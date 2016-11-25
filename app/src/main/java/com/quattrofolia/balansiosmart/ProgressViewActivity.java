@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.models.User;
@@ -15,9 +16,6 @@ import com.quattrofolia.balansiosmart.storage.Storage;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
-
-import static com.quattrofolia.balansiosmart.BalansioSmart.userId;
 
 
 public class ProgressViewActivity extends Activity {
@@ -31,11 +29,11 @@ public class ProgressViewActivity extends Activity {
     private RecyclerView goalRecyclerView;
     private RecyclerView.Adapter goalAdapter;
     private RecyclerView.LayoutManager goalLayoutManager;
+    private TextView userNameTextView;
 
     // Storage
     private Realm realm;
     private RealmChangeListener userResultsListener;
-    private RealmResults<User> userResults;
     private Storage storage;
 
     @Override
@@ -48,6 +46,12 @@ public class ProgressViewActivity extends Activity {
             @Override
             public void successHandler() {
                 Log.d(TAG, "successHandler");
+                User loggedUser = realm.where(User.class).findFirst();
+                if (loggedUser != null) {
+                    userNameTextView.setText(loggedUser.getFirstName() + " " + loggedUser.getLastName());
+                    goalAdapter = new GoalItemRecyclerAdapter(loggedUser.goals);
+                    goalRecyclerView.setAdapter(goalAdapter);
+                }
             }
 
             @Override
@@ -60,25 +64,7 @@ public class ProgressViewActivity extends Activity {
         realm = Realm.getDefaultInstance();
 
         // Define result listener for handling results
-        userResultsListener = new RealmChangeListener<RealmResults<User>>() {
-            @Override
-            public void onChange(RealmResults<User> userRealmResults) {
-                Log.d(TAG, userRealmResults.size() + " user results");
-                for (User user : userRealmResults) {
-                    Log.d(TAG, "User id: " + user.getId());
-                }
-                userId = userRealmResults.last().getId();
-                goalAdapter = new GoalItemRecyclerAdapter(userRealmResults.last().goals);
-                goalRecyclerView.setAdapter(goalAdapter);
-            }
-        };
-        userResults = realm.where(User.class).findAll();
-        userResults.addChangeListener(userResultsListener);
-
-        storage.save(new User("Test", "User"));
-        storage.save(new User("Test", "User2"));
-        storage.save(new User("Test", "User3"));
-
+        userNameTextView = (TextView) findViewById(R.id.userNameTextView);
         goalRecyclerView = (RecyclerView) findViewById(R.id.goalRecyclerView);
         goalRecyclerView.setHasFixedSize(false);
         goalLayoutManager = new LinearLayoutManager(this) {
@@ -88,6 +74,17 @@ public class ProgressViewActivity extends Activity {
             }
         };
         goalRecyclerView.setLayoutManager(goalLayoutManager);
+
+        // Check if user is logged in
+        User loggedUser = realm.where(User.class).findFirst();
+        if (loggedUser != null) {
+            userNameTextView.setText(loggedUser.getFirstName() + " " + loggedUser.getLastName());
+            goalAdapter = new GoalItemRecyclerAdapter(loggedUser.goals);
+            goalRecyclerView.setAdapter(goalAdapter);
+        } else {
+            userNameTextView.setText("User not logged in");
+            storage.save(new User("Created", "User"));
+        }
 
         createGoalButton = (Button) findViewById(R.id.create_goal_button);
 
@@ -120,7 +117,6 @@ public class ProgressViewActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        userResults.removeChangeListener(userResultsListener);
         realm.close();
     }
 }

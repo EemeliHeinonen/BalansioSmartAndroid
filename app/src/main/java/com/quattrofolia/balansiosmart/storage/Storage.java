@@ -31,7 +31,7 @@ public class Storage implements StorageHandler {
                     incrementableObject.setPrimaryKey(incrementableObject.getNextPrimaryKey(bgRealm));
                     bgRealm.copyToRealmOrUpdate((RealmObject) incrementableObject);
                 } else {
-                    bgRealm.copyToRealm(object);
+                    bgRealm.copyToRealmOrUpdate(object);
                 }
             }
         }, new Realm.Transaction.OnSuccess() {
