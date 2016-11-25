@@ -36,6 +36,7 @@ public class ProgressViewActivity extends Activity {
     // Storage
     private Realm realm;
     private RealmChangeListener userResultsListener;
+    private RealmChangeListener goalResultsListener;
     private Storage storage;
 
     @Override
@@ -62,12 +63,12 @@ public class ProgressViewActivity extends Activity {
         // Define result listener for handling results
         userResultsListener = new RealmChangeListener<RealmResults<User>>() {
             @Override
-            public void onChange(RealmResults<User> results) {
-                Log.d(TAG, results.size() + " user results");
-                for (User user : results) {
+            public void onChange(RealmResults<User> userRealmResults) {
+                Log.d(TAG, userRealmResults.size() + " user results");
+                for (User user : userRealmResults) {
                     Log.d(TAG, "User id: " + user.getId());
                 }
-                user = results.last();
+                user = userRealmResults.last();
                 goalAdapter = new GoalItemRecyclerAdapter(user.goals);
                 goalRecyclerView.setAdapter(goalAdapter);
             }
@@ -76,6 +77,8 @@ public class ProgressViewActivity extends Activity {
         userResults.addChangeListener(userResultsListener);
 
         storage.save(new User("Test", "User"));
+        storage.save(new User("Test", "User2"));
+        storage.save(new User("Test", "User3"));
 
         goalRecyclerView = (RecyclerView) findViewById(R.id.goalRecyclerView);
         goalRecyclerView.setHasFixedSize(false);
