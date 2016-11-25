@@ -27,8 +27,8 @@ public class GoalNotificationFragment extends Fragment {
     private String goalType;
     private int frequency;
     private String monitoringPeriod;
-    private int idealRangeMin;
-    private int idealRangeMax;
+    private String idealRangeMin;
+    private String idealRangeMax;
     private RadioGroup radioButtonGroup;
     private RadioButton rbStrict;
     private RadioButton rbEasy;
@@ -36,14 +36,14 @@ public class GoalNotificationFragment extends Fragment {
     private String notificationStyle = "Strict";
 
     public static GoalNotificationFragment newInstance
-            (String GoalType, int frequency, String monitoringPeriod, int idealRangeMin, int idealRangeMax) {
+            (String GoalType, int frequency, String monitoringPeriod, String idealRangeMin, String idealRangeMax) {
         GoalNotificationFragment fragment = new GoalNotificationFragment();
         Bundle args = new Bundle();
         args.putString("goalType", GoalType);
         args.putInt("frequency", frequency);
         args.putString("monitoringPeriod", monitoringPeriod);
-        args.putInt("rangeMin", idealRangeMin);
-        args.putInt("rangeMax", idealRangeMax);
+        args.putString("rangeMin", idealRangeMin);
+        args.putString("rangeMax", idealRangeMax);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,8 +56,8 @@ public class GoalNotificationFragment extends Fragment {
             goalType = getArguments().getString("goalType");
             frequency = getArguments().getInt("frequency");
             monitoringPeriod = getArguments().getString("monitoringPeriod");
-            idealRangeMin = getArguments().getInt("rangeMin");
-            idealRangeMax = getArguments().getInt("rangeMax");
+            idealRangeMin = getArguments().getString("rangeMin");
+            idealRangeMax = getArguments().getString("rangeMax");
             Log.d(TAG, "onCreate: goaltype: "+goalType);
             Log.d(TAG, "onCreate: measurement frequency: "+frequency);
             Log.d(TAG, "onCreate: monitoringPeriod: "+monitoringPeriod);

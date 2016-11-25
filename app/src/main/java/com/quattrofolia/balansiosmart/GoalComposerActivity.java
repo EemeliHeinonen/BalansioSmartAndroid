@@ -50,6 +50,8 @@ public class GoalComposerActivity extends FragmentActivity{
     public void addGoal(Goal g){
         Log.d("jes", "addGoal: ");
         user.goals.add(g);
-        Log.d("jes", "addGoal: Frequency: "+g.getDiscipline().getFrequency());
+        Log.d("jes", "addGoal: Type: "+g.getType().getLongName());
+        Log.d("jes", "addGoal: Discipline: "+g.getDiscipline());
+        Log.d("jes", "addGoal: Range: "+g.getTargetRange());
     }
 }

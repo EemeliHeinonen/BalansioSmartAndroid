@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GoalTypeListData {
 
-    private static final String[] headers = {"Blood Glucose", "Blood Pressure", "Weight", "Exercise", "Sleep", "Nutrition", "Heart Rate"};
+    private static final String[] headers = {"Blood Glucose", "Blood Pressure Systolic", "Blood Pressure Diastolic", "Weight", "Exercise", "Sleep", "Nutrition"};
 
     public static List<GoalTypeListItem> getListData() {
         List<GoalTypeListItem> goal_composer_type = new ArrayList<>();

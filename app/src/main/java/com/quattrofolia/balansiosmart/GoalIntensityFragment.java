@@ -114,8 +114,11 @@ public class GoalIntensityFragment extends Fragment {
             exerciseMode();
         }
 
+        //handle the swiping to the next fragment by clicking on the button
         btnSkip.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+
+                //Move to the next fragment without passing new data from this fragment
                 GoalRangeFragment newFragment = GoalRangeFragment.newInstance(goalType, 0, "none");
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
@@ -133,7 +136,7 @@ public class GoalIntensityFragment extends Fragment {
                 if (goalType.equals("Exercise")) {
                     // Create fragment and pass the selected values as arguments to the next fragment
                     Log.d(TAG, "onClick: about to create a fragment, goalType: " + goalType + " selected amount: " + selectedFrequency + " selected timeframe: " + selectedMonitoringPeriod);
-                    GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(goalType, selectedFrequency, selectedMonitoringPeriod, 0, 0);
+                    GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(goalType, selectedFrequency, selectedMonitoringPeriod, "0", "0");
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
 
