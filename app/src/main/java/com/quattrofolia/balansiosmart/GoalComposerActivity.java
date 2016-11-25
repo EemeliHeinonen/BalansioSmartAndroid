@@ -1,27 +1,27 @@
 package com.quattrofolia.balansiosmart;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
-import io.realm.RealmList;
 
+import static com.quattrofolia.balansiosmart.BalansioSmart.userId;
 
 
 public class GoalComposerActivity extends FragmentActivity{
-    private User user;
+
+    public static final String TAG = "FragmentActivity";
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm.init(this); // Initialize Realm only once when the app starts.
+        realm = Realm.getDefaultInstance();
         setContentView(R.layout.activity_main);
-        user = new User();
-        user.goals = new RealmList<>();
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -47,11 +47,40 @@ public class GoalComposerActivity extends FragmentActivity{
         }
     }
 
-    public void addGoal(Goal g){
-        Log.d("jes", "addGoal: ");
-        user.goals.add(g);
-        Log.d("jes", "addGoal: Type: "+g.getType().getLongName());
-        Log.d("jes", "addGoal: Discipline: "+g.getDiscipline());
-        Log.d("jes", "addGoal: Range: "+g.getTargetRange());
+    public void addGoal(final Goal goal){
+        Log.d(TAG, "addGoal: ");
+
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                Goal managedGoal = bgRealm.copyToRealmOrUpdate(goal);
+                User managedUser = bgRealm.where(User.class).equalTo("id", userId).findFirst();
+                if (managedUser != null) {
+                    managedUser.goals.add(managedGoal);
+                }
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm bgRealm) {
+                        User updatedUser = bgRealm.where(User.class).equalTo("id", userId).findFirst();
+                        if (updatedUser != null) {
+                            Log.d(TAG, "Goals updated. Total amount of goals is " + updatedUser.goals.size());
+                            for (Goal updatedGoal : updatedUser.goals) {
+                                Log.d(TAG, "Goal type: " + updatedGoal.getType().getLongName());
+                            }
+                        }
+                    }
+                });
+                finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

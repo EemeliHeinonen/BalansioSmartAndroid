@@ -6,8 +6,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class Goal extends RealmObject implements Incrementable {
 
-    @PrimaryKey
     private int id;
+    @PrimaryKey
     private String type;
     private Discipline discipline;
     private Range targetRange;

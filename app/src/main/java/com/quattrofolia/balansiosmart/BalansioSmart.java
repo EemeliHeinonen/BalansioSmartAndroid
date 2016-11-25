@@ -8,6 +8,7 @@ import io.realm.RealmConfiguration;
 
 public class BalansioSmart extends Application {
     private final static String TAG = "BalansioSmart";
+    public static int userId;
     @Override
     public void onCreate() {
         super.onCreate();

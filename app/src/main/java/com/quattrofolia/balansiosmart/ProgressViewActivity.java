@@ -17,6 +17,8 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
+import static com.quattrofolia.balansiosmart.BalansioSmart.userId;
+
 
 public class ProgressViewActivity extends Activity {
 
@@ -30,13 +32,10 @@ public class ProgressViewActivity extends Activity {
     private RecyclerView.Adapter goalAdapter;
     private RecyclerView.LayoutManager goalLayoutManager;
 
-    // Model
-    private User user;
-
     // Storage
     private Realm realm;
     private RealmChangeListener userResultsListener;
-    private RealmChangeListener goalResultsListener;
+    private RealmResults<User> userResults;
     private Storage storage;
 
     @Override
@@ -57,7 +56,7 @@ public class ProgressViewActivity extends Activity {
             }
         };
 
-        // Prepare Realm and RealmListener for querying and observing database
+        // Instantiate Realm for the UI thread
         realm = Realm.getDefaultInstance();
 
         // Define result listener for handling results
@@ -68,12 +67,12 @@ public class ProgressViewActivity extends Activity {
                 for (User user : userRealmResults) {
                     Log.d(TAG, "User id: " + user.getId());
                 }
-                user = userRealmResults.last();
-                goalAdapter = new GoalItemRecyclerAdapter(user.goals);
+                userId = userRealmResults.last().getId();
+                goalAdapter = new GoalItemRecyclerAdapter(userRealmResults.last().goals);
                 goalRecyclerView.setAdapter(goalAdapter);
             }
         };
-        RealmResults<User> userResults = realm.where(User.class).findAll();
+        userResults = realm.where(User.class).findAll();
         userResults.addChangeListener(userResultsListener);
 
         storage.save(new User("Test", "User"));
@@ -99,7 +98,7 @@ public class ProgressViewActivity extends Activity {
             }
         });
 
-        mCardStack = (CardStack) findViewById(R.id.container);
+        mCardStack = (CardStack) findViewById(R.id.cardStack);
         mCardStack.setContentResource(R.layout.card_content);
         //mCardStack.setStackMargin(20);
 
@@ -121,6 +120,7 @@ public class ProgressViewActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        userResults.removeChangeListener(userResultsListener);
         realm.close();
     }
 }

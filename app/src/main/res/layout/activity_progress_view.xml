@@ -15,7 +15,7 @@
             android:id="@+id/goal_view_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/container"
+            android:layout_below="@+id/cardStack"
             android:orientation="vertical">
 
             <Button
@@ -35,7 +35,7 @@
 
 
         <com.quattrofolia.balansiosmart.cardstack.CardStack
-            android:id="@id/container"
+            android:id="@id/cardStack"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_alignParentTop="true"
