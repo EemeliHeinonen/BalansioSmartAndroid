@@ -4,7 +4,7 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Goal extends RealmObject implements AutoIncrementable {
+public class Goal extends RealmObject implements Incrementable {
 
     @PrimaryKey
     private int id;
@@ -37,12 +37,17 @@ public class Goal extends RealmObject implements AutoIncrementable {
     }
 
     @Override
-    public void setPrimaryKey(int primaryKey) {
-        this.id = primaryKey;
+    public int getNextPrimaryKey(Realm realm) {
+        Number n = realm.where(Goal.class).max("id");
+        if (n != null) {
+            return n.intValue() + 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public int getNextPrimaryKey(Realm realm) {
-        return realm.where(Goal.class).max("id").intValue() + 1;
+    public void setPrimaryKey(int id) {
+        this.id = id;
     }
 }

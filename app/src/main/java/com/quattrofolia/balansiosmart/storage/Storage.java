@@ -2,34 +2,34 @@ package com.quattrofolia.balansiosmart.storage;
 
 import android.util.Log;
 
-import com.quattrofolia.balansiosmart.models.AutoIncrementable;
+import com.quattrofolia.balansiosmart.models.Incrementable;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
 
-public class Storage {
-    Realm realm;
+public class Storage implements StorageHandler {
+    private Realm realm;
     private static final String TAG = "Storage";
 
     public Storage() {
         try {
-            realm = realm.getDefaultInstance();
+            realm = Realm.getDefaultInstance();
         } catch (Exception e) {
-            Log.e("Realm init failed", e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
     }
 
-    protected void save(final RealmObject object) {
+    // Use this method for persisting RealmObjects
+    public void save(final RealmObject object) {
         realm.executeTransactionAsync(new Realm.Transaction() {
 
-            // Use this method for persisting RealmObjects
             @Override
             public void execute(Realm bgRealm) {
-                if (object instanceof AutoIncrementable) {
-                    // Auto increment primary key for autoincrementable RealmObjects
-                    AutoIncrementable autoIncrementable = (AutoIncrementable) object;
-                    autoIncrementable.setPrimaryKey(autoIncrementable.getNextPrimaryKey(bgRealm));
-                    bgRealm.copyToRealm((RealmObject) autoIncrementable);
+                if (object instanceof Incrementable) {
+                    // Increment primary key for autoincrementable RealmObjects
+                    Incrementable incrementableObject = (Incrementable) object;
+                    incrementableObject.setPrimaryKey(incrementableObject.getNextPrimaryKey(bgRealm));
+                    bgRealm.copyToRealmOrUpdate((RealmObject) incrementableObject);
                 } else {
                     bgRealm.copyToRealm(object);
                 }
@@ -37,15 +37,21 @@ public class Storage {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                // success
-                Log.d(TAG, "saved: " + object.toString());
+                successHandler();
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
-                // error
-                Log.e("error saving " + object.toString(), error.getMessage());
+                error.printStackTrace();
             }
         });
+    }
+
+    public void successHandler() {
+        Log.d(TAG, "saved.");
+    }
+
+    public void errorHandler() {
+        Log.d(TAG, "error.");
     }
 }
