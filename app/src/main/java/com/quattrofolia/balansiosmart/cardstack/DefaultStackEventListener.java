@@ -2,8 +2,11 @@ package com.quattrofolia.balansiosmart.cardstack;
 
 //Part of ProgressView's CardView
 
+import android.util.Log;
+
 public class DefaultStackEventListener implements CardStack.CardEventListener {
 
+    private String TAG ="tagi";
     private float mThreshold;
 
     public DefaultStackEventListener(int i) {
@@ -32,6 +35,7 @@ public class DefaultStackEventListener implements CardStack.CardEventListener {
 
     @Override
     public void topCardTapped() {
+        Log.d(TAG, "topCardTapped: ");
 
     }
 
