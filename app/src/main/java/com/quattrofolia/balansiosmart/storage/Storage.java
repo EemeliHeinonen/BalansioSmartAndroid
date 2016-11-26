@@ -37,21 +37,22 @@ public class Storage implements StorageHandler {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                successHandler();
+                storageDataSaved(object);
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
                 error.printStackTrace();
+                storageDataError(error);
             }
         });
     }
 
-    public void successHandler() {
+    public void storageDataSaved(RealmObject savedObject) {
         Log.d(TAG, "saved.");
     }
 
-    public void errorHandler() {
+    public void storageDataError(Throwable error) {
         Log.d(TAG, "error.");
     }
 }

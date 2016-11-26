@@ -1,6 +1,8 @@
 package com.quattrofolia.balansiosmart.storage;
 
+import io.realm.RealmObject;
+
 public interface StorageHandler {
-    void successHandler();
-    void errorHandler();
+    void storageDataSaved(RealmObject savedObject);
+    void storageDataError(Throwable error);
 }
