@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name">Balansio Smart</string>
     <string name="button_text_create_goal">Create Goal</string>
+
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Hello There!</string>
+    <string name="slide_1_description">Welcome to Balansio Smart, your new way of health management application.</string>
+
+    <string name="slide_2_title">Set Your Goals</string>
+    <string name="slide_2_description"> You can set your health goals and change it later as you like.</string>
+
+    <string name="slide_3_title">User Friendly Interface</string>
+    <string name="slide_3_description">You can check your status in a glance, and learn more in the list.</string>
+
+    <string name="slide_4_title"> Let\'s get started!</string>
+    <string name="slide_4_description"> </string>
+
+    <!--<string name="play_again_description">To see the welcome slider again, go to Settings -> apps -> welcome slider -> clear data</string>-->
+    <!--<string name="play_again">Play Again</string>-->
 </resources>
