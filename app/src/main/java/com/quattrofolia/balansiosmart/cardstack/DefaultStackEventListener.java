@@ -41,6 +41,4 @@ public class DefaultStackEventListener implements CardStack.CardEventListener {
         Log.d(TAG, "topCardTapped: ");
 
     }
-
-
 }
