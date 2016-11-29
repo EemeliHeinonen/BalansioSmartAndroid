@@ -1,7 +1,9 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalComposer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.quattrofolia.balansiosmart.ProgressViewActivity;
+import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.Range;
@@ -144,7 +148,8 @@ public class GoalOverviewFragment extends Fragment {
         TextView tvFrequency = (TextView) myView.findViewById(R.id.tvOverviewFrequency);
         TextView tvRangeMin = (TextView) myView.findViewById(R.id.tvOverviewRangeMin);
         TextView tvRangeMax = (TextView) myView.findViewById(R.id.tvOverviewRangeMax);
-        Button btnCreateGoal = (Button) myView.findViewById(R.id.btnCreateGoal);
+        Button btnOverviewFinish = (Button) myView.findViewById(R.id.btnOverviewFinish);
+        Button btnOverviewAnother = (Button) myView.findViewById(R.id.btnOverviewAnother);
 
         tvType.setText("Goal type: "+goalType);
         tvFrequency.setText(frequency+" Measurement(s) a "+monitoringPeriod);
@@ -153,10 +158,25 @@ public class GoalOverviewFragment extends Fragment {
             tvRangeMax.setText("Goal range maximum value: "+idealRangeMax);
         }
 
-        btnCreateGoal.setOnClickListener(new View.OnClickListener() {
+        btnOverviewAnother.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Add the newly created progress_view_goal_item_row object to the users list of goals
                 ((GoalComposerActivity) getActivity()).addGoal(goal);
+                GoalTypeFragment newFragment = GoalTypeFragment.newInstance();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        btnOverviewFinish.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //Add the newly created progress_view_goal_item_row object to the users list of goals
+                ((GoalComposerActivity) getActivity()).addGoal(goal);
+                Intent intent = new Intent(getActivity(), ProgressViewActivity.class);
+                startActivity(intent);
             }
         });
 

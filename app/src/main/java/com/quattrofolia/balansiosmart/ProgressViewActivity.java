@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
+import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Goal;
 
 import java.util.ArrayList;

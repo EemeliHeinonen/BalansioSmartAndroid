@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalComposer;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.RecyclerViewClickListener;
 
 import static android.content.ContentValues.TAG;
 
@@ -23,6 +26,11 @@ import static android.content.ContentValues.TAG;
 public class GoalTypeFragment extends Fragment implements RecyclerViewClickListener {
     private RecyclerView recyclerView;
     private GoalTypeAdapter goalTypeAdapter;
+
+    public static GoalTypeFragment newInstance() {
+        GoalTypeFragment fragment = new GoalTypeFragment();
+        return fragment;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
