@@ -19,6 +19,10 @@ public class Storage implements StorageHandler {
         }
     }
 
+    public Storage(Realm realm) {
+        this.realm = realm;
+    }
+
     // Use this method for persisting RealmObjects
     public void save(final RealmObject object) {
         realm.executeTransactionAsync(new Realm.Transaction() {

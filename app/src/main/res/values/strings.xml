@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Balansio Smart</string>
     <string name="button_text_create_goal">Create Goal</string>
+    <string name="button_text_create_user">Create Mock User</string>
+
+    <!-- Common buttons -->
+    <string name="dialog_confirmation">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+
+    <!-- Alerts -->
+    <string name="dialog_authorization_error">Could not authorize user credentials. Please log in again.</string>
+    <string name="dialog_select_user_title">Select a User</string>
 </resources>

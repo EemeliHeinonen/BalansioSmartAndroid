@@ -1,64 +1,74 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    tools:context=".ProgressViewActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
+        android:id="@+id/layout_userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:orientation="vertical"
-        tools:context=".ProgressViewActivity">
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/userNameLayout"
+        <TextView
+            android:id="@+id/textView_userName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_goals"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cardStack"
+        android:background="@color/testGreen"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/button_createGoal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/button_text_create_goal" />
+
+        <Button
+            android:id="@+id/button_createUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/button_text_create_user" />
+
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/progressScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/userNameTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_horizontal" />
-
-        </LinearLayout>
-
-        <RelativeLayout
-            android:background="@color/testGreen"
-            android:id="@+id/goal_view_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/cardStack"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/create_goal_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/button_text_create_goal" />
+            android:layout_below="@id/button_createGoal">
 
             <!-- Goal RecyclerView -->
             <android.support.v7.widget.RecyclerView
-                android:background="@color/testYellow"
-                android:id="@+id/goalRecyclerView"
+                android:id="@+id/recyclerView_goals"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/create_goal_button" />
-        </RelativeLayout>
+                android:background="@color/testYellow" />
 
-        <com.quattrofolia.balansiosmart.cardstack.CardStack
-            android:id="@id/cardStack"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@id/userNameLayout"
-            android:layout_marginTop="20dp"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:padding="5dp"
-            app:stackMargin="20" />
+        </ScrollView>
 
     </RelativeLayout>
-</ScrollView>
+
+    <com.quattrofolia.balansiosmart.cardstack.CardStack
+        android:id="@id/cardStack"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/layout_userName"
+        android:layout_marginTop="20dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="5dp"
+        app:stackMargin="20" />
+
+</RelativeLayout>

@@ -16,6 +16,7 @@ public class DragGestureDetector {
     private DragListener mListener;
     private boolean mStarted = false;
     private MotionEvent mOriginalEvent;
+
     public interface DragListener {
         boolean onDragStart(MotionEvent e1, MotionEvent e2, float distanceX,
                             float distanceY);
