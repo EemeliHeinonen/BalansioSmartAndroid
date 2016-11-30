@@ -6,6 +6,7 @@ import com.quattrofolia.balansiosmart.models.AutoIncrementable;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 
 public class Storage {
     Realm realm;
@@ -47,5 +48,9 @@ public class Storage {
                 Log.e("error saving " + object.toString(), error.getMessage());
             }
         });
+    }
+
+    public <T extends RealmObject> RealmResults<T> findAll(Class<T> type) {
+        return realm.where(type).findAll();
     }
 }
