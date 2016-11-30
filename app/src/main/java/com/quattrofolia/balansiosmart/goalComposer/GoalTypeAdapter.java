@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalComposer;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.RecyclerViewClickListener;
 
 import java.util.List;
 import static android.content.ContentValues.TAG;

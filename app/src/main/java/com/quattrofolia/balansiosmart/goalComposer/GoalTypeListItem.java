@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalComposer;
 
 /**
  * Created by mrbeva on 10/30/16.

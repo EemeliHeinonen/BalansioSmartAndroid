@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalComposer;
 
 import java.util.ArrayList;
 import java.util.List;

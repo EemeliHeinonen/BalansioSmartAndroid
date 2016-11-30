@@ -1,16 +1,17 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalComposer;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 
-
+//Goal Composer's activity, the goal composer's fragments will be shown in the fragment container in this activity.
 
 public class GoalComposerActivity extends FragmentActivity{
     private User user;

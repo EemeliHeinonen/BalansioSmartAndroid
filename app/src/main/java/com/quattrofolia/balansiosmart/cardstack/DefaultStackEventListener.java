@@ -4,6 +4,7 @@ package com.quattrofolia.balansiosmart.cardstack;
 
 import android.util.Log;
 
+
 public class DefaultStackEventListener implements CardStack.CardEventListener {
 
     private String TAG ="tagi";
@@ -30,6 +31,8 @@ public class DefaultStackEventListener implements CardStack.CardEventListener {
 
     @Override
     public void discarded(int mIndex,int direction) {
+        Log.d(TAG, "discarded: "+mIndex);
+
 
     }
 
@@ -38,6 +41,4 @@ public class DefaultStackEventListener implements CardStack.CardEventListener {
         Log.d(TAG, "topCardTapped: ");
 
     }
-
-
 }
