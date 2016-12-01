@@ -36,25 +36,38 @@
         android:layout_below="@+id/cardStack"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_createGoal"
+        <LinearLayout
+            android:id="@+id/layout_buttonBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/button_text_create_goal" />
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true">
 
-        <Button
-            android:id="@+id/button_createUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/button_text_create_user" />
+            <Button
+                android:id="@+id/button_createGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_text_create_goal" />
+
+            <Button
+                android:id="@+id/button_createUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_text_create_user" />
+
+            <Button
+                android:id="@+id/button_selectUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login" />
+
+        </LinearLayout>
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/progressScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/button_createGoal">
+            android:layout_below="@id/layout_buttonBar">
 
             <!-- Goal RecyclerView -->
             <android.support.v7.widget.RecyclerView

@@ -10,6 +10,7 @@
     <!-- Alerts -->
     <string name="dialog_authorization_error">Could not authorize user credentials. Please log in again.</string>
     <string name="dialog_select_user_title">Select a User</string>
+    <string name="user_created">User created!</string>
 
     <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>
