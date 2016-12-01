@@ -13,23 +13,33 @@ import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
+import com.quattrofolia.balansiosmart.storage.Storage;
 
 import java.util.ArrayList;
+
+import io.realm.Realm;
 
 
 public class ProgressViewActivity extends Activity {
     private CardStack mCardStack;
     private CardsDataAdapter mCardAdapter;
     private Button createGoalButton;
+    private Button notificationButton;
+    private Button defaultGoalsButton;
     private RecyclerView goalRecyclerView;
     private RecyclerView.Adapter goalAdapter;
     private RecyclerView.LayoutManager goalLayoutManager;
     private ArrayList<Goal> goals;
+    private Realm realm;
+    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progress_view);
+
+        realm = Realm.getDefaultInstance();
+        storage = new Storage(realm);
 
         goalRecyclerView = (RecyclerView) findViewById(R.id.goalRecyclerView);
         goalRecyclerView.setHasFixedSize(false);
@@ -46,6 +56,8 @@ public class ProgressViewActivity extends Activity {
         goalRecyclerView.setAdapter(goalAdapter);
 
         createGoalButton = (Button)findViewById(R.id.create_goal_button);
+        notificationButton = (Button)findViewById(R.id.notification_button);
+        defaultGoalsButton = (Button)findViewById(R.id.default_goals_button);
 
         createGoalButton.setOnClickListener(new Button.OnClickListener()
         {
@@ -56,6 +68,24 @@ public class ProgressViewActivity extends Activity {
 
                 //this place just for testing
                 NotificationEventReceiver.setupAlarm(getApplicationContext());
+            }
+        });
+
+        notificationButton.setOnClickListener(new Button.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                //Send notifications
+                NotificationEventReceiver.setupAlarm(getApplicationContext());
+            }
+        });
+
+        defaultGoalsButton.setOnClickListener(new Button.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                //Create default goals and entries here
+
             }
         });
 

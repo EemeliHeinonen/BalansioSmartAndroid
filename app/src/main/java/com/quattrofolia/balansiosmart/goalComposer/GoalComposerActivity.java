@@ -21,6 +21,8 @@ public class GoalComposerActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         Realm.init(this); // Initialize Realm only once when the app starts.
         setContentView(R.layout.activity_main);
+
+        //User is created here just for testing purposes
         user = new User();
         user.goals = new RealmList<>();
 

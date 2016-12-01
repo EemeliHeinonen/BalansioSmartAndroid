@@ -6,9 +6,11 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject implements AutoIncrementable {
+
     @PrimaryKey
     private int id;
     public RealmList<Goal> goals;
+    public RealmList<HealthDataEntry> entries;
 
     @Override
     public void setPrimaryKey(int primaryKey) {
