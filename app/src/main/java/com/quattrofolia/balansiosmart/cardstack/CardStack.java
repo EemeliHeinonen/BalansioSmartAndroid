@@ -37,7 +37,7 @@ public class CardStack extends RelativeLayout {
     private int mContentResource = 0;
 
 
-    public interface CardEventListener{
+    public interface CardEventListener {
         //section
         // 0 | 1
         //--------
@@ -45,13 +45,17 @@ public class CardStack extends RelativeLayout {
         // swipe distance, most likely be used with height and width of a view ;
 
         boolean swipeEnd(int section, float distance);
+
         boolean swipeStart(int section, float distance);
+
         boolean swipeContinue(int section, float distanceX, float distanceY);
+
         void discarded(int mIndex, int direction);
+
         void topCardTapped();
     }
 
-    public void discardTop(final int direction){
+    public void discardTop(final int direction) {
         mCardAnimator.discard(direction, new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator arg0) {
@@ -66,7 +70,7 @@ public class CardStack extends RelativeLayout {
         });
     }
 
-    public int getCurrIndex(){
+    public int getCurrIndex() {
         //sync?
         return mIndex;
     }
@@ -83,25 +87,25 @@ public class CardStack extends RelativeLayout {
         }
 
         //get attrs assign minVisiableNum
-        for(int i = 0; i<mNumVisible; i++){
+        for (int i = 0; i < mNumVisible; i++) {
             addContainerViews();
         }
         setupAnimation();
     }
 
-    private void addContainerViews(){
-        FrameLayout v =  new FrameLayout(getContext());
+    private void addContainerViews() {
+        FrameLayout v = new FrameLayout(getContext());
         viewCollection.add(v);
         addView(v);
     }
 
-    public void setStackMargin(int margin){
+    public void setStackMargin(int margin) {
         mStackMargin = margin;
         mCardAnimator.setStackMargin(mStackMargin);
         mCardAnimator.initLayout();
     }
 
-    public void setContentResource(int res){
+    public void setContentResource(int res) {
         mContentResource = res;
     }
 
@@ -109,39 +113,40 @@ public class CardStack extends RelativeLayout {
         this.canSwipe = can;
     }
 
-    public void reset(boolean resetIndex){
-        if(resetIndex) mIndex = 0;
+    public void reset(boolean resetIndex) {
+        if (resetIndex) mIndex = 0;
         removeAllViews();
         viewCollection.clear();
-        for(int i = 0; i<mNumVisible; i++){
+        for (int i = 0; i < mNumVisible; i++) {
             addContainerViews();
         }
         setupAnimation();
         loadData();
     }
 
-    public void setVisibleCardNum(int visiableNum){
+    public void setVisibleCardNum(int visiableNum) {
         mNumVisible = visiableNum;
         reset(false);
     }
 
-    public void setThreshold(int t){
+    public void setThreshold(int t) {
         mEventListener = new DefaultStackEventListener(t);
     }
 
-    public void setListener(CardEventListener cel){
+    public void setListener(CardEventListener cel) {
         mEventListener = cel;
     }
-    private void setupAnimation(){
-        final View cardView = viewCollection.get(viewCollection.size()-1);
+
+    private void setupAnimation() {
+        final View cardView = viewCollection.get(viewCollection.size() - 1);
         mCardAnimator = new CardAnimator(viewCollection, mColor, mStackMargin);
         mCardAnimator.initLayout();
 
-        final DragGestureDetector dd = new DragGestureDetector(CardStack.this.getContext(),new DragGestureDetector.DragListener(){
+        final DragGestureDetector dd = new DragGestureDetector(CardStack.this.getContext(), new DragGestureDetector.DragListener() {
 
             @Override
-            public  boolean onDragStart(MotionEvent e1, MotionEvent e2,
-                                        float distanceX, float distanceY) {
+            public boolean onDragStart(MotionEvent e1, MotionEvent e2,
+                                       float distanceX, float distanceY) {
                 if (canSwipe) {
                     mCardAnimator.drag(e1, e2, distanceX, distanceY);
                 }
@@ -162,26 +167,26 @@ public class CardStack extends RelativeLayout {
                 float y1 = e1.getRawY();
                 float x2 = e2.getRawX();
                 float y2 = e2.getRawY();
-                final int direction = CardUtils.direction(x1,y1,x2,y2);
+                final int direction = CardUtils.direction(x1, y1, x2, y2);
                 if (canSwipe) {
                     mCardAnimator.drag(e1, e2, distanceX, distanceY);
                 }
-                mEventListener.swipeContinue(direction, Math.abs(x2-x1), Math.abs(y2-y1));
+                mEventListener.swipeContinue(direction, Math.abs(x2 - x1), Math.abs(y2 - y1));
                 return true;
             }
 
             @Override
-            public  boolean onDragEnd(MotionEvent e1, MotionEvent e2) {
+            public boolean onDragEnd(MotionEvent e1, MotionEvent e2) {
                 //reverse(e1,e2);
                 float x1 = e1.getRawX();
                 float y1 = e1.getRawY();
                 float x2 = e2.getRawX();
                 float y2 = e2.getRawY();
-                float distance = CardUtils.distance(x1,y1,x2,y2);
-                final int direction = CardUtils.direction(x1,y1,x2,y2);
+                float distance = CardUtils.distance(x1, y1, x2, y2);
+                final int direction = CardUtils.direction(x1, y1, x2, y2);
 
                 boolean discard = mEventListener.swipeEnd(direction, distance);
-                if(discard){
+                if (discard) {
                     if (canSwipe) {
                         mCardAnimator.discard(direction, new AnimatorListenerAdapter() {
 
@@ -201,7 +206,7 @@ public class CardStack extends RelativeLayout {
 
                         });
                     }
-                }else{
+                } else {
                     if (canSwipe) {
                         mCardAnimator.reverse(e1, e2);
                     }
@@ -219,6 +224,7 @@ public class CardStack extends RelativeLayout {
 
         mOnTouchListener = new OnTouchListener() {
             private static final String DEBUG_TAG = "MotionEvents";
+
             @Override
             public boolean onTouch(View arg0, MotionEvent event) {
                 dd.onTouchEvent(event);
@@ -228,9 +234,9 @@ public class CardStack extends RelativeLayout {
         cardView.setOnTouchListener(mOnTouchListener);
     }
 
-    private DataSetObserver mOb = new DataSetObserver(){
+    private DataSetObserver mOb = new DataSetObserver() {
         @Override
-        public void onChanged(){
+        public void onChanged() {
             reset(false);
         }
     };
@@ -239,12 +245,13 @@ public class CardStack extends RelativeLayout {
     //ArrayList
 
     ArrayList<View> viewCollection = new ArrayList<View>();
+
     public CardStack(Context context) {
         super(context);
     }
 
-    public void setAdapter(final ArrayAdapter<?> adapter){
-        if(mAdapter != null){
+    public void setAdapter(final ArrayAdapter<?> adapter) {
+        if (mAdapter != null) {
             mAdapter.unregisterDataSetObserver(mOb);
         }
         mAdapter = adapter;
@@ -261,13 +268,13 @@ public class CardStack extends RelativeLayout {
         return ((ViewGroup) viewCollection.get(viewCollection.size() - 1)).getChildAt(0);
     }
 
-    private void loadData(){
-        for(int i=mNumVisible-1 ; i>=0 ; i--) {
+    private void loadData() {
+        for (int i = mNumVisible - 1; i >= 0; i--) {
             ViewGroup parent = (ViewGroup) viewCollection.get(i);
             int index = (mIndex + mNumVisible - 1) - i;
             if (index > mAdapter.getCount() - 1) {
                 parent.setVisibility(View.GONE);
-            }else{
+            } else {
                 View child = mAdapter.getView(index, getContentView(), this);
                 parent.addView(child);
                 parent.setVisibility(View.VISIBLE);
@@ -275,21 +282,21 @@ public class CardStack extends RelativeLayout {
         }
     }
 
-    private View getContentView(){
+    private View getContentView() {
         View contentView = null;
-        if(mContentResource != 0) {
+        if (mContentResource != 0) {
             LayoutInflater lf = LayoutInflater.from(getContext());
-            contentView = lf.inflate(mContentResource,null);
+            contentView = lf.inflate(mContentResource, null);
         }
         return contentView;
 
     }
 
-    private void loadLast(){
-        ViewGroup parent = (ViewGroup)viewCollection.get(0);
+    private void loadLast() {
+        ViewGroup parent = (ViewGroup) viewCollection.get(0);
 
-        int lastIndex = (mNumVisible - 1)+ mIndex;
-        if(lastIndex > mAdapter.getCount() -1 ){
+        int lastIndex = (mNumVisible - 1) + mIndex;
+        if (lastIndex > mAdapter.getCount() - 1) {
             parent.setVisibility(View.GONE);
             return;
         }
