@@ -23,14 +23,14 @@ public class Storage implements StorageHandler {
         this.realm = realm;
     }
 
-    // Use this method for persisting RealmObjects
+    // Use this method for persisting incrementable RealmObjects
     public void save(final RealmObject object) {
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        Realm.getDefaultInstance().executeTransactionAsync(new Realm.Transaction() {
 
             @Override
             public void execute(Realm bgRealm) {
                 if (object instanceof Incrementable) {
-                    // Increment primary key for autoincrementable RealmObjects
+                    // Increment primary key for incrementable RealmObjects
                     Incrementable incrementableObject = (Incrementable) object;
                     incrementableObject.setPrimaryKey(incrementableObject.getNextPrimaryKey(bgRealm));
                     bgRealm.copyToRealmOrUpdate((RealmObject) incrementableObject);

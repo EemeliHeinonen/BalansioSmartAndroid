@@ -11,12 +11,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
+import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
+import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
+import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.storage.Storage;
+
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
+
+import static com.quattrofolia.balansiosmart.BalansioSmart.session;
 
 
 public class ProgressViewActivity extends Activity {
@@ -28,6 +34,7 @@ public class ProgressViewActivity extends Activity {
     private CardsDataAdapter cardAdapter;
     private Button createGoalButton;
     private Button createMockUserButton;
+    private Button logoutButton;
     private RecyclerView goalRecyclerView;
     private RecyclerView.Adapter goalAdapter;
     private RecyclerView.LayoutManager goalLayoutManager;
@@ -36,6 +43,7 @@ public class ProgressViewActivity extends Activity {
     // Storage
     private Realm realm;
     private RealmChangeListener realmChangeListener;
+    private RealmChangeListener<Session> sessionListener;
     private Storage storage;
 
     @Override
@@ -57,6 +65,14 @@ public class ProgressViewActivity extends Activity {
             }
         };
         realm.addChangeListener(realmChangeListener);
+        sessionListener = new RealmChangeListener<Session>() {
+            @Override
+            public void onChange(Session element) {
+                Log.d(TAG, "session onChange");
+                updateView();
+            }
+        };
+        session.addChangeListener(sessionListener);
 
         // Create Storage for saving autoincrementable objects
         storage = new Storage();
@@ -82,8 +98,22 @@ public class ProgressViewActivity extends Activity {
         createMockUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                storage.save(new User("Mock", "User"));
                 SelectUserDialogFragment fragment = new SelectUserDialogFragment();
-                fragment.show(getFragmentManager(), "Select User");
+                fragment.show(getFragmentManager(), "Select User:");
+            }
+        });
+        logoutButton = (Button) findViewById(R.id.button_logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final RealmResults<Session> sessions = realm.where(Session.class).findAll();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        sessions.deleteAllFromRealm();
+                    }
+                });
             }
         });
 
@@ -104,12 +134,12 @@ public class ProgressViewActivity extends Activity {
 
         /* Check if user is logged in */
 
-        Integer id = BalansioSmart.userId;
-        RealmResults<User> userResults;
-        User managedUser;
-        userResults = realm.where(User.class).findAll();
-        if (id != null && !userResults.isEmpty()) {
-            managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+        final Session session = BalansioSmart.currentSession(realm);
+
+        RealmResults<User> userResults = realm.where(User.class).findAll();
+
+        if (session != null && !userResults.isEmpty()) {
+            User managedUser = userResults.where().equalTo("id", session.getUserId()).findFirst();
             if (managedUser != null) {
 
                 /* User id and database match.
@@ -118,37 +148,37 @@ public class ProgressViewActivity extends Activity {
                 userNameTextView.setText(managedUser.getFirstName() + " " + managedUser.getLastName());
                 goalAdapter = new GoalItemRecyclerAdapter(managedUser.goals);
                 goalRecyclerView.setAdapter(goalAdapter);
-                enableAuthorizedInterface(true);
-                Log.d(TAG, "View updated");
+                setInterfaceAccessibility(true);
                 return;
             } else {
 
                 /* User id and database mismatch.
                 * Display an alert dialog. */
 
-                userNameTextView.setText("");
-                BalansioSmart.userId = null;
                 AuthorizationErrorDialogFragment fragment = new AuthorizationErrorDialogFragment();
-                fragment.show(getFragmentManager(), "Error");
+                fragment.show(getFragmentManager(), "Login Error");
             }
         }
 
         /* No user information available. */
         userNameTextView.setText("User not logged in.");
-        enableAuthorizedInterface(false);
+        setInterfaceAccessibility(false);
     }
 
-    private void enableAuthorizedInterface(boolean authorized) {
+    private void setInterfaceAccessibility(boolean authorized) {
         createGoalButton.setEnabled(authorized);
         createMockUserButton.setEnabled(!authorized);
+        logoutButton.setEnabled(authorized);
         if (authorized) {
             cardStack.setVisibility(View.VISIBLE);
             createGoalButton.setVisibility(View.VISIBLE);
             createMockUserButton.setVisibility(View.GONE);
+            logoutButton.setVisibility(View.VISIBLE);
         } else {
             cardStack.setVisibility(View.INVISIBLE);
             createGoalButton.setVisibility(View.GONE);
             createMockUserButton.setVisibility(View.VISIBLE);
+            logoutButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -156,6 +186,7 @@ public class ProgressViewActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         realm.removeChangeListener(realmChangeListener);
+        session.removeChangeListener(sessionListener);
         realm.close();
     }
 }

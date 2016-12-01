@@ -9,11 +9,16 @@ public class Goal extends RealmObject implements Incrementable {
     private int id;
     @PrimaryKey
     private String type;
+    private String notificationStyle;
     private Discipline discipline;
     private Range targetRange;
 
     public void setType(HealthDataType type) {
         this.type = type.toString();
+    }
+
+    public void setNotificationStyle(String notificationStyle){
+        this.notificationStyle = notificationStyle;
     }
 
     public void setDiscipline(Discipline discipline) {
@@ -34,6 +39,10 @@ public class Goal extends RealmObject implements Incrementable {
 
     public Range getTargetRange() {
         return targetRange;
+    }
+
+    public String getNotificationStyle(){
+        return notificationStyle;
     }
 
     @Override

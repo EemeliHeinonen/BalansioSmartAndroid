@@ -11,13 +11,21 @@
         android:id="@+id/layout_userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
 
         <TextView
             android:id="@+id/textView_userName"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_horizontal" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+             />
+        <Button
+            android:id="@+id/button_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout"
+            />
 
     </LinearLayout>
 
@@ -26,7 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/cardStack"
-        android:background="@color/testGreen"
         android:orientation="vertical">
 
         <Button
@@ -53,8 +60,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView_goals"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/testYellow" />
+                android:layout_height="wrap_content" />
 
         </ScrollView>
 
@@ -72,3 +78,4 @@
         app:stackMargin="20" />
 
 </RelativeLayout>
+

@@ -22,10 +22,15 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvOverviewRangeMin"/>
 
-
-    <Button android:id="@+id/btnCreateGoal"
+    <Button android:id="@+id/btnOverviewFinish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create goal"
+        android:text="Create goal and finish"
         android:layout_alignParentBottom="true"/>
+
+    <Button android:id="@+id/btnOverviewAnother"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create another goal"
+        android:layout_above="@id/btnOverviewFinish"/>
 </RelativeLayout>
