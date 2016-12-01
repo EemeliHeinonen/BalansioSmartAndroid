@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bg_target_range_low">4.5</string>
+    <string name="bg_target_range_high">8.0</string>
+    <integer name="bg_measurements_min_per_day">8</integer>
+    <integer name="hypos_max_per_day">1</integer>
+    <integer name="sleep_h_min">7</integer>
+    <integer name="medication_bolus_min_per_day">3</integer>
+    <integer name="medication_basal_min_per_day">1</integer>
+    <integer name="medication_basal_max_per_day">2</integer>
+    <string name="a1c_max">7.5</string>
+    <integer name="activity_h_min_per_week">4</integer>
+    <integer name="blood_pressure_systolic_min">100</integer>
+    <integer name="blood_pressure_systolic_max">150</integer>
+    <integer name="blood_pressure_diastolic_min">70</integer>
+    <integer name="blood_pressure_diastolic_max">90</integer>
+</resources>

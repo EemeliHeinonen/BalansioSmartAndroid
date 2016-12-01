@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
 
 import java.util.ArrayList;
 
@@ -52,6 +53,9 @@ public class ProgressViewActivity extends Activity {
             {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
                 startActivity(i);
+
+                //this place just for testing
+                NotificationEventReceiver.setupAlarm(getApplicationContext());
             }
         });
 
