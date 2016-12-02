@@ -142,13 +142,13 @@ public class ProgressViewActivity extends Activity {
             @Override
             public void onChange(RealmResults<Session> sessionResults) {
                 // Received sessionResults
-                if (sessionResults.size() == 1) {
+                if (!sessionResults.isEmpty()) {
 
                     /* Session found.
                     * Get user object by id.
                     * Populate adapter datasets with responding data. */
 
-                    Session currentSession = sessionResults.first();
+                    Session currentSession = sessionResults.last();
                     User managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
                     userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
                     setInterfaceAccessibility(true);
@@ -159,13 +159,14 @@ public class ProgressViewActivity extends Activity {
                 } else {
 
                     /* Session not found.
+                    * Update interface.
                     * Clear adapter datasets. */
 
                     setInterfaceAccessibility(false);
                     goalItems.clear();
                 }
 
-                /* Call adapter notifiers. */
+                /* Update adapters. */
 
                 goalAdapter.setItemList(goalItems);
             }

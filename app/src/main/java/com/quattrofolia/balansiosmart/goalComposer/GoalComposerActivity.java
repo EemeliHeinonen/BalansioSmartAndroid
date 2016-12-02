@@ -88,6 +88,7 @@ public class GoalComposerActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        realm.close();
     }
 
     private void displayAuthErrorDialog() {
