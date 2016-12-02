@@ -9,10 +9,16 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.Session;
+import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.storage.Storage;
+
+import org.joda.time.Instant;
+import org.joda.time.Minutes;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -37,6 +43,7 @@ public class NotificationIntentService extends IntentService {
     private RealmChangeListener realmChangeListener;
     private Storage storage;
     private RealmList<Goal> goals;
+
 
 
 
@@ -91,27 +98,58 @@ public class NotificationIntentService extends IntentService {
         // Do something. For example, fetch fresh data from backend to create a rich notification?
 
         realm = Realm.getDefaultInstance();
+        final Session session = BalansioSmart.currentSession(realm);
+
         //query.equalTo("name", "John");
-       // realmTestString = goals.get(0).getType().toString();
+        //realmTestString = goals.get(0).getType().toString();
         //Log.d(TAG, "processStartNotification: testString: "+realmTestString);
+        final int id = session.getUserId().intValue();
+        User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+
+        //Entry check testing
+        Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size()-1).getInstant();
+        Log.d(TAG, "processStartNotification: Last Entry time: "+lastEntryTime.getMillis());
+        Instant now = new Instant();
+
+        Log.d(TAG, "processStartNotification: present time: "+now);
+        Log.d(TAG, "processStartNotification: difference in time(getMillis()-getMillis()): "+(now.getMillis() - lastEntryTime.getMillis()));
+        Log.d(TAG, "processStartNotification: difference in time(minutesBetween): "+Minutes.minutesBetween(lastEntryTime, now));
 
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setContentTitle("Scheduled Notification")
-                .setAutoCancel(true)
-                .setColor(getResources().getColor(R.color.colorAccent))
-                .setContentText("This notification has been triggered by Notification Service")
-                .setSmallIcon(R.drawable.blood_glucose);
+        if (managedUser.entries.size()>5) {
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setContentTitle("Scheduled Notification")
+                    .setAutoCancel(true)
+                    .setColor(getResources().getColor(R.color.colorAccent))
+                    .setContentText("This notification has been triggered by Notification Service")
+                    .setSmallIcon(R.drawable.blood_glucose);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                NOTIFICATION_ID,
-                new Intent(this, ProgressViewActivity.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(pendingIntent);
-        builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
+            PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                    NOTIFICATION_ID,
+                    new Intent(this, ProgressViewActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
 
-        final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(NOTIFICATION_ID, builder.build());
+            final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(NOTIFICATION_ID, builder.build());
+        } else {
+            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setContentTitle("Scheduled Notification")
+                    .setAutoCancel(true)
+                    .setColor(getResources().getColor(R.color.colorAccent))
+                    .setContentText("there's less than 5 entries")
+                    .setSmallIcon(R.drawable.blood_glucose);
 
+            PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                    NOTIFICATION_ID,
+                    new Intent(this, ProgressViewActivity.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
+            builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
+
+            final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(NOTIFICATION_ID, builder.build());
+        }
     }
 }

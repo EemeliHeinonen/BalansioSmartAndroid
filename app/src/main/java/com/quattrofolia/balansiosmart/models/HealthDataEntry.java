@@ -8,17 +8,17 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class HealthDataEntry extends RealmObject implements AutoIncrementable {
+public class HealthDataEntry extends RealmObject implements Incrementable {
 
     @PrimaryKey
     private int id;
     private String type;
 
     public HealthDataEntry() {}
-    public HealthDataEntry(String type, String value, long instant) {
+    public HealthDataEntry(String type, String value, Instant instant) {
         this.type = type;
         this.value = value;
-        this.instant = instant;
+        this.instant = instant.getMillis();
     }
 
     private String value;
@@ -57,12 +57,17 @@ public class HealthDataEntry extends RealmObject implements AutoIncrementable {
     }
 
     @Override
-    public void setPrimaryKey(int primaryKey) {
-        this.id = primaryKey;
+    public int getNextPrimaryKey(Realm realm) {
+        Number n = realm.where(HealthDataEntry.class).max("id");
+        if (n != null) {
+            return n.intValue() + 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public int getNextPrimaryKey(Realm realm) {
-        return realm.where(HealthDataEntry.class).max("id").intValue() + 1;
+    public void setPrimaryKey(int id) {
+        this.id = id;
     }
 }
