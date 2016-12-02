@@ -81,6 +81,7 @@ public class GoalOverviewFragment extends Fragment {
             notificationStyle = getArguments().getString("notificationStyle");
 
             goal = new Goal();
+            goal.setNotificationStyle(notificationStyle);
             if(frequency!=0) {
                 discipline = new Discipline();
             }
