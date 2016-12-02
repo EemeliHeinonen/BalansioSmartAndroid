@@ -16,15 +16,23 @@ import com.quattrofolia.balansiosmart.dialogs.SelectUserDialogFragment;
 import com.quattrofolia.balansiosmart.dialogs.UserCreatedDialogFragment;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.HealthDataEntry;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.Incrementable;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
+import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
+import org.joda.time.Instant;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
@@ -36,6 +44,8 @@ public class ProgressViewActivity extends Activity {
     private CardStack cardStack;
     private CardsDataAdapter cardAdapter;
     private Button createGoalButton;
+    private Button notificationButton;
+    private Button defaultGoalsButton;
     private Button createMockUserButton;
     private Button loginButton;
     private Button logoutButton;
@@ -60,6 +70,7 @@ public class ProgressViewActivity extends Activity {
         setContentView(R.layout.activity_progress_view);
 
         realm = Realm.getDefaultInstance();
+
         // Use storage.save() for saving autoincrementable objects
         storage = new Storage();
 
@@ -77,12 +88,87 @@ public class ProgressViewActivity extends Activity {
         goalAdapter = new GoalItemRecyclerAdapter(goalItems);
         goalRecyclerView.setAdapter(goalAdapter);
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
+        notificationButton = (Button) findViewById(R.id.notification_button);
+        defaultGoalsButton = (Button) findViewById(R.id.default_goals_button);
         createGoalButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
                 startActivity(i);
+
             }
         });
+
+        notificationButton.setOnClickListener(new Button.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                //Send notifications
+                NotificationEventReceiver.setupAlarm(getApplicationContext());
+            }
+        });
+
+        defaultGoalsButton.setOnClickListener(new Button.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                //Create default goals and entries here
+                final Session session = BalansioSmart.currentSession(realm);
+                final HealthDataEntry firstEntry = new HealthDataEntry();
+                firstEntry.setType(HealthDataType.BLOOD_GLUCOSE);
+                firstEntry.setValue(new BigDecimal("4.5"));
+                firstEntry.setInstant(new Instant());
+
+                if (session != null) {
+
+                    final int id = session.getUserId().intValue();
+                    final RealmResults<User> users;
+                    users = realm.where(User.class).equalTo("id", id).findAll();
+
+                    if (users.size() != 1) {
+                        Log.e(TAG, "Incorrect results");
+                        return;
+                    }
+
+            /* Session/User database match.
+            * Set incrementable primary key for goal.
+            * Save goal and add it to user's list of goals. */
+
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm bgRealm) {
+                            Incrementable incrementable = firstEntry;
+                            incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
+                            bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
+                            User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
+                            managedUser.entries.add((HealthDataEntry) incrementable);
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm bgRealm) {
+                                    User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
+                                    if (updatedUser != null) {
+                                        Log.d(TAG, "Entries updated. Total amount of entries is " + updatedUser.entries.size());
+                                        for (HealthDataEntry updatedEntry : updatedUser.entries) {
+                                            Log.d(TAG, "Entry type: " + updatedEntry.getType().getLongName());
+                                            Log.d(TAG, "execute: "+updatedEntry.getInstant().toString());
+                                        }
+                                    }
+                                }
+                            });
+                            //finish();
+                        }
+                    });
+
+                } else {
+                    //displayAuthErrorDialog();
+                    Log.d(TAG, "create entries onClick: Session is null");
+                }
+            }
+        });
+
         createMockUserButton = (Button) findViewById(R.id.button_createUser);
         createMockUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,10 +192,10 @@ public class ProgressViewActivity extends Activity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final RealmResults<Session> sessions = realm.where(Session.class).findAll();
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
+                        RealmResults<Session> sessions = realm.where(Session.class).findAll();
                         sessions.deleteAllFromRealm();
                     }
                 });
@@ -143,9 +229,14 @@ public class ProgressViewActivity extends Activity {
             public void onChange(RealmResults<Session> sessionResults) {
                 // Received sessionResults
                 if (!sessionResults.isEmpty()) {
+                    if (sessionResults.size() > 2) {
+                        Log.e(TAG, "sessionResults size shouldn't be " + sessionResults.size());
+                    }
 
-                    /* Session found.
+                    /* Sessions found: User is logged in.
+                    * Get last session.
                     * Get user object by id.
+                    * Update interface.
                     * Populate adapter datasets with responding data. */
 
                     Session currentSession = sessionResults.last();
@@ -158,7 +249,7 @@ public class ProgressViewActivity extends Activity {
                     goalItems.addAll(managedUser.goals);
                 } else {
 
-                    /* Session not found.
+                    /* Session not found: User is not logged in.
                     * Update interface.
                     * Clear adapter datasets. */
 
@@ -180,6 +271,8 @@ public class ProgressViewActivity extends Activity {
         logoutButton.setEnabled(authorized);
         createMockUserButton.setEnabled(!authorized);
         loginButton.setEnabled(!authorized);
+        notificationButton.setEnabled(authorized);
+        defaultGoalsButton.setEnabled(authorized);
         if (authorized) {
             userNameTextView.setVisibility(View.VISIBLE);
             cardStack.setVisibility(View.VISIBLE);
@@ -187,6 +280,8 @@ public class ProgressViewActivity extends Activity {
             logoutButton.setVisibility(View.VISIBLE);
             createMockUserButton.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
+            notificationButton.setVisibility(View.VISIBLE);
+            defaultGoalsButton.setVisibility(View.VISIBLE);
         } else {
             userNameTextView.setVisibility(View.INVISIBLE);
             cardStack.setVisibility(View.INVISIBLE);
@@ -194,6 +289,8 @@ public class ProgressViewActivity extends Activity {
             logoutButton.setVisibility(View.INVISIBLE);
             createMockUserButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.VISIBLE);
+            notificationButton.setVisibility(View.INVISIBLE);
+            defaultGoalsButton.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -202,8 +299,8 @@ public class ProgressViewActivity extends Activity {
         super.onDestroy();
         sessionResults.removeChangeListener(sessionResultsListener);
         realm.removeChangeListener(realmChangeListener);
-        if (sessionResults.size() == 1) {
-            storage.save(sessionResults.first());
+        if (sessionResults.size() > 1) {
+            storage.save(sessionResults.last());
         }
         realm.close();
     }

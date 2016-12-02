@@ -15,10 +15,10 @@ public class HealthDataEntry extends RealmObject implements Incrementable {
     private String type;
 
     public HealthDataEntry() {}
-    public HealthDataEntry(String type, String value, long instant) {
+    public HealthDataEntry(String type, String value, Instant instant) {
         this.type = type;
         this.value = value;
-        this.instant = instant;
+        this.instant = instant.getMillis();
     }
 
     private String value;
