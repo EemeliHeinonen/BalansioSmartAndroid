@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.models.Goal;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecyclerAdapter.GoalViewHolder> {
 
     private static final String TAG = "GoalItemRecyclerAdapter";
 
-    private ArrayList<Goal> goals;
+    private List<Goal> goals;
 
     public static class GoalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -30,7 +30,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             v.setOnClickListener(this);
         }
 
-        public void bindGoal(ArrayList<Goal> goals, int position) {
+        public void bindGoal(List<Goal> goals, int position) {
             String count = String.valueOf(position + 1);
             countView.setText(count);
             typeView.setText(goals.get(position).getType().getLongName());
@@ -43,8 +43,13 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         }
     }
 
-    public GoalItemRecyclerAdapter(ArrayList<Goal> goals) {
+    public GoalItemRecyclerAdapter(List<Goal> goals) {
         this.goals = goals;
+    }
+
+    public void setItemList(List<Goal> goals) {
+        this.goals = goals;
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -67,4 +72,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             return 0;
         }
     }
+
+
 }

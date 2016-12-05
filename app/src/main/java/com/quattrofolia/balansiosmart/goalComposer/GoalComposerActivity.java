@@ -1,28 +1,35 @@
 package com.quattrofolia.balansiosmart.goalComposer;
 
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.dialogs.AuthorizationErrorDialogFragment;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.Incrementable;
+import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
+import com.quattrofolia.balansiosmart.storage.Storage;
 
 import io.realm.Realm;
-import io.realm.RealmList;
+import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
+import io.realm.RealmResults;
 
-//Goal Composer's activity, the goal composer's fragments will be shown in the fragment container in this activity.
+public class GoalComposerActivity extends FragmentActivity {
 
-public class GoalComposerActivity extends FragmentActivity{
-    private User user;
+    public static final String TAG = "FragmentActivity";
+    private Realm realm;
+    private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
+    private RealmResults<Session> sessionResults;
+    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm.init(this); // Initialize Realm only once when the app starts.
+        realm = Realm.getDefaultInstance();
+        storage = new Storage(realm);
         setContentView(R.layout.activity_main);
-        user = new User();
-        user.goals = new RealmList<>();
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -48,11 +55,44 @@ public class GoalComposerActivity extends FragmentActivity{
         }
     }
 
-    public void addGoal(Goal g){
-        Log.d("jes", "addGoal: ");
-        user.goals.add(g);
-        Log.d("jes", "addGoal: Type: "+g.getType().getLongName());
-        Log.d("jes", "addGoal: Discipline: "+g.getDiscipline());
-        Log.d("jes", "addGoal: Range: "+g.getTargetRange());
+    public void addGoal(final Goal goal) {
+        sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
+            @Override
+            public void onChange(RealmResults<Session> sessions) {
+                if (sessions.size() == 1) {
+                    final int id = sessions.first().getUserId().intValue();
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            Incrementable incrementableGoal = goal;
+                            incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
+                            realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
+                            User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+                            managedUser.goals.add((Goal) incrementableGoal);
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            finish();
+                        }
+                    });
+                } else {
+                    displayAuthErrorDialog();
+                }
+            }
+        };
+        sessionResults = realm.where(Session.class).findAllAsync();
+        sessionResults.addChangeListener(sessionResultsListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
+
+    private void displayAuthErrorDialog() {
+        AuthorizationErrorDialogFragment fragment = new AuthorizationErrorDialogFragment();
+        fragment.show(getFragmentManager(), "Login Error");
     }
 }
