@@ -117,40 +117,27 @@ public class NotificationIntentService extends IntentService {
 
 
         if (managedUser.entries.size()>5) {
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setContentTitle("Scheduled Notification")
-                    .setAutoCancel(true)
-                    .setColor(getResources().getColor(R.color.colorAccent))
-                    .setContentText("This notification has been triggered by Notification Service")
-                    .setSmallIcon(R.drawable.blood_glucose);
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                    NOTIFICATION_ID,
-                    new Intent(this, ProgressViewActivity.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pendingIntent);
-            builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
-
-            final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, builder.build());
-            
+            sendNotification("Scheduled Notification","This notification has been triggered by Notification Service");
         } else {
-            final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setContentTitle("Scheduled Notification")
-                    .setAutoCancel(true)
-                    .setColor(getResources().getColor(R.color.colorAccent))
-                    .setContentText("there's less than 5 entries")
-                    .setSmallIcon(R.drawable.blood_glucose);
-
-            PendingIntent pendingIntent = PendingIntent.getActivity(this,
-                    NOTIFICATION_ID,
-                    new Intent(this, ProgressViewActivity.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pendingIntent);
-            builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
-
-            final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, builder.build());
+            sendNotification("Scheduled Notification","there's less than 5 entries");
         }
+    }
+    private void sendNotification(String title, String text){
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle(title)
+                .setAutoCancel(true)
+                .setColor(getResources().getColor(R.color.colorAccent))
+                .setContentText(text)
+                .setSmallIcon(R.drawable.blood_glucose);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                NOTIFICATION_ID,
+                new Intent(this, ProgressViewActivity.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
+
+        final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(NOTIFICATION_ID, builder.build());
     }
 }

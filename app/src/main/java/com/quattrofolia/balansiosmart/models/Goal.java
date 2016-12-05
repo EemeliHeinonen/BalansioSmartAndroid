@@ -14,7 +14,7 @@ public class Goal extends RealmObject implements Incrementable {
     private String notificationStyle;
     private Discipline discipline;
     private Range targetRange;
-    private Instant notificationTimestamp;
+    private long notificationTimestamp;
 
     public void setType(HealthDataType type) {
         this.type = type.toString();
@@ -48,11 +48,12 @@ public class Goal extends RealmObject implements Incrementable {
         return notificationStyle;
     }
 
-    public void setNotificationTimestamp(Instant i){
-        this.notificationTimestamp = i;
+    public void setNotificationTimestamp(){
+        Instant i = new Instant();
+        this.notificationTimestamp = i.getMillis();
     }
 
-    public Instant getNotificationTimestamp(){
+    public long getNotificationTimestamp(){
         return this.notificationTimestamp;
     }
 
