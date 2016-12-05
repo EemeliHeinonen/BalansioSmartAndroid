@@ -1,5 +1,7 @@
 package com.quattrofolia.balansiosmart.models;
 
+import org.joda.time.Instant;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -12,6 +14,7 @@ public class Goal extends RealmObject implements Incrementable {
     private String notificationStyle;
     private Discipline discipline;
     private Range targetRange;
+    private Instant notificationTimestamp;
 
     public void setType(HealthDataType type) {
         this.type = type.toString();
@@ -43,6 +46,14 @@ public class Goal extends RealmObject implements Incrementable {
 
     public String getNotificationStyle(){
         return notificationStyle;
+    }
+
+    public void setNotificationTimestamp(Instant i){
+        this.notificationTimestamp = i;
+    }
+
+    public Instant getNotificationTimestamp(){
+        return this.notificationTimestamp;
     }
 
     @Override

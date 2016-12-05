@@ -1,8 +1,14 @@
 package com.quattrofolia.balansiosmart.models;
 
+import android.util.Log;
+
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+
+import static android.content.ContentValues.TAG;
+
 
 public class Discipline extends RealmObject implements Incrementable {
 
@@ -10,6 +16,8 @@ public class Discipline extends RealmObject implements Incrementable {
     private int id;
     private int frequency;
     private String monitoringPeriod;
+    private RealmList<RealmBoolean> list ;
+
 
     public int getFrequency() {
         return frequency;
@@ -17,6 +25,13 @@ public class Discipline extends RealmObject implements Incrementable {
 
     public void setFrequency(int frequency) {
         this.frequency = frequency;
+        list = new RealmList<>();
+        for (int i = 0; i<frequency; i++) {
+            RealmBoolean b = new RealmBoolean();
+            b.setaBoolean(false);
+            this.list.add(b);
+        }
+        Log.d(TAG, "setFrequency: notificationChecklist size: "+list.size());
     }
 
     public MonitoringPeriod getMonitoringPeriod() {

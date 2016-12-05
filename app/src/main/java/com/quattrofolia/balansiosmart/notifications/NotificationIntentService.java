@@ -133,6 +133,7 @@ public class NotificationIntentService extends IntentService {
 
             final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(NOTIFICATION_ID, builder.build());
+            
         } else {
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setContentTitle("Scheduled Notification")
