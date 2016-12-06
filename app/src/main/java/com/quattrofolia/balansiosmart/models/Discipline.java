@@ -16,7 +16,7 @@ public class Discipline extends RealmObject implements Incrementable {
     private int id;
     private int frequency;
     private String monitoringPeriod;
-    private RealmList<RealmBoolean> list ;
+    private RealmList<RealmBoolean> list;
 
 
     public int getFrequency() {
@@ -55,5 +55,9 @@ public class Discipline extends RealmObject implements Incrementable {
     @Override
     public void setPrimaryKey(int id) {
         this.id = id;
+    }
+
+    public RealmList<RealmBoolean> getNotificationChecklist(){
+        return this.list;
     }
 }

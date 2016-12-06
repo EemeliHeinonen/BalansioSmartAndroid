@@ -34,6 +34,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             String count = String.valueOf(position + 1);
             countView.setText(count);
             typeView.setText(goals.get(position).getType().getLongName());
+            Log.d(TAG, "GoalItemRecyclerAdapter bindGoal: goals.size: "+ goals.size());
         }
 
         // Handle required events

@@ -13,17 +13,20 @@ import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
+import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.Minutes;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import io.realm.RealmList;
+
+
 
 
 /**
@@ -42,7 +45,26 @@ public class NotificationIntentService extends IntentService {
     private Realm realm;
     private RealmChangeListener realmChangeListener;
     private Storage storage;
-    private RealmList<Goal> goals;
+
+
+    private RealmResults<Goal> allGoals;
+    private Goal weightGoal;
+    private Goal bgGoal;
+    private Goal bpsGoal;
+    private Goal bpdGoal;
+    private Goal sleepGoal;
+    private Goal exerciseGoal;
+    private Goal nutritionGoal;
+
+    private RealmResults<HealthDataEntry> allEntries;
+    private RealmResults<HealthDataEntry> weightEntries;
+    private RealmResults<HealthDataEntry> bgEntries;
+    private RealmResults<HealthDataEntry> bpsEntries;
+    private RealmResults<HealthDataEntry> bpdEntries;
+    private RealmResults<HealthDataEntry> sleepEntries;
+    private RealmResults<HealthDataEntry> exerciseEntries;
+    private RealmResults<HealthDataEntry> nutritionEntries;
+
 
 
 
@@ -99,21 +121,26 @@ public class NotificationIntentService extends IntentService {
 
         realm = Realm.getDefaultInstance();
         final Session session = BalansioSmart.currentSession(realm);
-
-        //query.equalTo("name", "John");
-        //realmTestString = goals.get(0).getType().toString();
-        //Log.d(TAG, "processStartNotification: testString: "+realmTestString);
         final int id = session.getUserId().intValue();
+
         User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+
+
+        initGoals();
+        initEntries();
+        easyDisciplineCheck();
+        Log.d(TAG, "processStartNotification: allGoals size: "+allGoals.size());
+        Log.d(TAG, "processStartNotification: last goal's type"+allGoals.get(allGoals.size()-1).getType().getLongName());
+        Log.d(TAG, "processStartNotification: weightGoal TEST: "+weightGoal.getType().getLongName());
+        Log.d(TAG, "processStartNotification: bgGoal TEST: "+bgGoal.getType().getLongName());
 
         //Entry check testing
         Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size()-1).getInstant();
-        Log.d(TAG, "processStartNotification: Last Entry time: "+lastEntryTime.getMillis());
+        Log.d(TAG, "processStartNotification: isToday: "+isToday(lastEntryTime.toDateTime()));
+        Log.d(TAG, "processStartNotification: Last Entry time: "+lastEntryTime);
         Instant now = new Instant();
-
-        Log.d(TAG, "processStartNotification: present time: "+now);
-        Log.d(TAG, "processStartNotification: difference in time(getMillis()-getMillis()): "+(now.getMillis() - lastEntryTime.getMillis()));
         Log.d(TAG, "processStartNotification: difference in time(minutesBetween): "+Minutes.minutesBetween(lastEntryTime, now));
+
 
 
         if (managedUser.entries.size()>5) {
@@ -139,5 +166,63 @@ public class NotificationIntentService extends IntentService {
 
         final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(NOTIFICATION_ID, builder.build());
+    }
+
+
+    private void initGoals(){
+        allGoals = realm.where(Goal.class).findAll();
+        weightGoal = realm.where(Goal.class).equalTo("type", "WEIGHT").findFirst();
+        bgGoal = realm.where(Goal.class).equalTo("type", "BLOOD_GLUCOSE").findFirst();
+        bpsGoal = realm.where(Goal.class).equalTo("type", "BLOOD_PRESSURE_SYSTOLIC").findFirst();
+        bpdGoal = realm.where(Goal.class).equalTo("type", "BLOOD_PRESSURE_DIASTOLIC").findFirst();
+        sleepGoal = realm.where(Goal.class).equalTo("type", "SLEEP").findFirst();
+        exerciseGoal = realm.where(Goal.class).equalTo("type", "EXERCISE").findFirst();
+        nutritionGoal = realm.where(Goal.class).equalTo("type", "NUTRITION").findFirst();
+    }
+
+    private void initEntries(){
+        allEntries = realm.where(HealthDataEntry.class).findAll();
+        bgEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_GLUCOSE").findAll();
+        weightEntries = realm.where(HealthDataEntry.class).equalTo("type", "WEIGHT").findAll();
+        bpsEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_PRESSURE_SYSTOLIC").findAll();
+        bpdEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_PRESSURE_DIASTOLIC").findAll();
+        sleepEntries = realm.where(HealthDataEntry.class).equalTo("type", "SLEEP").findAll();
+        exerciseEntries = realm.where(HealthDataEntry.class).equalTo("type", "EXERCISE").findAll();
+        nutritionEntries = realm.where(HealthDataEntry.class).equalTo("type", "NUTRITION").findAll();
+    }
+
+    private void easyDisciplineCheck(){
+        // TODO: check that goals monitoringperiod is day
+        RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("discipline").findAll();
+        if (easyDisciplineGoals.size()>0) {
+            Log.d(TAG, "easyDisciplineCheck: easyDiscipline Typen Test log: "+easyDisciplineGoals.first().getType().toString());
+            int entryIsTodayCounter = 0;
+
+            for (int i = 0; i < easyDisciplineGoals.size(); i++){
+                RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i).getType().toString()).findAll();
+                 for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++ ) {
+                     if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime())){
+                         entryIsTodayCounter++;
+                     }
+                 }
+
+            }
+
+            //Log.d(TAG, "easyDisciplineCheck: number of entrys of the first item in the easyDisciplineGoals list: "+ i);
+            Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals Size: "+easyDisciplineGoals.size());
+            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin type: "+easyDisciplineGoals.get(easyDisciplineGoals.size()-1).getType().getLongName());
+            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin discipline: "+easyDisciplineGoals.get(easyDisciplineGoals.size()-1).getDiscipline().toString());
+        } else {
+            Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals is empty");
+        }
+    }
+
+    private boolean isToday(DateTime dt){
+        DateTime midnightToday = DateTime.now().withTimeAtStartOfDay();
+        if (dt.isAfter(midnightToday)){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
