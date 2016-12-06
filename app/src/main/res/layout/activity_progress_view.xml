@@ -11,21 +11,20 @@
         android:id="@+id/layout_userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/textView_userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-             />
+            android:gravity="center_horizontal" />
+
         <Button
             android:id="@+id/button_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logout"
-            />
+            android:text="Logout" />
 
     </LinearLayout>
 
@@ -36,25 +35,49 @@
         android:layout_below="@+id/cardStack"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_createGoal"
+        <LinearLayout
+            android:id="@+id/layout_buttonBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="@string/button_text_create_goal" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_createUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/button_text_create_user" />
+            <Button
+                android:id="@+id/button_createGoal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_text_create_goal" />
+
+            <Button
+                android:id="@+id/button_createUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_text_create_user" />
+
+            <Button
+                android:id="@+id/button_selectUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login" />
+
+            <Button
+                android:id="@+id/notification_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start notifications" />
+
+            <Button
+                android:id="@+id/default_goals_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create default goals" />
+        </LinearLayout>
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/progressScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/button_createGoal">
+            android:layout_below="@id/layout_buttonBar">
 
             <!-- Goal RecyclerView -->
             <android.support.v7.widget.RecyclerView
