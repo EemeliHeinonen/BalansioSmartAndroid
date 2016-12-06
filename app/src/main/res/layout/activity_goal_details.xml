@@ -19,31 +19,20 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:textSize="20sp"
-        android:layout_toStartOf="@+id/imageButton" />
-
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        android:layout_marginEnd="53dp"
-        android:id="@+id/imageButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="497dp" />
+        android:layout_alignEnd="@+id/textView12" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@android:drawable/ic_menu_delete"
-        android:layout_alignBottom="@+id/imageButton"
         android:layout_alignParentEnd="true"
-        android:id="@+id/imageButton2" />
+        android:id="@+id/deleteButton" />
 
     <TextView
         android:text="@string/discipline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageButton2"
+        android:layout_below="@+id/deleteButton"
         android:layout_alignParentStart="true"
         android:id="@+id/textView6"
         android:textSize="15sp" />
@@ -69,14 +58,6 @@
         android:layout_marginTop="12dp" />
 
     <TextView
-        android:text="@string/disciplines_reading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageButton2"
-        android:layout_toStartOf="@+id/imageButton"
-        android:id="@+id/textView10" />
-
-    <TextView
         android:text="@string/target_range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -98,6 +79,14 @@
         android:layout_height="match_parent"
         android:layout_marginTop="51dp"
         android:layout_below="@+id/textView8" />
+
+    <TextView
+        android:text="@string/disciplines_reading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView10"
+        android:layout_below="@+id/deleteButton"
+        android:layout_alignStart="@+id/textView11" />
 
 
 </RelativeLayout>

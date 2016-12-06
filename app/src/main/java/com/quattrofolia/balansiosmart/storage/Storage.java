@@ -57,6 +57,10 @@ public class Storage implements StorageHandler {
         return realm.where(type).findAll();
     }
 
+    public void executeTransaction(Realm.Transaction transaction) {
+        realm.executeTransaction(transaction);
+    }
+
     public void storageDataSaved(RealmObject savedObject) {
         Log.d(TAG, "saved.");
     }
