@@ -93,6 +93,10 @@ public class GoalComposerActivity extends FragmentActivity {
 
     private void displayAuthErrorDialog() {
         AuthorizationErrorDialogFragment fragment = new AuthorizationErrorDialogFragment();
-        fragment.show(getFragmentManager(), "Login Error");
+        try {
+            fragment.show(getFragmentManager(), "Login Error");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
