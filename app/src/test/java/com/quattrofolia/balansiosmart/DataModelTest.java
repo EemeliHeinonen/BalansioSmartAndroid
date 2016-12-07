@@ -113,13 +113,14 @@ public class DataModelTest {
         weightGoal.setDiscipline(weightDiscipline);
         weightGoal.setTargetRange(weightRange);
 
-        user.goals = new RealmList<>();
-        user.goals.add(bgGoal);
-        user.goals.add(weightGoal);
+        RealmList<Goal> goals = new RealmList<>();
+        goals.add(bgGoal);
+        goals.add(weightGoal);
+        user.setGoals(goals);
 
         /*Following iterator checks the current progress status
         * on each progress_view_goal_item_row with previously generated mock values. */
-        for (Goal goal : user.goals) {
+        for (Goal goal : user.getGoals()) {
 
             Discipline discipline = goal.getDiscipline();
 
