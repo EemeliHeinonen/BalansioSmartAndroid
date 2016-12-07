@@ -61,16 +61,15 @@ public class GoalComposerActivity extends FragmentActivity {
             public void onChange(RealmResults<Session> sessions) {
                 if (!sessions.isEmpty()) {
                     final int id = sessions.last().getUserId().intValue();
-                    final User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
-                    final RealmList<Goal> managedGoals = managedUser.getGoals();
                     final Incrementable incrementableGoal = goal;
                     incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
 
                     realm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            // realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
-
+                            User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+                            RealmList<Goal> managedGoals = managedUser.getGoals();
+                            managedGoals.add((Goal) incrementableGoal);
                         }
                     }, new Realm.Transaction.OnSuccess() {
                         @Override

@@ -215,6 +215,7 @@ public class ProgressViewActivity extends Activity {
         cardAdapter.add("test5");
         cardStack.setAdapter(cardAdapter);
 
+        /*Use this listener to update the view. */
         sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
             @Override
             public void onChange(RealmResults<Session> sessionResults) {
