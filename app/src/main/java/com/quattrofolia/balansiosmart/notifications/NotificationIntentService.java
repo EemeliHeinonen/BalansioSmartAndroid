@@ -47,6 +47,7 @@ public class NotificationIntentService extends IntentService {
     private RealmChangeListener realmChangeListener;
     private Storage storage;
 
+    private Instant now;
 
     private RealmResults<Goal> allGoals;
     private Goal weightGoal;
@@ -116,7 +117,7 @@ public class NotificationIntentService extends IntentService {
     private void processStartNotification() {
         Log.d(TAG, "processStartNotification: ");
         // Do something. For example, fetch fresh data from backend to create a rich notification?
-
+        now = new Instant();
         realm = Realm.getDefaultInstance();
         final Session session = BalansioSmart.currentSession(realm);
         final int id = session.getUserId().intValue();
@@ -128,7 +129,7 @@ public class NotificationIntentService extends IntentService {
         initEntries();
         easyDisciplineCheck();
 
-        Log.d(TAG, "processStartNotification: WeekOfWeekYear test: " + DateTime.now().weekOfWeekyear().getAsText());
+        Log.d(TAG, "processStartNotification: WeekOfWeekYear test: " + now.toDateTime().weekOfWeekyear().getAsText());
         Log.d(TAG, "processStartNotification: allGoals size: " + allGoals.size());
         Log.d(TAG, "processStartNotification: last goal's type" + allGoals.get(allGoals.size() - 1).getType().getLongName());
         //Log.d(TAG, "processStartNotification: weightGoal TEST: "+weightGoal.getType().getLongName());
@@ -139,15 +140,14 @@ public class NotificationIntentService extends IntentService {
         isThisWeek(lastEntryTime.toDateTime());
         Log.d(TAG, "processStartNotification: isToday: " + isToday(lastEntryTime.toDateTime()));
         Log.d(TAG, "processStartNotification: Last Entry time: " + lastEntryTime);
-        Instant now = new Instant();
         Log.d(TAG, "processStartNotification: difference in time(minutesBetween): " + Minutes.minutesBetween(lastEntryTime, now));
 
 
-        if (managedUser.entries.size() > 5) {
+        /*if (managedUser.entries.size() > 5) {
             sendNotification("Scheduled Notification", "This notification has been triggered by Notification Service");
         } else {
             sendNotification("Scheduled Notification", "there's less than 5 entries");
-        }
+        }*/
     }
 
     private void sendNotification(String title, String text) {
@@ -198,7 +198,6 @@ public class NotificationIntentService extends IntentService {
         if (easyDisciplineGoals.size() > 0) {
             Log.d(TAG, "easyDisciplineCheck: easyDiscipline Typen Test log: " + easyDisciplineGoals.first().getType().toString());
 
-            Instant now = new Instant();
             for (int i = 0; i < easyDisciplineGoals.size(); i++) {
                 if (isLastHourOfMonitoringPeriod(easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().quantizedInterval(now, 0).getEnd())) {
                 RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i)
@@ -218,6 +217,13 @@ public class NotificationIntentService extends IntentService {
                         entryIsInPeriodCounter++;
                     }
                 }
+                    if(easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter){
+                        Log.d(TAG, "easyDisciplineCheck: goal failed");
+                        sendNotification(easyDisciplineGoals.get(i).getType().getLongName()+ "goal has failed","You didn't accomplish your goal this time");
+                    }
+                    else {
+                        Log.d(TAG, "easyDisciplineCheck: goal accomplished");
+                    }
             }
             }
 
@@ -231,19 +237,17 @@ public class NotificationIntentService extends IntentService {
     }
 
     private boolean isToday(DateTime dt) {
-        DateTime midnightToday = DateTime.now().withTimeAtStartOfDay();
+        DateTime midnightToday = now.toDateTime().withTimeAtStartOfDay();
         if (dt.isAfter(midnightToday)) {
-            Log.d(TAG, "isToday: YES");
             return true;
         } else {
-            Log.d(TAG, "isToday: NO");
             return false;
         }
     }
 
     private boolean isThisWeek(DateTime dt) {
-        DateTime.Property thisWeek = DateTime.now().weekOfWeekyear();
-        DateTime.Property thisYear = DateTime.now().year();
+        DateTime.Property thisWeek = now.toDateTime().weekOfWeekyear();
+        DateTime.Property thisYear = now.toDateTime().year();
         if (dt.weekOfWeekyear().getAsText().equals(thisWeek.getAsText()) && dt.year().getAsText().equals(thisYear.getAsText())) {
             Log.d(TAG, "isThisWeek: YES");
             return true;
@@ -254,8 +258,8 @@ public class NotificationIntentService extends IntentService {
     }
 
     private boolean isThisMonth(DateTime dt) {
-        DateTime.Property thisMonth = DateTime.now().monthOfYear();
-        DateTime.Property thisYear = DateTime.now().year();
+        DateTime.Property thisMonth = now.toDateTime().monthOfYear();
+        DateTime.Property thisYear = now.toDateTime().year();
         if (dt.monthOfYear().getAsText().equals(thisMonth.getAsText()) && dt.year().getAsText().equals(thisYear.getAsText())) {
             Log.d(TAG, "isThisMonth: YES");
             return true;
@@ -267,7 +271,6 @@ public class NotificationIntentService extends IntentService {
 
 
     private boolean isLastHourOfMonitoringPeriod(DateTime dt) {
-        Instant now = new Instant();
         Interval window = new Interval(dt.minusHours(12), dt.minusHours(2));
         if (window.contains(now)) {
             Log.d(TAG, "isLastHourOfMonitoringPeriod: YES");
