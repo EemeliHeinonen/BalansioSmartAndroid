@@ -20,13 +20,14 @@ import com.quattrofolia.balansiosmart.storage.Storage;
 
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
+import org.joda.time.Interval;
 import org.joda.time.Minutes;
+
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-
-
 
 
 /**
@@ -64,9 +65,6 @@ public class NotificationIntentService extends IntentService {
     private RealmResults<HealthDataEntry> sleepEntries;
     private RealmResults<HealthDataEntry> exerciseEntries;
     private RealmResults<HealthDataEntry> nutritionEntries;
-
-
-
 
 
     public NotificationIntentService() {
@@ -129,27 +127,30 @@ public class NotificationIntentService extends IntentService {
         initGoals();
         initEntries();
         easyDisciplineCheck();
-        Log.d(TAG, "processStartNotification: allGoals size: "+allGoals.size());
-        Log.d(TAG, "processStartNotification: last goal's type"+allGoals.get(allGoals.size()-1).getType().getLongName());
-        Log.d(TAG, "processStartNotification: weightGoal TEST: "+weightGoal.getType().getLongName());
-        Log.d(TAG, "processStartNotification: bgGoal TEST: "+bgGoal.getType().getLongName());
+
+        Log.d(TAG, "processStartNotification: WeekOfWeekYear test: " + DateTime.now().weekOfWeekyear().getAsText());
+        Log.d(TAG, "processStartNotification: allGoals size: " + allGoals.size());
+        Log.d(TAG, "processStartNotification: last goal's type" + allGoals.get(allGoals.size() - 1).getType().getLongName());
+        //Log.d(TAG, "processStartNotification: weightGoal TEST: "+weightGoal.getType().getLongName());
+        //Log.d(TAG, "processStartNotification: bgGoal TEST: "+bgGoal.getType().getLongName());
 
         //Entry check testing
-        Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size()-1).getInstant();
-        Log.d(TAG, "processStartNotification: isToday: "+isToday(lastEntryTime.toDateTime()));
-        Log.d(TAG, "processStartNotification: Last Entry time: "+lastEntryTime);
+        Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size() - 1).getInstant();
+        isThisWeek(lastEntryTime.toDateTime());
+        Log.d(TAG, "processStartNotification: isToday: " + isToday(lastEntryTime.toDateTime()));
+        Log.d(TAG, "processStartNotification: Last Entry time: " + lastEntryTime);
         Instant now = new Instant();
-        Log.d(TAG, "processStartNotification: difference in time(minutesBetween): "+Minutes.minutesBetween(lastEntryTime, now));
+        Log.d(TAG, "processStartNotification: difference in time(minutesBetween): " + Minutes.minutesBetween(lastEntryTime, now));
 
 
-
-        if (managedUser.entries.size()>5) {
-            sendNotification("Scheduled Notification","This notification has been triggered by Notification Service");
+        if (managedUser.entries.size() > 5) {
+            sendNotification("Scheduled Notification", "This notification has been triggered by Notification Service");
         } else {
-            sendNotification("Scheduled Notification","there's less than 5 entries");
+            sendNotification("Scheduled Notification", "there's less than 5 entries");
         }
     }
-    private void sendNotification(String title, String text){
+
+    private void sendNotification(String title, String text) {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle(title)
                 .setAutoCancel(true)
@@ -169,7 +170,7 @@ public class NotificationIntentService extends IntentService {
     }
 
 
-    private void initGoals(){
+    private void initGoals() {
         allGoals = realm.where(Goal.class).findAll();
         weightGoal = realm.where(Goal.class).equalTo("type", "WEIGHT").findFirst();
         bgGoal = realm.where(Goal.class).equalTo("type", "BLOOD_GLUCOSE").findFirst();
@@ -180,7 +181,7 @@ public class NotificationIntentService extends IntentService {
         nutritionGoal = realm.where(Goal.class).equalTo("type", "NUTRITION").findFirst();
     }
 
-    private void initEntries(){
+    private void initEntries() {
         allEntries = realm.where(HealthDataEntry.class).findAll();
         bgEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_GLUCOSE").findAll();
         weightEntries = realm.where(HealthDataEntry.class).equalTo("type", "WEIGHT").findAll();
@@ -191,38 +192,92 @@ public class NotificationIntentService extends IntentService {
         nutritionEntries = realm.where(HealthDataEntry.class).equalTo("type", "NUTRITION").findAll();
     }
 
-    private void easyDisciplineCheck(){
+    private void easyDisciplineCheck() {
         // TODO: check that goals monitoringperiod is day
         RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("discipline").findAll();
-        if (easyDisciplineGoals.size()>0) {
-            Log.d(TAG, "easyDisciplineCheck: easyDiscipline Typen Test log: "+easyDisciplineGoals.first().getType().toString());
-            int entryIsTodayCounter = 0;
+        if (easyDisciplineGoals.size() > 0) {
+            Log.d(TAG, "easyDisciplineCheck: easyDiscipline Typen Test log: " + easyDisciplineGoals.first().getType().toString());
 
-            for (int i = 0; i < easyDisciplineGoals.size(); i++){
-                RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i).getType().toString()).findAll();
-                 for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++ ) {
-                     if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime())){
-                         entryIsTodayCounter++;
-                     }
-                 }
+            Instant now = new Instant();
+            for (int i = 0; i < easyDisciplineGoals.size(); i++) {
+                if (isLastHourOfMonitoringPeriod(easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().quantizedInterval(now, 0).getEnd())) {
+                RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i)
+                        .getType().toString()).findAll();
+                int entryIsInPeriodCounter = 0;
+                String currentMonitoringPeriod = easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().toString();
+                Log.d(TAG, "easyDisciplineCheck: monitoringPeriod: " + currentMonitoringPeriod);
+                for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++) {
 
+                    if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("day")) {
+                        entryIsInPeriodCounter++;
+                    }
+                    if (isThisWeek(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("week")) {
+                        entryIsInPeriodCounter++;
+                    }
+                    if (isThisMonth(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("month")) {
+                        entryIsInPeriodCounter++;
+                    }
+                }
+            }
             }
 
             //Log.d(TAG, "easyDisciplineCheck: number of entrys of the first item in the easyDisciplineGoals list: "+ i);
-            Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals Size: "+easyDisciplineGoals.size());
-            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin type: "+easyDisciplineGoals.get(easyDisciplineGoals.size()-1).getType().getLongName());
-            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin discipline: "+easyDisciplineGoals.get(easyDisciplineGoals.size()-1).getDiscipline().toString());
+            Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals Size: " + easyDisciplineGoals.size());
+            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin type: " + easyDisciplineGoals.get(easyDisciplineGoals.size() - 1).getType().getLongName());
+            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin discipline: " + easyDisciplineGoals.get(easyDisciplineGoals.size() - 1).getDiscipline().toString());
         } else {
             Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals is empty");
         }
     }
 
-    private boolean isToday(DateTime dt){
+    private boolean isToday(DateTime dt) {
         DateTime midnightToday = DateTime.now().withTimeAtStartOfDay();
-        if (dt.isAfter(midnightToday)){
+        if (dt.isAfter(midnightToday)) {
+            Log.d(TAG, "isToday: YES");
             return true;
         } else {
+            Log.d(TAG, "isToday: NO");
             return false;
         }
     }
+
+    private boolean isThisWeek(DateTime dt) {
+        DateTime.Property thisWeek = DateTime.now().weekOfWeekyear();
+        DateTime.Property thisYear = DateTime.now().year();
+        if (dt.weekOfWeekyear().getAsText().equals(thisWeek.getAsText()) && dt.year().getAsText().equals(thisYear.getAsText())) {
+            Log.d(TAG, "isThisWeek: YES");
+            return true;
+        } else {
+            Log.d(TAG, "isThisWeek: NO");
+            return false;
+        }
+    }
+
+    private boolean isThisMonth(DateTime dt) {
+        DateTime.Property thisMonth = DateTime.now().monthOfYear();
+        DateTime.Property thisYear = DateTime.now().year();
+        if (dt.monthOfYear().getAsText().equals(thisMonth.getAsText()) && dt.year().getAsText().equals(thisYear.getAsText())) {
+            Log.d(TAG, "isThisMonth: YES");
+            return true;
+        } else {
+            Log.d(TAG, "isThisMonth: NO");
+            return false;
+        }
+    }
+
+
+    private boolean isLastHourOfMonitoringPeriod(DateTime dt) {
+        Instant now = new Instant();
+        Interval window = new Interval(dt.minusHours(12), dt.minusHours(2));
+        if (window.contains(now)) {
+            Log.d(TAG, "isLastHourOfMonitoringPeriod: YES");
+            return true;
+        }
+        else{
+            Log.d(TAG, "isLastHourOfMonitoringPeriod: NO");
+            return false;
+        }
+
+    }
+
 }
