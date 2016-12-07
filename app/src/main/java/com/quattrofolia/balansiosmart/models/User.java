@@ -11,8 +11,18 @@ public class User extends RealmObject implements Incrementable {
     private int id;
     private String firstName;
     private String lastName;
-    public RealmList<Goal> goals;
-    public RealmList<HealthDataEntry> entries;
+    private RealmList<Goal> goals;
+    private RealmList<HealthDataEntry> entries;
+
+    public User() {
+        this.goals = new RealmList<>();
+    }
+
+    public User(String firstName, String lastName) {
+        this();
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public int getId() {
         return id;
@@ -34,17 +44,22 @@ public class User extends RealmObject implements Incrementable {
         this.lastName = lastName;
     }
 
-    public User() {
-        this.goals = new RealmList<>();
+
+    public RealmList<Goal> getGoals() {
+        return goals;
     }
 
-    public User(String firstName, String lastName) {
-        this();
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public void setGoals(RealmList<Goal> goals) {
+        this.goals = goals;
     }
 
+    public RealmList<HealthDataEntry> getEntries() {
+        return entries;
+    }
 
+    public void setEntries(RealmList<HealthDataEntry> entries) {
+        this.entries = entries;
+    }
 
     @Override
     public int getNextPrimaryKey(Realm realm) {

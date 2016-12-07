@@ -22,7 +22,6 @@ import org.joda.time.Minutes;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
 import io.realm.RealmList;
 
 
@@ -107,7 +106,7 @@ public class NotificationIntentService extends IntentService {
         User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
 
         //Entry check testing
-        Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size()-1).getInstant();
+        Instant lastEntryTime = managedUser.getEntries().get(managedUser.getEntries().size()-1).getInstant();
         Log.d(TAG, "processStartNotification: Last Entry time: "+lastEntryTime.getMillis());
         Instant now = new Instant();
 
@@ -116,7 +115,7 @@ public class NotificationIntentService extends IntentService {
         Log.d(TAG, "processStartNotification: difference in time(minutesBetween): "+Minutes.minutesBetween(lastEntryTime, now));
 
 
-        if (managedUser.entries.size()>5) {
+        if (managedUser.getEntries().size()>5) {
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setContentTitle("Scheduled Notification")
                     .setAutoCancel(true)

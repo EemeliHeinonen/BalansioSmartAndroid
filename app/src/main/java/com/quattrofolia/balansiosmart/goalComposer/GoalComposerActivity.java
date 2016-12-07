@@ -13,7 +13,7 @@ import com.quattrofolia.balansiosmart.storage.Storage;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class GoalComposerActivity extends FragmentActivity {
@@ -59,16 +59,18 @@ public class GoalComposerActivity extends FragmentActivity {
         sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
             @Override
             public void onChange(RealmResults<Session> sessions) {
-                if (sessions.size() == 1) {
-                    final int id = sessions.first().getUserId().intValue();
+                if (!sessions.isEmpty()) {
+                    final int id = sessions.last().getUserId().intValue();
+                    final User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+                    final RealmList<Goal> managedGoals = managedUser.getGoals();
+                    final Incrementable incrementableGoal = goal;
+                    incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
+
                     realm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            Incrementable incrementableGoal = goal;
-                            incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
-                            realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
-                            User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.goals.add((Goal) incrementableGoal);
+                            // realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
+
                         }
                     }, new Realm.Transaction.OnSuccess() {
                         @Override
@@ -93,6 +95,16 @@ public class GoalComposerActivity extends FragmentActivity {
 
     private void displayAuthErrorDialog() {
         AuthorizationErrorDialogFragment fragment = new AuthorizationErrorDialogFragment();
-        fragment.show(getFragmentManager(), "Login Error");
+        try {
+            fragment.show(getFragmentManager(), "Error");
+        } catch (IllegalStateException ignored) {
+
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
     }
 }

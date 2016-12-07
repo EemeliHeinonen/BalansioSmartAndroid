@@ -32,6 +32,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -140,7 +141,9 @@ public class ProgressViewActivity extends Activity {
                             incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
                             bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
                             User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.entries.add((HealthDataEntry) incrementable);
+                            RealmList<HealthDataEntry> entries = managedUser.getEntries();
+                            entries.add((HealthDataEntry) incrementable);
+                            managedUser.setEntries(entries);
                         }
                     }, new Realm.Transaction.OnSuccess() {
                         @Override
@@ -150,8 +153,8 @@ public class ProgressViewActivity extends Activity {
                                 public void execute(Realm bgRealm) {
                                     User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
                                     if (updatedUser != null) {
-                                        Log.d(TAG, "Entries updated. Total amount of entries is " + updatedUser.entries.size());
-                                        for (HealthDataEntry updatedEntry : updatedUser.entries) {
+                                        Log.d(TAG, "Entries updated. Total amount of entries is " + updatedUser.getEntries().size());
+                                        for (HealthDataEntry updatedEntry : updatedUser.getEntries()) {
                                             Log.d(TAG, "Entry type: " + updatedEntry.getType().getLongName());
                                             Log.d(TAG, "execute: "+updatedEntry.getInstant().toString());
                                         }
@@ -212,18 +215,6 @@ public class ProgressViewActivity extends Activity {
         cardAdapter.add("test5");
         cardStack.setAdapter(cardAdapter);
 
-        /* Instantiate Realm for ProgressView's UI thread.
-        Instantiate RealmChangeListener for observing any changes
-        in the model and updating the view accordingly. */
-
-        realmChangeListener = new RealmChangeListener() {
-            @Override
-            public void onChange(Object element) {
-                sessionResults = realm.where(Session.class).findAllAsync();
-            }
-        };
-        realm.addChangeListener(realmChangeListener);
-
         sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
             @Override
             public void onChange(RealmResults<Session> sessionResults) {
@@ -243,10 +234,11 @@ public class ProgressViewActivity extends Activity {
                     User managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
                     userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
                     setInterfaceAccessibility(true);
-                    for (Goal g : managedUser.goals) {
+                    for (Goal g : managedUser.getGoals()) {
                         Log.d(TAG, g.getType().getLongName());
                     }
-                    goalItems.addAll(managedUser.goals);
+                    managedUser.getGoals().size();
+                    goalItems.addAll(managedUser.getGoals());
                 } else {
 
                     /* Session not found: User is not logged in.
