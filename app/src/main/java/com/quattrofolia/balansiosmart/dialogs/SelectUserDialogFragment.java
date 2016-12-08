@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Session;
@@ -30,11 +31,29 @@ public class SelectUserDialogFragment extends DialogFragment {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, final int i) {
+
                         /* User selected */
-                        realm.executeTransaction(new Realm.Transaction() {
+                        realm.executeTransactionAsync(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                realm.copyToRealmOrUpdate(new Session(users.get(i).getId()));
+                                RealmResults<User> managedUsers;
+                                managedUsers = realm.where(User.class).findAll();
+                                final User selected = managedUsers.get(i);
+                                realm.copyToRealmOrUpdate(new Session(selected.getId()));
+                            }
+                        },
+                        new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                RealmResults<User> managedUsers;
+                                managedUsers = realm.where(User.class).findAll();
+                                final User selected = managedUsers.get(i);
+                                Log.d(TAG, "User " + selected.getId() + " logged in");
+                            }
+                        }, new Realm.Transaction.OnError() {
+                            @Override
+                            public void onError(Throwable error) {
+                                error.printStackTrace();
                             }
                         });
                     }

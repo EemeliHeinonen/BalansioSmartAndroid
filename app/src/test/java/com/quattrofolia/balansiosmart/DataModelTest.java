@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import io.realm.RealmList;
-
 import static com.quattrofolia.balansiosmart.models.HealthDataType.BLOOD_GLUCOSE;
 import static com.quattrofolia.balansiosmart.models.HealthDataType.WEIGHT;
 import static com.quattrofolia.balansiosmart.models.MonitoringPeriod.day;
@@ -113,13 +111,12 @@ public class DataModelTest {
         weightGoal.setDiscipline(weightDiscipline);
         weightGoal.setTargetRange(weightRange);
 
-        user.goals = new RealmList<>();
-        user.goals.add(bgGoal);
-        user.goals.add(weightGoal);
+        user.getGoals().add(bgGoal);
+        user.getGoals().add(weightGoal);
 
         /*Following iterator checks the current progress status
         * on each progress_view_goal_item_row with previously generated mock values. */
-        for (Goal goal : user.goals) {
+        for (Goal goal : user.getGoals()) {
 
             Discipline discipline = goal.getDiscipline();
 
