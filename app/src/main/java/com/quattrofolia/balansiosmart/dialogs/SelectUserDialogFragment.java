@@ -34,28 +34,34 @@ public class SelectUserDialogFragment extends DialogFragment {
 
                         /* User selected */
                         realm.executeTransactionAsync(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                RealmResults<User> managedUsers;
-                                managedUsers = realm.where(User.class).findAll();
-                                final User selected = managedUsers.get(i);
-                                realm.copyToRealmOrUpdate(new Session(selected.getId()));
-                            }
-                        },
-                        new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                RealmResults<User> managedUsers;
-                                managedUsers = realm.where(User.class).findAll();
-                                final User selected = managedUsers.get(i);
-                                Log.d(TAG, "User " + selected.getId() + " logged in");
-                            }
-                        }, new Realm.Transaction.OnError() {
-                            @Override
-                            public void onError(Throwable error) {
-                                error.printStackTrace();
-                            }
-                        });
+                                                          @Override
+                                                          public void execute(Realm realm) {
+                                                              RealmResults<User> managedUsers;
+                                                              managedUsers = realm.where(User.class).findAll();
+                                                              final User selected = managedUsers.get(i);
+                                                              RealmResults<Session> managedSessions;
+                                                              managedSessions = realm.where(Session.class).findAll();
+                                                              if (managedSessions.size() == 1) {
+                                                                  managedSessions.get(0).setUserId(selected.getId());
+                                                              } else {
+                                                                  Log.e(TAG, "managed sessions size shouldn't be " + managedSessions.size());
+                                                              }
+                                                          }
+                                                      },
+                                new Realm.Transaction.OnSuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        RealmResults<User> managedUsers;
+                                        managedUsers = realm.where(User.class).findAll();
+                                        final User selected = managedUsers.get(i);
+                                        Log.d(TAG, "User " + selected.getId() + " logged in");
+                                    }
+                                }, new Realm.Transaction.OnError() {
+                                    @Override
+                                    public void onError(Throwable error) {
+                                        error.printStackTrace();
+                                    }
+                                });
                     }
                 })
                 .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {

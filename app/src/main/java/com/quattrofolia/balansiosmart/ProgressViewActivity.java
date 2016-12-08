@@ -57,7 +57,6 @@ public class ProgressViewActivity extends Activity {
 
     // Storage
     private Realm realm;
-    private RealmChangeListener realmChangeListener;
     private Storage storage;
     private RealmResults<Session> sessionResults;
     private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
@@ -196,8 +195,16 @@ public class ProgressViewActivity extends Activity {
                         if (managedSessions.size() == 1) {
                             managedSessions.get(0).setUserId(null);
                         } else {
-                            Log.e(TAG, "Incorrect amount of managed sessions: " + managedSessions.size());
-                            managedSessions.deleteAllFromRealm();
+                            Log.e(TAG, "Amount of managed sessions: " + managedSessions.size());
+
+                            for (int i = 0; i < managedSessions.size(); i++) {
+                                if (i == managedSessions.size() - 1) {
+                                    managedSessions.get(i).setUserId(null);
+                                    break;
+                                } else {
+                                    managedSessions.deleteFromRealm(i);
+                                }
+                            }
                         }
                     }
                 }, new Realm.Transaction.OnSuccess() {
@@ -228,14 +235,6 @@ public class ProgressViewActivity extends Activity {
         Instantiate RealmChangeListener for observing any changes
         in the model and updating the view accordingly. */
 
-        realmChangeListener = new RealmChangeListener() {
-            @Override
-            public void onChange(Object element) {
-                sessionResults = realm.where(Session.class).findAllAsync();
-            }
-        };
-        realm.addChangeListener(realmChangeListener);
-
         sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
             @Override
             public void onChange(RealmResults<Session> sessionResults) {
@@ -243,13 +242,12 @@ public class ProgressViewActivity extends Activity {
                 goalItems.clear();
 
                 if (!sessionResults.isEmpty()) {
-                    if (sessionResults.size() > 2) {
+                    if (sessionResults.size() > 1) {
                         Log.e(TAG, "sessionResults size shouldn't be " + sessionResults.size());
                     }
 
                     // Get last session.
                     Session currentSession = sessionResults.last();
-                    User managedUser;
 
                     if (currentSession.getUserId() != null) {
 
@@ -258,11 +256,15 @@ public class ProgressViewActivity extends Activity {
                         * Update interface.
                         * Populate adapter datasets with responding data. */
 
+                        User managedUser;
                         managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
                         userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
                         authorized = true;
                         goalItems.addAll(managedUser.getGoals());
                     }
+                } else {
+                    storage.save(new Session());
+
                 }
 
                 /* Update UI and adapters. */
@@ -307,10 +309,6 @@ public class ProgressViewActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         sessionResults.removeChangeListener(sessionResultsListener);
-        realm.removeChangeListener(realmChangeListener);
-        if (sessionResults.size() > 1) {
-            storage.save(sessionResults.last());
-        }
         realm.close();
     }
 }
