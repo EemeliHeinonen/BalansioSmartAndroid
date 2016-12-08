@@ -34,11 +34,12 @@ public class Storage implements StorageHandler {
                     Incrementable incrementableObject = (Incrementable) object;
                     incrementableObject.setPrimaryKey(incrementableObject.getNextPrimaryKey(bgRealm));
                     bgRealm.copyToRealmOrUpdate((RealmObject) incrementableObject);
+
                 } else {
                     bgRealm.copyToRealmOrUpdate(object);
                 }
             }
-        }, new Realm.Transaction.OnSuccess() {
+        }/*, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
                 storageDataSaved(object);
@@ -46,10 +47,10 @@ public class Storage implements StorageHandler {
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
-                error.printStackTrace();
-                storageDataError(error);
+                //error.printStackTrace();
+                //storageDataError(error);
             }
-        });
+        }*/);
     }
 
     public void storageDataSaved(RealmObject savedObject) {
