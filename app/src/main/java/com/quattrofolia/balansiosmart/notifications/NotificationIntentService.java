@@ -139,6 +139,7 @@ public class NotificationIntentService extends IntentService {
         initEntries();
         initNotificationEntries();
         easyDisciplineCheck();
+        easyClinicalCheck();
 
         Log.d(TAG, "processStartNotification: WeekOfWeekYear test: " + now.toDateTime().weekOfWeekyear().getAsText());
         Log.d(TAG, "processStartNotification: allGoals size: " + allGoals.size());
@@ -146,12 +147,12 @@ public class NotificationIntentService extends IntentService {
         //Log.d(TAG, "processStartNotification: weightGoal TEST: "+weightGoal.getType().getLongName());
         //Log.d(TAG, "processStartNotification: bgGoal TEST: "+bgGoal.getType().getLongName());
 
-        //Entry check testing
-        Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size() - 1).getInstant();
-        isThisWeek(lastEntryTime.toDateTime());
-        Log.d(TAG, "processStartNotification: isToday: " + isToday(lastEntryTime.toDateTime()));
-        Log.d(TAG, "processStartNotification: Last Entry time: " + lastEntryTime);
-        Log.d(TAG, "processStartNotification: difference in time(minutesBetween): " + Minutes.minutesBetween(lastEntryTime, now));
+        ///////Entry check testing
+        //Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size() - 1).getInstant();
+        //isThisWeek(lastEntryTime.toDateTime());
+        //Log.d(TAG, "processStartNotification: isToday: " + isToday(lastEntryTime.toDateTime()));
+        //Log.d(TAG, "processStartNotification: Last Entry time: " + lastEntryTime);
+        //Log.d(TAG, "processStartNotification: difference in time(minutesBetween): " + Minutes.minutesBetween(lastEntryTime, now));
 
 
         /*if (managedUser.entries.size() > 5) {
@@ -239,20 +240,20 @@ public class NotificationIntentService extends IntentService {
                             .equalTo("type",easyDisciplineGoals
                                     .get(i)
                                     .getType()
-                                    .toString()).findAll();
+                                    .toString()).equalTo("value","easyDiscipline").findAll();
 
                     if(easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter) {
                         if(currentNotificationEntries.isEmpty()){
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
-                            notificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
+                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
                             sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time");
                         }
                         else if (currentNotificationEntries
                                 .last().getInstant().isBefore(now.minus(twoHours))) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
-                            notificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
+                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
                             sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time");
                         }
                     }
@@ -273,10 +274,8 @@ public class NotificationIntentService extends IntentService {
 
     private void easyClinicalCheck() {
 
-        //TODO before sending the notification, check if there are no related notifications after the 5. newest measurements
         if (isWakingHours()) {
-
-            RealmResults<Goal> easyClinicalGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("range").findAll();
+            RealmResults<Goal> easyClinicalGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("targetRange").findAll();
             if (easyClinicalGoals.size() > 0) {
                 Log.d(TAG, "easyClinicalCheck: easyClinical Typen Test log: " + easyClinicalGoals.first().getType().toString());
                 for (Goal goal : easyClinicalGoals) {
@@ -284,21 +283,39 @@ public class NotificationIntentService extends IntentService {
                     int numberOfFailedEntries = 0;
                     RealmResults<HealthDataEntry> currentEasyClinicalEntries = allEntries.where().equalTo("type", goal
                             .getType().toString()).findAll();
-                    if (currentEasyClinicalEntries.size() > 5) {
-                        BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
-                        BigDecimal currentGoalMaxRange = goal.getTargetRange().getHigh();
+                    if (currentEasyClinicalEntries.size() > 4) {
+                        RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where().equalTo("type",goal.getType().toString()).equalTo("value","easyClinical").findAll();
+                        if (currentNotificationEntries.isEmpty()) {
+                            Log.d(TAG, "easyClinicalCheck: currentNotificationEntries"+currentNotificationEntries.size());
+                            BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
+                            BigDecimal currentGoalMaxRange = goal.getTargetRange().getHigh();
 
-                        for (int i = currentEasyClinicalEntries.size() - 1; i >= currentEasyClinicalEntries.size() - 5; i--) {
-                            BigDecimal currentValue = new BigDecimal(currentEasyClinicalEntries.get(i).getValue());
+                            for (int i = currentEasyClinicalEntries.size() - 1; i >= currentEasyClinicalEntries.size() - 5; i--) {
+                                BigDecimal currentValue = new BigDecimal(currentEasyClinicalEntries.get(i).getValue());
 
-                            if (currentValue.compareTo(currentGoalMinRange) < 0 || currentValue.compareTo(currentGoalMaxRange) > 0) {
-                                numberOfFailedEntries++;
+                                if (currentValue.compareTo(currentGoalMinRange) < 0 || currentValue.compareTo(currentGoalMaxRange) > 0) {
+                                    numberOfFailedEntries++;
 
+                                }
+                            }
+                        }
+                        else if(currentNotificationEntries.last().getInstant().isBefore(currentEasyClinicalEntries.get(currentEasyClinicalEntries.size()-5).getInstant())){
+                            BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
+                            BigDecimal currentGoalMaxRange = goal.getTargetRange().getHigh();
+
+                            for (int i = currentEasyClinicalEntries.size() - 1; i >= currentEasyClinicalEntries.size() - 5; i--) {
+                                BigDecimal currentValue = new BigDecimal(currentEasyClinicalEntries.get(i).getValue());
+
+                                if (currentValue.compareTo(currentGoalMinRange) < 0 || currentValue.compareTo(currentGoalMaxRange) > 0) {
+                                    numberOfFailedEntries++;
+
+                                }
                             }
                         }
                     }
                     Log.d(TAG, "easyClinicalCheck: number of failed Entries: "+numberOfFailedEntries);
                     if (numberOfFailedEntries >= 5) {
+                        writeNotificationEntry(goal.getType(), "easyClinical");
                         sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time");
                     } else {
                         Log.d(TAG, "easyClinicalCheck: "+ goal.getType().getLongName() + " clinical goal accomplished.");
@@ -368,7 +385,7 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
-    private void notificationEntry(HealthDataType type, String value){
+    private void writeNotificationEntry(HealthDataType type, String value){
         NotificationEntry entry = new NotificationEntry();
         entry.setType(type);
         entry.setValue(value);
