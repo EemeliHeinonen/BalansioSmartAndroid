@@ -11,8 +11,25 @@ public class User extends RealmObject implements Incrementable {
     private int id;
     private String firstName;
     private String lastName;
-    public RealmList<Goal> goals;
-    public RealmList<HealthDataEntry> entries;
+
+    public RealmList<Goal> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(RealmList<Goal> goals) {
+        this.goals = goals;
+    }
+
+    public RealmList<HealthDataEntry> getEntries() {
+        return entries;
+    }
+
+    public void setEntries(RealmList<HealthDataEntry> entries) {
+        this.entries = entries;
+    }
+
+    private RealmList<Goal> goals;
+    private RealmList<HealthDataEntry> entries;
 
     public int getId() {
         return id;

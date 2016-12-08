@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class DefaultStackEventListener implements CardStack.CardEventListener {
 
-    private String TAG ="tagi";
+    private String TAG ="DefaultStackEventListen";
     private float mThreshold;
 
     public DefaultStackEventListener(int i) {
@@ -32,13 +32,10 @@ public class DefaultStackEventListener implements CardStack.CardEventListener {
     @Override
     public void discarded(int mIndex,int direction) {
         Log.d(TAG, "discarded: "+mIndex);
-
-
     }
 
     @Override
     public void topCardTapped() {
         Log.d(TAG, "topCardTapped: ");
-
     }
 }

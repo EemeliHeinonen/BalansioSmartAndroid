@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Session;
@@ -30,13 +31,37 @@ public class SelectUserDialogFragment extends DialogFragment {
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, final int i) {
+
                         /* User selected */
-                        realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                realm.copyToRealmOrUpdate(new Session(users.get(i).getId()));
-                            }
-                        });
+                        realm.executeTransactionAsync(new Realm.Transaction() {
+                                                          @Override
+                                                          public void execute(Realm realm) {
+                                                              RealmResults<User> managedUsers;
+                                                              managedUsers = realm.where(User.class).findAll();
+                                                              final User selected = managedUsers.get(i);
+                                                              RealmResults<Session> managedSessions;
+                                                              managedSessions = realm.where(Session.class).findAll();
+                                                              if (managedSessions.size() == 1) {
+                                                                  managedSessions.get(0).setUserId(selected.getId());
+                                                              } else {
+                                                                  Log.e(TAG, "managed sessions size shouldn't be " + managedSessions.size());
+                                                              }
+                                                          }
+                                                      },
+                                new Realm.Transaction.OnSuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        RealmResults<User> managedUsers;
+                                        managedUsers = realm.where(User.class).findAll();
+                                        final User selected = managedUsers.get(i);
+                                        Log.d(TAG, "User " + selected.getId() + " logged in");
+                                    }
+                                }, new Realm.Transaction.OnError() {
+                                    @Override
+                                    public void onError(Throwable error) {
+                                        error.printStackTrace();
+                                    }
+                                });
                     }
                 })
                 .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {

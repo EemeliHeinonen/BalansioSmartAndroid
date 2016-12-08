@@ -13,6 +13,7 @@ import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.storage.Storage;
@@ -22,7 +23,6 @@ import org.joda.time.Minutes;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
 import io.realm.RealmList;
 
 
@@ -43,8 +43,6 @@ public class NotificationIntentService extends IntentService {
     private RealmChangeListener realmChangeListener;
     private Storage storage;
     private RealmList<Goal> goals;
-
-
 
 
     public NotificationIntentService() {
@@ -107,16 +105,19 @@ public class NotificationIntentService extends IntentService {
         User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
 
         //Entry check testing
-        Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size()-1).getInstant();
-        Log.d(TAG, "processStartNotification: Last Entry time: "+lastEntryTime.getMillis());
+        HealthDataEntry lastEntry = managedUser.getEntries().last();
         Instant now = new Instant();
+        Log.d(TAG, "processStartNotification: present time: " + now);
+        if (lastEntry != null) {
+            Log.d(TAG, "processStartNotification: Last Entry time: " + lastEntry.getInstant().getMillis());
+            Log.d(TAG, "processStartNotification: difference in time(getMillis()-getMillis()): " + (now.getMillis() - lastEntry.getInstant().getMillis()));
+            Log.d(TAG, "processStartNotification: difference in time(minutesBetween): " + Minutes.minutesBetween(lastEntry.getInstant(), now));
+        } else {
+            Log.d(TAG, "processStartNotification: no entries");
+        }
 
-        Log.d(TAG, "processStartNotification: present time: "+now);
-        Log.d(TAG, "processStartNotification: difference in time(getMillis()-getMillis()): "+(now.getMillis() - lastEntryTime.getMillis()));
-        Log.d(TAG, "processStartNotification: difference in time(minutesBetween): "+Minutes.minutesBetween(lastEntryTime, now));
 
-
-        if (managedUser.entries.size()>5) {
+        if (managedUser.getEntries().size() > 5) {
             final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
             builder.setContentTitle("Scheduled Notification")
                     .setAutoCancel(true)

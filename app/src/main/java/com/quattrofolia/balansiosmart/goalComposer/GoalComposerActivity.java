@@ -9,7 +9,6 @@ import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.Incrementable;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
-import com.quattrofolia.balansiosmart.storage.Storage;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -22,13 +21,11 @@ public class GoalComposerActivity extends FragmentActivity {
     private Realm realm;
     private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
     private RealmResults<Session> sessionResults;
-    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
-        storage = new Storage(realm);
         setContentView(R.layout.activity_main);
 
         // Check that the activity is using the layout version with
@@ -68,7 +65,7 @@ public class GoalComposerActivity extends FragmentActivity {
                             incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
                             realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
                             User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.goals.add((Goal) incrementableGoal);
+                            managedUser.getGoals().add((Goal) incrementableGoal);
                         }
                     }, new Realm.Transaction.OnSuccess() {
                         @Override
@@ -93,6 +90,10 @@ public class GoalComposerActivity extends FragmentActivity {
 
     private void displayAuthErrorDialog() {
         AuthorizationErrorDialogFragment fragment = new AuthorizationErrorDialogFragment();
-        fragment.show(getFragmentManager(), "Login Error");
+        try {
+            fragment.show(getFragmentManager(), "Login Error");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

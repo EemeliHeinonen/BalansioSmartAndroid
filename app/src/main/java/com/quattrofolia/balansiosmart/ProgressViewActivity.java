@@ -57,7 +57,6 @@ public class ProgressViewActivity extends Activity {
 
     // Storage
     private Realm realm;
-    private RealmChangeListener realmChangeListener;
     private Storage storage;
     private RealmResults<Session> sessionResults;
     private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
@@ -98,19 +97,15 @@ public class ProgressViewActivity extends Activity {
             }
         });
 
-        notificationButton.setOnClickListener(new Button.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        notificationButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
                 //Send notifications
                 NotificationEventReceiver.setupAlarm(getApplicationContext());
             }
         });
 
-        defaultGoalsButton.setOnClickListener(new Button.OnClickListener()
-        {
-            public void onClick(View v)
-            {
+        defaultGoalsButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
                 //Create default goals and entries here
                 final Session session = BalansioSmart.currentSession(realm);
                 final HealthDataEntry firstEntry = new HealthDataEntry();
@@ -140,7 +135,7 @@ public class ProgressViewActivity extends Activity {
                             incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
                             bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
                             User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.entries.add((HealthDataEntry) incrementable);
+                            managedUser.getEntries().add((HealthDataEntry) incrementable);
                         }
                     }, new Realm.Transaction.OnSuccess() {
                         @Override
@@ -150,10 +145,10 @@ public class ProgressViewActivity extends Activity {
                                 public void execute(Realm bgRealm) {
                                     User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
                                     if (updatedUser != null) {
-                                        Log.d(TAG, "Entries updated. Total amount of entries is " + updatedUser.entries.size());
-                                        for (HealthDataEntry updatedEntry : updatedUser.entries) {
+                                        Log.d(TAG, "Entries updated. Total amount of entries is " + updatedUser.getEntries().size());
+                                        for (HealthDataEntry updatedEntry : updatedUser.getEntries()) {
                                             Log.d(TAG, "Entry type: " + updatedEntry.getType().getLongName());
-                                            Log.d(TAG, "execute: "+updatedEntry.getInstant().toString());
+                                            Log.d(TAG, "execute: " + updatedEntry.getInstant().toString());
                                         }
                                     }
                                 }
@@ -192,11 +187,35 @@ public class ProgressViewActivity extends Activity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                realm.executeTransaction(new Realm.Transaction() {
+                realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        RealmResults<Session> sessions = realm.where(Session.class).findAll();
-                        sessions.deleteAllFromRealm();
+                        RealmResults<Session> managedSessions;
+                        managedSessions = realm.where(Session.class).findAll();
+                        if (managedSessions.size() == 1) {
+                            managedSessions.get(0).setUserId(null);
+                        } else {
+                            Log.e(TAG, "Amount of managed sessions: " + managedSessions.size());
+
+                            for (int i = 0; i < managedSessions.size(); i++) {
+                                if (i == managedSessions.size() - 1) {
+                                    managedSessions.get(i).setUserId(null);
+                                    break;
+                                } else {
+                                    managedSessions.deleteFromRealm(i);
+                                }
+                            }
+                        }
+                    }
+                }, new Realm.Transaction.OnSuccess() {
+                    @Override
+                    public void onSuccess() {
+                        Log.d(TAG, "User logged out");
+                    }
+                }, new Realm.Transaction.OnError() {
+                    @Override
+                    public void onError(Throwable error) {
+                        error.printStackTrace();
                     }
                 });
             }
@@ -216,49 +235,41 @@ public class ProgressViewActivity extends Activity {
         Instantiate RealmChangeListener for observing any changes
         in the model and updating the view accordingly. */
 
-        realmChangeListener = new RealmChangeListener() {
-            @Override
-            public void onChange(Object element) {
-                sessionResults = realm.where(Session.class).findAllAsync();
-            }
-        };
-        realm.addChangeListener(realmChangeListener);
-
         sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
             @Override
             public void onChange(RealmResults<Session> sessionResults) {
-                // Received sessionResults
+                Boolean authorized = false;
+                goalItems.clear();
+
                 if (!sessionResults.isEmpty()) {
-                    if (sessionResults.size() > 2) {
+                    if (sessionResults.size() > 1) {
                         Log.e(TAG, "sessionResults size shouldn't be " + sessionResults.size());
                     }
 
-                    /* Sessions found: User is logged in.
-                    * Get last session.
-                    * Get user object by id.
-                    * Update interface.
-                    * Populate adapter datasets with responding data. */
-
+                    // Get last session.
                     Session currentSession = sessionResults.last();
-                    User managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
-                    userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
-                    setInterfaceAccessibility(true);
-                    for (Goal g : managedUser.goals) {
-                        Log.d(TAG, g.getType().getLongName());
+
+                    if (currentSession.getUserId() != null) {
+
+                        /* userId found: User is logged in.
+                        * Get user object by id.
+                        * Update interface.
+                        * Populate adapter datasets with responding data. */
+
+                        User managedUser;
+                        managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
+                        userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
+                        authorized = true;
+                        goalItems.addAll(managedUser.getGoals());
                     }
-                    goalItems.addAll(managedUser.goals);
                 } else {
+                    storage.save(new Session());
 
-                    /* Session not found: User is not logged in.
-                    * Update interface.
-                    * Clear adapter datasets. */
-
-                    setInterfaceAccessibility(false);
-                    goalItems.clear();
                 }
 
-                /* Update adapters. */
+                /* Update UI and adapters. */
 
+                setInterfaceAccessibility(authorized);
                 goalAdapter.setItemList(goalItems);
             }
         };
@@ -298,10 +309,6 @@ public class ProgressViewActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         sessionResults.removeChangeListener(sessionResultsListener);
-        realm.removeChangeListener(realmChangeListener);
-        if (sessionResults.size() > 1) {
-            storage.save(sessionResults.last());
-        }
         realm.close();
     }
 }

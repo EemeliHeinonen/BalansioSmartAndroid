@@ -7,12 +7,17 @@ import java.math.BigDecimal;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class HealthDataEntry extends RealmObject implements Incrementable {
 
     @PrimaryKey
     private int id;
+    @Required
     private String type;
+    @Required
+    private String value;
+    private long instant;
 
     public HealthDataEntry() {}
     public HealthDataEntry(String type, String value, Instant instant) {
@@ -21,8 +26,6 @@ public class HealthDataEntry extends RealmObject implements Incrementable {
         this.instant = instant.getMillis();
     }
 
-    private String value;
-    private long instant;
 
     public int getId() {
         return id;

@@ -1,14 +1,15 @@
 package com.quattrofolia.balansiosmart.models;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
 
 
-public class Session extends RealmObject {
+public class Session extends RealmObject implements Incrementable {
 
     @PrimaryKey
-    @Required
+    int id;
+
     private Integer userId;
 
     public Session() {
@@ -26,4 +27,18 @@ public class Session extends RealmObject {
         this.userId = userId;
     }
 
+    @Override
+    public int getNextPrimaryKey(Realm realm) {
+        Number n = realm.where(Session.class).max("id");
+        if (n != null) {
+            return n.intValue() + 1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public void setPrimaryKey(int id) {
+        this.id = id;
+    }
 }
