@@ -23,6 +23,7 @@ import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.Minutes;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import io.realm.Realm;
@@ -200,31 +201,30 @@ public class NotificationIntentService extends IntentService {
 
             for (int i = 0; i < easyDisciplineGoals.size(); i++) {
                 if (isLastHourOfMonitoringPeriod(easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().quantizedInterval(now, 0).getEnd())) {
-                RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i)
-                        .getType().toString()).findAll();
-                int entryIsInPeriodCounter = 0;
-                String currentMonitoringPeriod = easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().toString();
-                Log.d(TAG, "easyDisciplineCheck: monitoringPeriod: " + currentMonitoringPeriod);
-                for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++) {
+                    RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i)
+                            .getType().toString()).findAll();
+                    int entryIsInPeriodCounter = 0;
+                    String currentMonitoringPeriod = easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().toString();
+                    Log.d(TAG, "easyDisciplineCheck: monitoringPeriod: " + currentMonitoringPeriod);
+                    for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++) {
 
-                    if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("day")) {
-                        entryIsInPeriodCounter++;
+                        if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("day")) {
+                            entryIsInPeriodCounter++;
+                        }
+                        if (isThisWeek(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("week")) {
+                            entryIsInPeriodCounter++;
+                        }
+                        if (isThisMonth(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("month")) {
+                            entryIsInPeriodCounter++;
+                        }
                     }
-                    if (isThisWeek(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("week")) {
-                        entryIsInPeriodCounter++;
-                    }
-                    if (isThisMonth(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("month")) {
-                        entryIsInPeriodCounter++;
-                    }
-                }
-                    if(easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter){
+                    if (easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter) {
                         Log.d(TAG, "easyDisciplineCheck: goal failed");
-                        sendNotification(easyDisciplineGoals.get(i).getType().getLongName()+ "goal has failed","You didn't accomplish your goal this time");
-                    }
-                    else {
+                        sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time");
+                    } else {
                         Log.d(TAG, "easyDisciplineCheck: goal accomplished");
                     }
-            }
+                }
             }
 
             //Log.d(TAG, "easyDisciplineCheck: number of entrys of the first item in the easyDisciplineGoals list: "+ i);
@@ -235,6 +235,46 @@ public class NotificationIntentService extends IntentService {
             Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals is empty");
         }
     }
+
+    private void easyClinicalCheck() {
+
+        //TODO before sending the notification, check if there are no related notifications after the 5. newest measurements
+        if (isWakingHours()) {
+
+            RealmResults<Goal> easyClinicalGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("range").findAll();
+            if (easyClinicalGoals.size() > 0) {
+                Log.d(TAG, "easyClinicalCheck: easyClinical Typen Test log: " + easyClinicalGoals.first().getType().toString());
+                for (Goal goal : easyClinicalGoals) {
+
+                    int numberOfFailedEntries = 0;
+                    RealmResults<HealthDataEntry> currentEasyClinicalEntries = allEntries.where().equalTo("type", goal
+                            .getType().toString()).findAll();
+                    if (currentEasyClinicalEntries.size() > 5) {
+                        BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
+                        BigDecimal currentGoalMaxRange = goal.getTargetRange().getHigh();
+
+                        for (int i = currentEasyClinicalEntries.size() - 1; i >= currentEasyClinicalEntries.size() - 5; i--) {
+                            BigDecimal currentValue = new BigDecimal(currentEasyClinicalEntries.get(i).getValue());
+
+                            if (currentValue.compareTo(currentGoalMinRange) < 0 || currentValue.compareTo(currentGoalMaxRange) > 0) {
+                                numberOfFailedEntries++;
+
+                            }
+                        }
+                    }
+                    Log.d(TAG, "easyClinicalCheck: number of failed Entries: "+numberOfFailedEntries);
+                    if (numberOfFailedEntries >= 5) {
+                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time");
+                    } else {
+                        Log.d(TAG, "easyClinicalCheck: "+ goal.getType().getLongName() + " clinical goal accomplished.");
+                    }
+                }
+            } else {
+                Log.d(TAG, "easyClinicalCheck: easyClinicalGoals is empty");
+            }
+        }
+    }
+
 
     private boolean isToday(DateTime dt) {
         DateTime midnightToday = now.toDateTime().withTimeAtStartOfDay();
@@ -275,12 +315,22 @@ public class NotificationIntentService extends IntentService {
         if (window.contains(now)) {
             Log.d(TAG, "isLastHourOfMonitoringPeriod: YES");
             return true;
-        }
-        else{
+        } else {
             Log.d(TAG, "isLastHourOfMonitoringPeriod: NO");
             return false;
         }
 
+    }
+
+    private boolean isWakingHours() {
+        Interval wakingHours = new Interval(now.toDateTime().withHourOfDay(8).withMinuteOfHour(0), now.toDateTime().withHourOfDay(22).withMinuteOfHour(0));
+        if (wakingHours.contains(now)) {
+            Log.d(TAG, "isWakingHours: YES");
+            return true;
+        } else {
+            Log.d(TAG, "isWakingHours: NO");
+            return false;
+        }
     }
 
 }
