@@ -3,11 +3,13 @@ package com.quattrofolia.balansiosmart.models;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
 public class Goal extends RealmObject implements Incrementable {
 
-    private int id;
     @PrimaryKey
+    private int id;
+    @Required
     private String type;
     private String notificationStyle;
     private Discipline discipline;

@@ -3,10 +3,13 @@ package com.quattrofolia.balansiosmart.models;
 import java.math.BigDecimal;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Required;
 
 public class Range extends RealmObject {
 
+    @Required
     private String low;
+    @Required
     private String high;
 
     public BigDecimal getLow() {
