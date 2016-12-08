@@ -2,12 +2,10 @@ package com.quattrofolia.balansiosmart;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
-
-import static android.graphics.Color.GREEN;
-import static android.graphics.Paint.Style.FILL;
 
 
 public class CompletionCircle extends View {
@@ -22,12 +20,11 @@ public class CompletionCircle extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int x = getWidth();
-        int y = getHeight();
-        int radius = 100;
-        paint.setStyle(FILL);
-        paint.setColor(GREEN);
+        int radius = getHeight()/2;
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.GREEN);
         canvas.drawPaint(paint);
-        canvas.drawCircle(x / 2, y / 2, radius, paint);
+        canvas.drawCircle(radius, radius, radius, paint);
     }
 }
