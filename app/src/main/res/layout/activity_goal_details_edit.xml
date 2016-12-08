@@ -6,19 +6,13 @@
 
 
     <Button
-        android:text="Delete data"
+        android:text="Edit Goal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/deleteData" />
+        android:id="@+id/editGoal" />
 
     <Button
-        android:text="Delete all the data from the list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/deleteAll" />
-
-    <Button
-        android:text="Delete this goal"
+        android:text="Delete Goal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/deleteGoal" />

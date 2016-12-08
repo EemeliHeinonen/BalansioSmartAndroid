@@ -24,7 +24,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_delete"
+        app:srcCompat="@android:drawable/ic_menu_edit"
         android:layout_alignParentEnd="true"
         android:id="@+id/deleteButton" />
 

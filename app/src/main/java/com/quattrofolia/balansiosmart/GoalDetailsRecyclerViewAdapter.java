@@ -1,19 +1,16 @@
 package com.quattrofolia.balansiosmart;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 /**
@@ -22,9 +19,13 @@ import io.realm.RealmResults;
 
 public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDetailsRecyclerViewAdapter.View_Holder>{
 
-    RealmResults<HealthDataEntry> list;
+    private Storage storage;
+    private Realm realm;
+    private RealmResults<Goal> allGoals;
+    private RealmResults<HealthDataEntry> list;
+    private RealmChangeListener realmChangeListener;
 
-    private SparseBooleanArray selectedItems;
+
 
     public GoalDetailsRecyclerViewAdapter(RealmResults<HealthDataEntry> list) {
         this.list=list;
@@ -45,7 +46,6 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
         HealthDataEntry entry = list.get(position);
         holder.time.setText(entry.getInstant().toString());
         holder.measures.setText(entry.getValue());
-
     }
 
     @Override
@@ -70,46 +70,6 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
             time = (TextView) itemView.findViewById(R.id.time_of_measurement);
             measures = (TextView) itemView.findViewById(R.id.measurement);
         }
-    }
-
-    // method for select specific goals to delete.
-    private void toggleSelection(int pos){
-        if (selectedItems.get(pos, false)) {
-            selectedItems.delete(pos);
-        }
-        else {
-            selectedItems.put(pos, true);
-        }
-        notifyItemChanged(pos);
-    }
-
-    private void clearSelections(){
-        selectedItems.clear();
-        notifyDataSetChanged();
-    }
-
-    private int getSelectedItemCount(){
-        return selectedItems.size();
-    }
-
-    private List<Integer> getSelectedItems(){
-        List<Integer> items =
-                new ArrayList<>(selectedItems.size());
-        for (int i = 0; i < selectedItems.size(); i++) {
-            items.add(selectedItems.keyAt(i));
-        }
-        return items;
-    }
-
-    //function to be optimized
-    public void deleteData(final HealthDataEntry healthData){
-        Storage storage = new Storage();
-        storage.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                healthData.deleteFromRealm();
-            }
-        });
     }
 
     public void deleteAll() {
