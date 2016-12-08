@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.HealthDataEntry;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
 
 import java.util.List;
 
@@ -16,35 +18,11 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
     private static final String TAG = "GoalItemRecyclerAdapter";
 
     private List<Goal> goals;
+    private RecyclerViewClickListener clickListener;
 
-    public static class GoalViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        // Declare required views for goal items
-        private TextView countView;
-        private TextView typeView;
-
-        public GoalViewHolder(View v) {
-            super(v);
-            countView = (TextView) v.findViewById(R.id.goalItemCount);
-            typeView = (TextView) v.findViewById(R.id.goalItemType);
-            v.setOnClickListener(this);
-        }
-
-        public void bindGoal(List<Goal> goals, int position) {
-            String count = String.valueOf(position + 1);
-            countView.setText(count);
-            typeView.setText(goals.get(position).getType().getLongName());
-        }
-
-        // Handle required events
-        @Override
-        public void onClick(View view) {
-            Log.d(TAG, "onClick");
-        }
-    }
-
-    public GoalItemRecyclerAdapter(List<Goal> goals) {
+    public GoalItemRecyclerAdapter(List<Goal> goals, RecyclerViewClickListener clickListener) {
         this.goals = goals;
+        this.clickListener = clickListener;
     }
 
     public void setItemList(List<Goal> goals) {
@@ -56,7 +34,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
     public GoalItemRecyclerAdapter.GoalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View inflatedView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.progress_view_goal_item_row, parent, false);
-        return new GoalViewHolder(inflatedView);
+        return new GoalViewHolder(inflatedView, clickListener);
     }
 
     @Override
@@ -74,4 +52,31 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
     }
 
 
+    static class GoalViewHolder extends RecyclerView.ViewHolder {
+
+        // Declare required views for goal items
+        private TextView countView;
+        private TextView typeView;
+        private HealthDataType type;
+
+        GoalViewHolder(View v, final RecyclerViewClickListener listener) {
+            super(v);
+            countView = (TextView) v.findViewById(R.id.goalItemCount);
+            typeView = (TextView) v.findViewById(R.id.goalItemType);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.recyclerViewListClicked(view, getLayoutPosition(), type.toString());
+                }
+            });
+        }
+
+        void bindGoal(List<Goal> goals, int position) {
+            String count = String.valueOf(position + 1);
+            countView.setText(count);
+            type = goals.get(position).getType();
+            typeView.setText(type.getLongName());
+        }
+
+    }
 }

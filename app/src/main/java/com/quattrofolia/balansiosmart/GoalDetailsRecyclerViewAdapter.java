@@ -73,13 +73,13 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
     }
 
     public void deleteAll() {
-        Storage storage = new Storage();
-        storage.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                list.deleteAllFromRealm();
-            }
-        });
+//        Storage storage = new Storage();
+//        storage.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                list.deleteAllFromRealm();
+//            }
+//        });
     }
 
     //function to be finished

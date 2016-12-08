@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -36,7 +37,7 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
-public class ProgressViewActivity extends Activity {
+public class ProgressViewActivity extends Activity implements RecyclerViewClickListener {
 
     private static final String TAG = "ProgressViewActivity";
 
@@ -84,8 +85,9 @@ public class ProgressViewActivity extends Activity {
         };
         goalItems = new ArrayList<>();
         goalRecyclerView.setLayoutManager(goalLayoutManager);
-        goalAdapter = new GoalItemRecyclerAdapter(goalItems);
+        goalAdapter = new GoalItemRecyclerAdapter(goalItems, this);
         goalRecyclerView.setAdapter(goalAdapter);
+
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
         notificationButton = (Button) findViewById(R.id.notification_button);
         defaultGoalsButton = (Button) findViewById(R.id.default_goals_button);
@@ -310,5 +312,13 @@ public class ProgressViewActivity extends Activity {
         super.onDestroy();
         sessionResults.removeChangeListener(sessionResultsListener);
         realm.close();
+    }
+
+    @Override
+    public void recyclerViewListClicked(View v, int position, String itemName) {
+        Intent intent = new Intent(ProgressViewActivity.this, GoalDetailsActivity.class);
+        intent.putExtra("type", itemName);
+        intent.putExtra("userId", BalansioSmart.currentSession(realm).getUserId());
+        startActivity(intent);
     }
 }
