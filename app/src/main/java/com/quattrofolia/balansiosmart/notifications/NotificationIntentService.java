@@ -14,11 +14,14 @@ import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.NotificationEntry;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
 import org.joda.time.Minutes;
@@ -27,6 +30,7 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
@@ -57,7 +61,10 @@ public class NotificationIntentService extends IntentService {
     private Goal sleepGoal;
     private Goal exerciseGoal;
     private Goal nutritionGoal;
+    private Duration twoHours;
 
+    private RealmResults<NotificationEntry> allNotificationEntries;
+    private RealmResults<NotificationEntry> easyDisciplineNotificationEntries;
     private RealmResults<HealthDataEntry> allEntries;
     private RealmResults<HealthDataEntry> weightEntries;
     private RealmResults<HealthDataEntry> bgEntries;
@@ -121,12 +128,15 @@ public class NotificationIntentService extends IntentService {
         realm = Realm.getDefaultInstance();
         final Session session = BalansioSmart.currentSession(realm);
         final int id = session.getUserId().intValue();
+        storage = new Storage();
+        twoHours = Duration.standardHours(2);
 
         User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
 
 
         initGoals();
         initEntries();
+        initNotificationEntries();
         easyDisciplineCheck();
 
         Log.d(TAG, "processStartNotification: WeekOfWeekYear test: " + now.toDateTime().weekOfWeekyear().getAsText());
@@ -192,6 +202,12 @@ public class NotificationIntentService extends IntentService {
         nutritionEntries = realm.where(HealthDataEntry.class).equalTo("type", "NUTRITION").findAll();
     }
 
+    private void initNotificationEntries(){
+        allNotificationEntries = realm.where(NotificationEntry.class).findAll();
+        easyDisciplineNotificationEntries = realm.where(NotificationEntry.class).equalTo("value","easyDiscipline").findAll();
+
+    }
+
     private void easyDisciplineCheck() {
         // TODO: check that goals monitoringperiod is day
         RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("discipline").findAll();
@@ -217,12 +233,30 @@ public class NotificationIntentService extends IntentService {
                         entryIsInPeriodCounter++;
                     }
                 }
-                    if(easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter){
-                        Log.d(TAG, "easyDisciplineCheck: goal failed");
-                        sendNotification(easyDisciplineGoals.get(i).getType().getLongName()+ "goal has failed","You didn't accomplish your goal this time");
+                    Log.d(TAG, "easyDisciplineCheck: easydisciplinenotificationentries size: "+easyDisciplineNotificationEntries.size());
+                    RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where()
+                            .equalTo("type",easyDisciplineGoals
+                                    .get(i)
+                                    .getType()
+                                    .toString()).findAll();
+
+                    if(easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter) {
+                        if(currentNotificationEntries.isEmpty()){
+
+                            Log.d(TAG, "easyDisciplineCheck: goal failed");
+                            notificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time");
+                        }
+                        else if (currentNotificationEntries
+                                .last().getInstant().isBefore(now.minus(twoHours))) {
+
+                            Log.d(TAG, "easyDisciplineCheck: goal failed");
+                            notificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time");
+                        }
                     }
                     else {
-                        Log.d(TAG, "easyDisciplineCheck: goal accomplished");
+                        Log.d(TAG, "easyDisciplineCheck: goal accomplished / has already been notified about");
                     }
             }
             }
@@ -281,6 +315,14 @@ public class NotificationIntentService extends IntentService {
             return false;
         }
 
+    }
+
+    private void notificationEntry(HealthDataType type, String value){
+        NotificationEntry entry = new NotificationEntry();
+        entry.setType(type);
+        entry.setValue(value);
+        entry.setInstant(now);
+        storage.save(entry);
     }
 
 }
