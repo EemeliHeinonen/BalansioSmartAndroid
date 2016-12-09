@@ -50,6 +50,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
                 RealmResults<HealthDataEntry> entries;
                 entries = Realm.getDefaultInstance()
                         .where(HealthDataEntry.class)
+                        .equalTo("type", goal.getType().toString())
                         .greaterThan("instant", currentPeriod.getStartMillis())
                         .lessThan("instant", currentPeriod.getEndMillis())
                         .findAll();
