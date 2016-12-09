@@ -75,7 +75,6 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
 
         userNameTextView = (TextView) findViewById(R.id.textView_userName);
         goalRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_goals);
-        goalRecyclerView.setHasFixedSize(false);
         goalLayoutManager = new LinearLayoutManager(this) {
             @Override
             public boolean canScrollVertically() {
@@ -86,6 +85,12 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
         goalRecyclerView.setLayoutManager(goalLayoutManager);
         goalAdapter = new GoalItemRecyclerAdapter(goalItems, this);
         goalRecyclerView.setAdapter(goalAdapter);
+        goalRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                Log.d(TAG, "height: "+view.getHeight());
+            }
+        });
 
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
         notificationButton = (Button) findViewById(R.id.notification_button);

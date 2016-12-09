@@ -3,6 +3,7 @@ package com.quattrofolia.balansiosmart.goalComposer;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.dialogs.AuthorizationErrorDialogFragment;
 import com.quattrofolia.balansiosmart.models.Goal;
@@ -53,33 +54,29 @@ public class GoalComposerActivity extends FragmentActivity {
     }
 
     public void addGoal(final Goal goal) {
-        sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
+        Session session = BalansioSmart.currentSession(realm);
+        if (session.getUserId() == null) {
+            displayAuthErrorDialog();
+            return;
+        }
+        final int id = session.getUserId().intValue();
+        realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
-            public void onChange(RealmResults<Session> sessions) {
-                if (sessions.size() == 1) {
-                    final int id = sessions.first().getUserId().intValue();
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            Incrementable incrementableGoal = goal;
-                            incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
-                            realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
-                            User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.getGoals().add((Goal) incrementableGoal);
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            finish();
-                        }
-                    });
-                } else {
-                    displayAuthErrorDialog();
-                }
+            public void execute(Realm realm) {
+                Incrementable incrementableGoal = goal;
+                incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
+                realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
+                User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
+                managedUser.getGoals().add((Goal) incrementableGoal);
             }
-        };
-        sessionResults = realm.where(Session.class).findAllAsync();
-        sessionResults.addChangeListener(sessionResultsListener);
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                finish();
+
+            }
+        });
+
     }
 
     @Override
