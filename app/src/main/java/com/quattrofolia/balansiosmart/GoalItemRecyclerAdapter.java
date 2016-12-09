@@ -1,17 +1,23 @@
 package com.quattrofolia.balansiosmart;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 
+import org.joda.time.Instant;
+import org.joda.time.Interval;
+
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecyclerAdapter.GoalViewHolder> {
 
@@ -21,6 +27,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
     private RecyclerViewClickListener clickListener;
 
     public GoalItemRecyclerAdapter(List<Goal> goals, RecyclerViewClickListener clickListener) {
+
         this.goals = goals;
         this.clickListener = clickListener;
     }
@@ -51,17 +58,16 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         }
     }
 
-
     static class GoalViewHolder extends RecyclerView.ViewHolder {
 
         // Declare required views for goal items
-        private TextView countView;
+        private CompletionRing completionRing;
         private TextView typeView;
         private HealthDataType type;
 
         GoalViewHolder(View v, final RecyclerViewClickListener listener) {
             super(v);
-            countView = (TextView) v.findViewById(R.id.goalItemCount);
+            completionRing = (CompletionRing) v.findViewById(R.id.goalItemCompletionCircle);
             typeView = (TextView) v.findViewById(R.id.goalItemType);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -71,11 +77,35 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             });
         }
 
-        void bindGoal(List<Goal> goals, int position) {
+        public void bindGoal(List<Goal> goals, int position) {
             String count = String.valueOf(position + 1);
-            countView.setText(count);
+            Goal goal = goals.get(position);
+            Discipline discipline = goal.getDiscipline();
             type = goals.get(position).getType();
             typeView.setText(type.getLongName());
+
+            if (discipline != null) {
+                Instant now = new Instant();
+                float frequency = discipline.getFrequency();
+                Interval currentPeriod = discipline.getMonitoringPeriod().quantizedInterval(now, 0);
+                RealmResults<HealthDataEntry> entries;
+                entries = Realm.getDefaultInstance()
+                        .where(HealthDataEntry.class)
+                        .greaterThan("instant", currentPeriod.getStartMillis())
+                        .lessThan("instant", currentPeriod.getEndMillis())
+                        .findAll();
+                float completion;
+                if (frequency > 0) {
+                    completion = (float) entries.size() / frequency;
+                } else {
+                    completion = 0;
+                }
+
+                /* Update completion view */
+                completionRing.setCompletion(completion);
+            } else {
+                completionRing.disable();
+            }
         }
 
     }
