@@ -7,6 +7,7 @@ import io.realm.annotations.Required;
 
 public class Goal extends RealmObject implements Incrementable {
 
+
     @PrimaryKey
     private int id;
     @Required
@@ -45,6 +46,10 @@ public class Goal extends RealmObject implements Incrementable {
 
     public String getNotificationStyle(){
         return notificationStyle;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override

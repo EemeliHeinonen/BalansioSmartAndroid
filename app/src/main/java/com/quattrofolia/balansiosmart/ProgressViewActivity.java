@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
-public class ProgressViewActivity extends Activity implements RecyclerViewClickListener {
+public class ProgressViewActivity extends Activity implements RecyclerViewClickListener, GoalItemClickListener {
 
     private static final String TAG = "ProgressViewActivity";
 
@@ -320,5 +319,10 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
         intent.putExtra("type", itemName);
         intent.putExtra("userId", BalansioSmart.currentSession(realm).getUserId());
         startActivity(intent);
+    }
+
+    @Override
+    public void onGoalItemClicked(Goal goal) {
+
     }
 }
