@@ -74,35 +74,24 @@ public class ProgressViewActivity extends Activity {
         storage = new Storage();
 
         userNameTextView = (TextView) findViewById(R.id.textView_userName);
-        goalRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_goals);
 
+        /* Goal RecyclerView */
+        goalRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_goals);
         goalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        goalItems = new ArrayList<>();
         goalRecyclerView.setLayoutManager(goalLayoutManager);
+        goalItems = new ArrayList<>();
         goalAdapter = new GoalItemRecyclerAdapter(goalItems);
         goalRecyclerView.setAdapter(goalAdapter);
-        goalRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-                Log.d(TAG, "height: "+view.getHeight());
-            }
-        });
 
-        goalRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Log.d(TAG, "onScrollStateChanged");
-            }
-        });
+        /* Button bar */
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
         notificationButton = (Button) findViewById(R.id.notification_button);
         defaultGoalsButton = (Button) findViewById(R.id.default_goals_button);
+
         createGoalButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
                 startActivity(i);
-
             }
         });
 
