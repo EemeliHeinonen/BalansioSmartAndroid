@@ -309,18 +309,4 @@ public class ProgressViewActivity extends Activity {
         sessionResults.removeChangeListener(sessionResultsListener);
         realm.close();
     }
-/*
-    @Override
-    public void recyclerViewListClicked(View v, int position, String itemName) {
-        Intent intent = new Intent(ProgressViewActivity.this, GoalDetailsActivity.class);
-        intent.putExtra("type", itemName);
-        intent.putExtra("userId", BalansioSmart.currentSession(realm).getUserId());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onGoalItemClicked(Goal goal) {
-
-    }
-*/
 }
