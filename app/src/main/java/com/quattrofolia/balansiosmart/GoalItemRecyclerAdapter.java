@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.models.Discipline;
@@ -26,13 +27,15 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
     private static final String TAG = "GoalItemRecyclerAdapter";
 
     private List<Goal> goals;
+    private Instant now;
 
     public static class GoalViewHolder extends RecyclerView.ViewHolder implements GoalItemClickListener {
 
         // Declare required views for goal items
         private View itemView;
         private CompletionRing completionRing;
-        private TextView typeView;
+        private TextView textViewType;
+        private LinearLayout layoutSchedule;
         private Context context;
 
         public GoalViewHolder(View v) {
@@ -40,7 +43,8 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             itemView = v;
             context = v.getContext();
             completionRing = (CompletionRing) v.findViewById(R.id.goalItemCompletionCircle);
-            typeView = (TextView) v.findViewById(R.id.goalItemType);
+            textViewType = (TextView) v.findViewById(R.id.textView_goalItemType);
+            layoutSchedule = (LinearLayout) v.findViewById(R.id.layout_goalItemSchedule);
         }
 
         @Override
@@ -57,10 +61,12 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
     public GoalItemRecyclerAdapter(List<Goal> goals) {
         this.goals = goals;
+        this.now = new Instant();
     }
 
     public void setItemList(List<Goal> goals) {
         this.goals = goals;
+        this.now = new Instant();
         this.notifyDataSetChanged();
     }
 
@@ -78,7 +84,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         Discipline discipline = goal.getDiscipline();
 
         if (discipline != null) {
-            Instant now = new Instant();
             float frequency = discipline.getFrequency();
             Interval currentPeriod = discipline.getMonitoringPeriod().quantizedInterval(now, 0);
             RealmResults<HealthDataEntry> entries;
@@ -100,7 +105,18 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         } else {
             holder.completionRing.disable();
         }
-        holder.typeView.setText(goals.get(position).getType().getLongName());
+        holder.textViewType.setText(goals.get(position).getType().getLongName());
+        List<Interval> intervals = goals.get(position).getDiscipline().getSchedule(now, 0);
+        for (Interval i : intervals) {
+            TextView cycle = new TextView(holder.layoutSchedule.getContext());
+            cycle.setText(i.toString());
+            cycle.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+            holder.layoutSchedule.addView(cycle);
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
