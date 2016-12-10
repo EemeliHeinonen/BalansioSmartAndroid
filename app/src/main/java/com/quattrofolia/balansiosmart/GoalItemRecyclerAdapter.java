@@ -28,6 +28,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
     private List<Goal> goals;
     private Instant now;
+    private Context parentContext;
 
     public static class GoalViewHolder extends RecyclerView.ViewHolder implements GoalItemClickListener {
 
@@ -35,7 +36,8 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         private View itemView;
         private CompletionRing completionRing;
         private TextView textViewType;
-        private LinearLayout layoutSchedule;
+        private TextView textViewDiscipline;
+        private LinearLayout scheduleView;
         private Context context;
 
         public GoalViewHolder(View v) {
@@ -44,7 +46,8 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             context = v.getContext();
             completionRing = (CompletionRing) v.findViewById(R.id.goalItemCompletionCircle);
             textViewType = (TextView) v.findViewById(R.id.textView_goalItemType);
-            layoutSchedule = (LinearLayout) v.findViewById(R.id.layout_goalItemSchedule);
+            textViewDiscipline = (TextView) v.findViewById(R.id.textView_discipline);
+            scheduleView = (LinearLayout) v.findViewById(R.id.layout_goalItemSchedule);
         }
 
         @Override
@@ -72,6 +75,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
     @Override
     public GoalItemRecyclerAdapter.GoalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        parentContext = parent.getContext();
         View inflatedView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.progress_view_goal_item_row, parent, false);
         return new GoalViewHolder(inflatedView);
@@ -102,27 +106,42 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
             /* Update completion view */
             holder.completionRing.setCompletion(completion);
+
+            String goalTypeText = goal.getType().getLongName();
+            holder.textViewType.setText(goalTypeText);
+
+            String disciplineText = "" + discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().toString();
+            holder.textViewDiscipline.setText(disciplineText);
+            TextView disciplineView = new TextView(holder.context);
+            disciplineView.setText(disciplineText);
+            disciplineView.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    RecyclerView.LayoutParams.WRAP_CONTENT));
+            holder.scheduleView.addView(disciplineView);
+
+            Log.d(TAG, "#" + position + ": id " + goal.getId() + "/ " + goalTypeText);
+            Log.d(TAG, disciplineText);
+            Log.d(TAG, "completion: " + completion);
+
+            List<Interval> intervals = goal.getDiscipline().getSchedule(now, 0);
+            for (Interval i : intervals) {
+                TextView cycle = new TextView(holder.context);
+                cycle.setText(i.toString());
+                cycle.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+                holder.scheduleView.addView(cycle);
+            }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    holder.onGoalItemClicked(goal);
+                }
+            });
         } else {
             holder.completionRing.disable();
         }
-        holder.textViewType.setText(goals.get(position).getType().getLongName());
-        List<Interval> intervals = goals.get(position).getDiscipline().getSchedule(now, 0);
-        for (Interval i : intervals) {
-            TextView cycle = new TextView(holder.layoutSchedule.getContext());
-            cycle.setText(i.toString());
-            cycle.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            ));
-            holder.layoutSchedule.addView(cycle);
-        }
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                holder.onGoalItemClicked(goal);
-            }
-        });
     }
 
     @Override

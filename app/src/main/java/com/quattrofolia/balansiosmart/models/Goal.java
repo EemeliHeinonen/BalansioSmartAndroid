@@ -37,7 +37,7 @@ public class Goal extends RealmObject implements Incrementable {
     }
 
     public Discipline getDiscipline() {
-        return discipline;
+        return this.discipline;
     }
 
     public Range getTargetRange() {
