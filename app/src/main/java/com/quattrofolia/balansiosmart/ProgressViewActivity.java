@@ -36,7 +36,7 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
-public class ProgressViewActivity extends Activity implements RecyclerViewClickListener, GoalItemClickListener {
+public class ProgressViewActivity extends Activity {
 
     private static final String TAG = "ProgressViewActivity";
 
@@ -52,7 +52,7 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
     private List<Goal> goalItems;
     private RecyclerView goalRecyclerView;
     private GoalItemRecyclerAdapter goalAdapter;
-    private RecyclerView.LayoutManager goalLayoutManager;
+    private LinearLayoutManager goalLayoutManager;
     private TextView userNameTextView;
 
     // Storage
@@ -75,15 +75,11 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
 
         userNameTextView = (TextView) findViewById(R.id.textView_userName);
         goalRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_goals);
-        goalLayoutManager = new LinearLayoutManager(this) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
+
+        goalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         goalItems = new ArrayList<>();
         goalRecyclerView.setLayoutManager(goalLayoutManager);
-        goalAdapter = new GoalItemRecyclerAdapter(goalItems, this);
+        goalAdapter = new GoalItemRecyclerAdapter(goalItems);
         goalRecyclerView.setAdapter(goalAdapter);
         goalRecyclerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -92,6 +88,13 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
             }
         });
 
+        goalRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.d(TAG, "onScrollStateChanged");
+            }
+        });
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
         notificationButton = (Button) findViewById(R.id.notification_button);
         defaultGoalsButton = (Button) findViewById(R.id.default_goals_button);
@@ -317,7 +320,7 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
         sessionResults.removeChangeListener(sessionResultsListener);
         realm.close();
     }
-
+/*
     @Override
     public void recyclerViewListClicked(View v, int position, String itemName) {
         Intent intent = new Intent(ProgressViewActivity.this, GoalDetailsActivity.class);
@@ -330,4 +333,5 @@ public class ProgressViewActivity extends Activity implements RecyclerViewClickL
     public void onGoalItemClicked(Goal goal) {
 
     }
+*/
 }

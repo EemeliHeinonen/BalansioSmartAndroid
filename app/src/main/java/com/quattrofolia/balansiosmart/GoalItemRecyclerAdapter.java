@@ -46,7 +46,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         }
     }
 
-    public GoalItemRecyclerAdapter(List<Goal> goals, GoalItemClickListener listener) {
+    public GoalItemRecyclerAdapter(List<Goal> goals) {
         this.goals = goals;
     }
 
@@ -92,14 +92,16 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.completionRing.disable();
         }
         holder.typeView.setText(goals.get(position).getType().getLongName());
+/*
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 holder.onGoalItemClicked(goal);
             }
         });
-    }
+*/
 
+    }
     @Override
     public int getItemCount() {
         if (goals != null) {
