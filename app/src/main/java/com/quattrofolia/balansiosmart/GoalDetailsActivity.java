@@ -21,6 +21,7 @@ import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.Range;
+import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
@@ -35,8 +36,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
     private Realm realm;
     private GoalTypeAdapter goalTypeAdapter;
+    private User user;
     GoalDetailsRecyclerViewAdapter adapter;
-    RealmResults<HealthDataEntry> list;
+    RealmResults<HealthDataEntry> healthDataEntries;
 
     private RealmChangeListener realmChangeListener;
 
@@ -48,25 +50,36 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        // Get the health data type
-        String typeName = intent.getStringExtra("type");
-
-        // Get the User
-        int userId = intent.getIntExtra("userId", -1);
-        User user = realm.where(User.class).equalTo("id", userId).findFirst();
+        /*Verify Session and instantiate User. */
+        Session session = BalansioSmart.currentSession(realm);
+        Integer userId = session.getUserId();
+        if (userId == null) {
+            finish();
+        }
+        user = realm.where(User.class)
+                .equalTo("id", userId.intValue())
+                .findFirst();
         Log.i("User", user.getFirstName() + " " + user.getLastName());
 
-        // Get the goal
-        Goal goal = user.getGoals().where().equalTo("type", typeName).findFirst();
+
+        /*Get Goal object by the id given by adapter.
+        * If the id is invalid, close the activity. */
+        int goalId = intent.getIntExtra("GOAL_ID", -1);
+        if (goalId == -1) {
+            finish();
+        }
+        Goal goal = realm.where(Goal.class)
+                .equalTo("id", goalId)
+                .findFirst();
+
         Log.i("Goal",
-                goal.getType().getLongName() +
-                ", discipline: " + goal.getDiscipline().getFrequency() +
-                ", range: " + goal.getTargetRange().getLow() + "-" + goal.getTargetRange().getHigh() +
-                ", notificationStyle: " + goal.getNotificationStyle()
-        );
+                goal.getType().getLongName());
 
         // Get entries
-        list = user.getEntries().where().equalTo("type", typeName).findAll();
+        healthDataEntries = user.getEntries()
+                .where()
+                .equalTo("type", goal.getType().name())
+                .findAll();
 
         setContentView(R.layout.activity_goal_details);
 
@@ -77,7 +90,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         goalName.setText(goal.getType().getLongName());
 
         // Show disciplines reading
-        TextView disciplinesReadings = (TextView)findViewById(R.id.disciplinesReading);
+        TextView disciplinesReadings = (TextView) findViewById(R.id.disciplinesReading);
         Discipline discipline = goal.getDiscipline();
         disciplinesReadings.setText(discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().name());
 
@@ -91,7 +104,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         notificationFrequency.setText(goal.getNotificationStyle());
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_list_view);
-        adapter = new GoalDetailsRecyclerViewAdapter(list);
+        adapter = new GoalDetailsRecyclerViewAdapter(healthDataEntries);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -105,9 +118,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 final Button editGoal = (Button) content.findViewById(R.id.editGoal);
                 final Button deleteGoal = (Button) content.findViewById(R.id.deleteGoal);
 
-                editGoal.setOnClickListener(new View.OnClickListener(){
+                editGoal.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View view){
+                    public void onClick(View view) {
                         Intent goalComposerActivity = new Intent(self, GoalComposerActivity.class);
                         startActivity(goalComposerActivity);
                     }

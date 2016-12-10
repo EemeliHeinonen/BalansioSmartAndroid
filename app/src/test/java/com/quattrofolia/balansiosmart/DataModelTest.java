@@ -190,7 +190,7 @@ public class DataModelTest {
                 0);
     }
 
-    // Returns a list containing provided amount of random times on provided date
+    // Returns a healthDataEntries containing provided amount of random times on provided date
     private List<DateTime> randomTimesInDay(int amount, DateTime byDate) {
         List<DateTime> randomTimes = new ArrayList<>();
         for (int i = 0; i < amount; amount--) {
@@ -199,7 +199,7 @@ public class DataModelTest {
         return randomTimes;
     }
 
-    // Returns a list containing provided amount of random times on the month of provided date
+    // Returns a healthDataEntries containing provided amount of random times on the month of provided date
     private List<DateTime> randomTimesInMonth(int amount, DateTime byDate) {
         List<DateTime> randomTimes = new ArrayList<>();
         for (int i = 0; i < amount; amount--) {
@@ -221,7 +221,7 @@ public class DataModelTest {
         return new BigDecimal(n.toString()).movePointLeft(1);
     }
 
-    // Prints each entry in the provided list to console in format:
+    // Prints each entry in the provided healthDataEntries to console in format:
     // <DateTime>: <HealthDataType>, <Value>
     private void printEntries(List<HealthDataEntry> entries) {
         if (entries.isEmpty()) {

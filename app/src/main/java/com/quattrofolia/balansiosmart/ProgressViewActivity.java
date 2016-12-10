@@ -124,7 +124,7 @@ public class ProgressViewActivity extends Activity {
 
             /* Session/User database match.
             * Set incrementable primary key for goal.
-            * Save goal and add it to user's list of goals. */
+            * Save goal and add it to user's healthDataEntries of goals. */
 
                     realm.executeTransactionAsync(new Realm.Transaction() {
                         @Override

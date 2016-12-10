@@ -1,5 +1,7 @@
 package com.quattrofolia.balansiosmart;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,10 +33,12 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         private View itemView;
         private CompletionRing completionRing;
         private TextView typeView;
+        private Context context;
 
         public GoalViewHolder(View v) {
             super(v);
-            itemView = v.findViewById(R.id.goal_item);
+            itemView = v;
+            context = v.getContext();
             completionRing = (CompletionRing) v.findViewById(R.id.goalItemCompletionCircle);
             typeView = (TextView) v.findViewById(R.id.goalItemType);
         }
@@ -43,6 +47,11 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         public void onGoalItemClicked(Goal goal) {
             Log.d(TAG, "onGoalItemClicked: " + goal.getId() + ", type: " + goal.getType().name());
             /* TODO: launch detail activity here */
+
+            Intent intent = new Intent(itemView.getContext(), GoalDetailsActivity.class);
+            intent.putExtra("GOAL_ID", goal.getId());
+            //intent.putExtra("userId", BalansioSmart.currentSession(realm).getUserId());
+            context.startActivity(intent);
         }
     }
 

@@ -77,7 +77,7 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
 //        storage.executeTransaction(new Realm.Transaction() {
 //            @Override
 //            public void execute(Realm realm) {
-//                list.deleteAllFromRealm();
+//                healthDataEntries.deleteAllFromRealm();
 //            }
 //        });
     }
