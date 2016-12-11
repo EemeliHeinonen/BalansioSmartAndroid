@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.quattrofolia.balansiosmart.R;
-import com.quattrofolia.balansiosmart.RecyclerViewClickListener;
 
 import static android.content.ContentValues.TAG;
 

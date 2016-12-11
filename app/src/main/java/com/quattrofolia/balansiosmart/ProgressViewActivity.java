@@ -15,6 +15,7 @@ import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
 import com.quattrofolia.balansiosmart.dialogs.SelectUserDialogFragment;
 import com.quattrofolia.balansiosmart.dialogs.UserCreatedDialogFragment;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
+import com.quattrofolia.balansiosmart.goalList.GoalItemRecyclerAdapter;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;

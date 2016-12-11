@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalList;
 
 import com.quattrofolia.balansiosmart.models.Goal;
 
