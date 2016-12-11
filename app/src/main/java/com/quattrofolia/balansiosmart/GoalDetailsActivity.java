@@ -68,7 +68,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         if (goalId == -1) {
             finish();
         }
-        Goal goal = realm.where(Goal.class)
+        final Goal goal = realm.where(Goal.class)
                 .equalTo("id", goalId)
                 .findFirst();
 
@@ -119,6 +119,11 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 View content = inflater.inflate(R.layout.activity_goal_details_edit, null);
                 final Button editGoal = (Button) content.findViewById(R.id.editGoal);
                 final Button deleteGoal = (Button) content.findViewById(R.id.deleteGoal);
+                AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
+                builder.setView(content)
+                        .setTitle("Edit");
+                final AlertDialog dialog = builder.create();
+                dialog.show();
 
                 editGoal.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -131,16 +136,20 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 deleteGoal.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        adapter.deleteGoal();
-                        Toast.makeText(self, "Goal deleted", LENGTH_LONG).show();
+                        dialog.dismiss();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                healthDataEntries.deleteAllFromRealm();
+                                goal.deleteFromRealm();
+                                Toast.makeText(self, "Goal deleted", LENGTH_LONG).show();
+                                self.finish();
+                            }
+                        });
+
                     }
                 });
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
-                builder.setView(content)
-                        .setTitle("Edit");
-                AlertDialog dialog = builder.create();
-                dialog.show();
             }
 
         });
