@@ -17,6 +17,7 @@
     <color name="bs_neutral">#43BBE8</color>
     <color name="bs_ok">#3FC26D</color>
     <color name="bs_content">#828282</color>
+    <color name="bs_contentDark">#5A5A5A</color>
     <color name="bs_background">#FAFAFA</color>
     <color name="bs_blank">#EAEAEA</color>
 

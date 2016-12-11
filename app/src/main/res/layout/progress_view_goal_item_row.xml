@@ -1,64 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/goal_item"
+    android:id="@+id/layout_goalItemList"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:paddingLeft="@dimen/goalItem_padding"
+    android:paddingRight="@dimen/goalItem_padding"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/layout_goalItemContent"
+        android:layout_margin="@dimen/goalItem_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <com.quattrofolia.balansiosmart.CompletionRing
-        android:id="@+id/goalItemCompletionCircle"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_width="100px"
-        android:layout_height="100px" />
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/textView_accomplishments"
-                android:text="Accomplishments"
-                android:textAlignment="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <com.quattrofolia.balansiosmart.CompletionRing
+                android:id="@+id/goalItem_completionCircle"
+                android:layout_width="130px"
+                android:layout_height="130px"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
 
-            <View
-                android:layout_width="25dp"
-                android:layout_height="1dp"
-                android:background="@color/bs_content" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView_disciplineFrequency"
-                android:text="Frequency"
-                android:textAlignment="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/textView_accomplishments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Accomplishments"
+                    android:textAlignment="center" />
 
-        </LinearLayout>
-    </RelativeLayout>
+                <View
+                    android:layout_width="25dp"
+                    android:layout_height="1dp"
+                    style="@style/AppTheme"
+                    android:background="@color/bs_content"
+                    />
 
-    <TextView
-        android:id="@+id/textView_goalItemType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/textView_disciplineFrequency"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Frequency"
+                    android:textAlignment="center" />
 
-    <TextView
-        android:id="@+id/textView_discipline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+            </LinearLayout>
+        </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/layout_goalItemSchedule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        <TextView
+            android:id="@+id/textView_goalItemType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView_discipline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:id="@+id/layout_goalItemSchedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/goalItem_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bs_content"/>
 
 </LinearLayout>
