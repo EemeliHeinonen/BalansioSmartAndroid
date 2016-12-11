@@ -71,4 +71,12 @@ public class Discipline extends RealmObject implements Incrementable {
     public void setPrimaryKey(int id) {
         this.id = id;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.setPrimaryKey(id);
+    }
 }

@@ -119,9 +119,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
                     RecyclerView.LayoutParams.WRAP_CONTENT));
             holder.scheduleView.addView(disciplineView);
 
-            Log.d(TAG, "#" + position + ": id " + goal.getId() + "/ " + goalTypeText);
-            Log.d(TAG, disciplineText);
-            Log.d(TAG, "completion: " + completion);
+
 
             List<Interval> intervals = goal.getDiscipline().getSchedule(now, 0);
             for (Interval i : intervals) {

@@ -2,6 +2,7 @@ package com.quattrofolia.balansiosmart.goalComposer;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
@@ -18,7 +19,7 @@ import io.realm.RealmResults;
 
 public class GoalComposerActivity extends FragmentActivity {
 
-    public static final String TAG = "FragmentActivity";
+    public static final String TAG = "GoalComposerActivity";
     private Realm realm;
     private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
     private RealmResults<Session> sessionResults;
@@ -59,15 +60,35 @@ public class GoalComposerActivity extends FragmentActivity {
             displayAuthErrorDialog();
             return;
         }
+
+        // DEBUG:
+        Integer uid = session.getUserId();
+        User u = realm.where(User.class).equalTo("id", uid).findFirst();
+        Log.d(TAG, "USER #" + u.getId() + ": " + u.getFirstName() + " " + u.getLastName());
+        for (Goal g : u.getGoals()) {
+            Log.d(TAG, "GOAL #" + g.getId() + ": " + g.getType().getLongName());
+            Log.d(TAG, "DISCIPLINE #" + g.getDiscipline().getId() + ": " + g.getDiscipline().getFrequency() + " times a " + g.getDiscipline().getMonitoringPeriod().toString());
+        }
+        Log.d(TAG, "COMPOSED GOAL:  " + goal.getType().getLongName());
+        Log.d(TAG, "DISCIPLINE #" + goal.getDiscipline().getId() + ": " + goal.getDiscipline().getFrequency() + " times a " + goal.getDiscipline().getMonitoringPeriod().toString());
+
+
         final int id = session.getUserId().intValue();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 Incrementable incrementableGoal = goal;
                 incrementableGoal.setPrimaryKey(incrementableGoal.getNextPrimaryKey(realm));
+                Incrementable incrementableDiscipline = goal.getDiscipline();
+                incrementableDiscipline.setPrimaryKey(incrementableDiscipline.getNextPrimaryKey(realm));
                 realm.copyToRealmOrUpdate((RealmObject) incrementableGoal);
                 User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
                 managedUser.getGoals().add((Goal) incrementableGoal);
+                Log.d(TAG, "MANAGED USER #" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
+                for (Goal g : managedUser.getGoals()) {
+                    Log.d(TAG, "MANAGED GOAL #" + g.getId() + ": " + g.getType().getLongName());
+                    Log.d(TAG, "MANAGED DISCIPLINE #" + g.getDiscipline().getId() + ": " + g.getDiscipline().getFrequency() + " times a " + g.getDiscipline().getMonitoringPeriod().toString());
+                }
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override

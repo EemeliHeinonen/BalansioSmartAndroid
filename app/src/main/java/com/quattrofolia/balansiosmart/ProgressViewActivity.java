@@ -40,6 +40,9 @@ public class ProgressViewActivity extends Activity {
 
     private static final String TAG = "ProgressViewActivity";
 
+    // DEBUG
+    private RealmChangeListener<Realm> realmChangeListener;
+
     // View
     private CardStack cardStack;
     private CardsDataAdapter cardAdapter;
@@ -69,6 +72,23 @@ public class ProgressViewActivity extends Activity {
         setContentView(R.layout.activity_progress_view);
 
         realm = Realm.getDefaultInstance();
+        realmChangeListener = new RealmChangeListener<Realm>() {
+            @Override
+            public void onChange(Realm element) {
+                Session s = BalansioSmart.currentSession(element);
+                Integer uid = s.getUserId();
+                if (uid == null) {
+                    return;
+                }
+                User u = element.where(User.class).equalTo("id", uid).findFirst();
+                Log.d(TAG, "USER #" + u.getId() + ": " + u.getFirstName() + " " + u.getLastName());
+                for (Goal g : u.getGoals()) {
+                    Log.d(TAG, "" + g.getId() + "/ " + g.getType().getLongName());
+                    Log.d(TAG, "" + g.getDiscipline().getFrequency() + " times a " + g.getDiscipline().getMonitoringPeriod().toString());
+                }
+            }
+        };
+        realm.addChangeListener(realmChangeListener);
 
         // Use storage.save() for saving autoincrementable objects
         storage = new Storage();
