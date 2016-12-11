@@ -83,8 +83,8 @@ public class ProgressViewActivity extends Activity {
                 User u = element.where(User.class).equalTo("id", uid).findFirst();
                 Log.d(TAG, "USER #" + u.getId() + ": " + u.getFirstName() + " " + u.getLastName());
                 for (Goal g : u.getGoals()) {
-                    Log.d(TAG, "" + g.getId() + "/ " + g.getType().getLongName());
-                    Log.d(TAG, "" + g.getDiscipline().getFrequency() + " times a " + g.getDiscipline().getMonitoringPeriod().toString());
+                    Log.d(TAG, "GOAL: " + g.getId() + "/ " + g.getType().getLongName());
+                    Log.d(TAG, "DISCIPLINE: " + g.getDiscipline().getFrequency() + " times a " + g.getDiscipline().getMonitoringPeriod().toString());
                 }
             }
         };
