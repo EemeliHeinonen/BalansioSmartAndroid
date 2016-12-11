@@ -9,6 +9,17 @@
     <color name="testGreen">#66bb6a</color>
     <color name="testYellow">#fdd835</color>
     <color name="testBlue">#1e88e5</color>
+
+    <!-- Primary colors based (mostly) on Phan's mock-ups -->
+    <color name="bs_primary">#3BD0C3</color>
+    <color name="bs_emphasis">#347FC4</color>
+    <color name="bs_alert">#F35C52</color>
+    <color name="bs_neutral">#43BBE8</color>
+    <color name="bs_ok">#3FC26D</color>
+    <color name="bs_content">#828282</color>
+    <color name="bs_background">#FAFAFA</color>
+    <color name="bs_blank">#EAEAEA</color>
+
     <!-- Screens background color-->
     <color name="bg_screen1">#cccccc</color>
     <color name="bg_screen2">#cccccc</color>
