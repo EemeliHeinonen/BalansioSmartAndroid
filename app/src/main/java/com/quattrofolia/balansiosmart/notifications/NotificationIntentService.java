@@ -105,7 +105,7 @@ public class NotificationIntentService extends IntentService {
         User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
 
         //Entry check testing
-        HealthDataEntry lastEntry = managedUser.getEntries().last();
+        HealthDataEntry lastEntry = managedUser.getEntries().last(null);
         Instant now = new Instant();
         Log.d(TAG, "processStartNotification: present time: " + now);
         if (lastEntry != null) {
