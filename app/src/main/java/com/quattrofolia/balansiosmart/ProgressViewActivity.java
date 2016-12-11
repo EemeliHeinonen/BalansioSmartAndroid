@@ -326,7 +326,8 @@ public class ProgressViewActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sessionResults.removeChangeListener(sessionResultsListener);
+        sessionResults.removeChangeListeners();
+        realm.removeAllChangeListeners();
         realm.close();
     }
 }
