@@ -97,7 +97,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Show target range
         TextView targetRange = (TextView) findViewById(R.id.targetRange);
         Range range = goal.getTargetRange();
-        targetRange.setText(range.getLow() + " - " + range.getHigh());
+        if (range != null) {
+            targetRange.setText(range.getLow() + " - " + range.getHigh());
+        }
 
         // Show notification frequency
         TextView notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
