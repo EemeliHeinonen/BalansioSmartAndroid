@@ -4,7 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- Goal item list margins -->
-    <dimen name="goalItem_padding">16dp</dimen>
+    <dimen name="goalItemList_padding">16dp</dimen>
+    <dimen name="goalItemContent_padding">8dp</dimen>
 
 
     <dimen name="fab_margin">16dp</dimen>

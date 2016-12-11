@@ -12,7 +12,7 @@ import org.joda.time.Interval;
 * Interval object.  */
 
 public enum MonitoringPeriod {
-    day ("day") {
+    day ("day", "daily") {
         @Override
         public Interval quantizedInterval(Instant pointer, int transposition) {
             if (pointer == null) {
@@ -24,7 +24,7 @@ public enum MonitoringPeriod {
             return new Interval(dateStarting, dateEnding);
         }
     },
-    week ("week") {
+    week ("week", "weekly") {
         @Override
         public Interval quantizedInterval(Instant pointer, int transposition) {
             if (pointer == null) {
@@ -38,7 +38,7 @@ public enum MonitoringPeriod {
             return new Interval(dateStarting, dateEnding);
         }
     },
-    month ("month") {
+    month ("month", "monthly") {
         @Override
         public Interval quantizedInterval(Instant pointer, int transposition) {
             if (pointer == null) {
@@ -52,7 +52,7 @@ public enum MonitoringPeriod {
             return new Interval(dateStarting, dateEnding);
         }
     },
-    year ("year") {
+    year ("year", "yearly") {
         @Override
         public Interval quantizedInterval(Instant pointer, int transposition) {
             if (pointer == null) {
@@ -68,11 +68,18 @@ public enum MonitoringPeriod {
     };
 
     private final String name;
-    MonitoringPeriod(String name) {
+    private final String descriptiveName;
+    MonitoringPeriod(String name, String descriptiveName) {
         this.name = name;
+        this.descriptiveName = descriptiveName;
     }
+
     public String toString() {
         return this.name;
+    }
+
+    public String getDescriptiveName() {
+        return this.descriptiveName;
     }
 
     public abstract Interval quantizedInterval(Instant pointer, int transposition);

@@ -35,6 +35,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         private CompletionRing completionRing;
         private TextView textViewAccomplishments;
         private TextView textViewFrequency;
+        private TextView textViewPeriod;
         private TextView textViewType;
         private Context context;
 
@@ -45,6 +46,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             completionRing = (CompletionRing) v.findViewById(R.id.goalItem_completionCircle);
             textViewAccomplishments = (TextView) v.findViewById(R.id.textView_accomplishments);
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
+            textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
             textViewType = (TextView) v.findViewById(R.id.textView_goalItemType);
         }
 
@@ -104,9 +106,10 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.completionRing.setCompletion(completion);
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
-
+            holder.textViewPeriod.setText(discipline.getMonitoringPeriod().getDescriptiveName());
             String goalTypeText = goal.getType().getLongName();
             holder.textViewType.setText(goalTypeText);
+
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

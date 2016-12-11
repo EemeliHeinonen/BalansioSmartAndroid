@@ -10,6 +10,19 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    
+    <style name="Caption">
+        <item name="android:textColor">@color/bs_content</item>
+        <item name="android:paddingLeft">@dimen/goalItemContent_padding</item>
+        <item name="android:paddingRight">@dimen/goalItemContent_padding</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Caption.Small">
+        <item name="android:textSize">10sp</item>
+    </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
