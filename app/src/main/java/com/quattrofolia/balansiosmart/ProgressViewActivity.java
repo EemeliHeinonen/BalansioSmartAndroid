@@ -295,6 +295,24 @@ public class ProgressViewActivity extends Activity {
         sessionResults.addChangeListener(sessionResultsListener);
     }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        goalItems.clear();
+
+        Session currentSession = sessionResults.last(null);
+        if (currentSession == null || currentSession.getUserId() == null) {
+            return;
+        }
+
+        User user = realm.where(User.class).equalTo("id", currentSession.getUserId()).findFirst();
+        goalItems.addAll(user.getGoals());
+        goalAdapter.setItemList(goalItems);
+    }
+
+
     private void setInterfaceAccessibility(boolean authorized) {
         createGoalButton.setEnabled(authorized);
         logoutButton.setEnabled(authorized);

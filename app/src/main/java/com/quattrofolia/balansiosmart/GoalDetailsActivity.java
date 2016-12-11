@@ -26,6 +26,7 @@ import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 import static android.widget.Toast.*;
@@ -140,7 +141,12 @@ public class GoalDetailsActivity extends AppCompatActivity {
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
+                                RealmList<HealthDataEntry> userEntries = user.getEntries();
+                                userEntries.removeAll(healthDataEntries);
                                 healthDataEntries.deleteAllFromRealm();
+
+                                RealmList<Goal> userGoals = user.getGoals();
+                                userGoals.remove(goal);
                                 goal.deleteFromRealm();
                                 Toast.makeText(self, "Goal deleted", LENGTH_LONG).show();
                                 self.finish();
