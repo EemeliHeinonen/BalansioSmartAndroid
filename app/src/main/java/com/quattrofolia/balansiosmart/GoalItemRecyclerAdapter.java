@@ -106,9 +106,8 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.completionRing.setCompletion(completion);
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
-            holder.textViewPeriod.setText(discipline.getMonitoringPeriod().getDescriptiveName());
-            String goalTypeText = goal.getType().getLongName();
-            holder.textViewType.setText(goalTypeText);
+            holder.textViewPeriod.setText(discipline.getMonitoringPeriod().getDescriptiveName() + " measurements");
+            holder.textViewType.setText(goal.getType().getLongName());
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
