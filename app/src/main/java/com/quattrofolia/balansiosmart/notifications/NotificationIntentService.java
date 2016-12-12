@@ -163,34 +163,13 @@ public class NotificationIntentService extends IntentService {
         storage = new Storage();
         twoHours = Duration.standardHours(2);
 
-        User managedUser = realm.where(User.class).equalTo("id", id).findFirst();
-
-
         initGoals();
         initEntries();
         initNotificationEntries();
         easyDisciplineCheck();
         easyClinicalCheck();
 
-        Log.d(TAG, "processStartNotification: WeekOfWeekYear test: " + now.toDateTime().weekOfWeekyear().getAsText());
-        Log.d(TAG, "processStartNotification: allGoals size: " + allGoals.size());
-        Log.d(TAG, "processStartNotification: last goal's type" + allGoals.get(allGoals.size() - 1).getType().getLongName());
-        //Log.d(TAG, "processStartNotification: weightGoal TEST: "+weightGoal.getType().getLongName());
-        //Log.d(TAG, "processStartNotification: bgGoal TEST: "+bgGoal.getType().getLongName());
 
-        ///////Entry check testing
-        //Instant lastEntryTime = managedUser.entries.get(managedUser.entries.size() - 1).getInstant();
-        //isThisWeek(lastEntryTime.toDateTime());
-        //Log.d(TAG, "processStartNotification: isToday: " + isToday(lastEntryTime.toDateTime()));
-        //Log.d(TAG, "processStartNotification: Last Entry time: " + lastEntryTime);
-        //Log.d(TAG, "processStartNotification: difference in time(minutesBetween): " + Minutes.minutesBetween(lastEntryTime, now));
-
-
-        /*if (managedUser.entries.size() > 5) {
-            sendNotification("Scheduled Notification", "This notification has been triggered by Notification Service");
-        } else {
-            sendNotification("Scheduled Notification", "there's less than 5 entries");
-        }*/
     }
 
     private void sendNotification(String title, String text, HealthDataType goalType) {
@@ -264,6 +243,7 @@ public class NotificationIntentService extends IntentService {
         easyDisciplineNotificationEntries = realm.where(NotificationEntry.class).equalTo("value", "easyDiscipline").findAll();
 
     }
+
 
     private void easyDisciplineCheck() {
         // TODO: check that goals monitoringperiod is day

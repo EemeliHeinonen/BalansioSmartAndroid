@@ -20,11 +20,6 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal" />
 
-        <Button
-            android:id="@+id/button_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Logout" />
 
     </LinearLayout>
 
@@ -48,23 +43,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/button_text_create_goal" />
 
-            <Button
-                android:id="@+id/button_createUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/button_text_create_user" />
-
-            <Button
-                android:id="@+id/button_selectUser"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Login" />
-
-            <Button
-                android:id="@+id/notification_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Start notifications" />
 
             <Button
                 android:id="@+id/default_goals_button"
