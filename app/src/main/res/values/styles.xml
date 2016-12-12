@@ -12,8 +12,9 @@
     </style>
 
     <!-- BS button styles -->
+
     <style name="BSButton">
-        <item name="android:background">@drawable/button_shape</item>
+        <item name="android:background">@drawable/button_background</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_margin">3dp</item>
@@ -23,7 +24,7 @@
     </style>
 
     <style name="BSButton.Alert">
-        <item name="background">@color/bs_alert</item>
+        <item name="android:background">@drawable/alert_button_background</item>
     </style>
 
     <!-- BS text styles -->

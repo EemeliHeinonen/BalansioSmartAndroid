@@ -12,8 +12,10 @@
 
     <!-- Primary colors based (mostly) on Phan's mock-ups -->
     <color name="bs_primary">#3BD0C3</color>
-    <color name="bs_emphasis">#347FC4</color>
+    <color name="bs_primaryPressed">#32B2A7</color>
     <color name="bs_alert">#F35C52</color>
+    <color name="bs_alertPressed">#D04F46</color>
+    <color name="bs_emphasis">#347FC4</color>
     <color name="bs_neutral">#43BBE8</color>
     <color name="bs_ok">#3FC26D</color>
     <color name="bs_content">#828282</color>

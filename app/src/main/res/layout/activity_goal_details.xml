@@ -22,8 +22,7 @@
         android:layout_alignEnd="@+id/notificationFrequency" />
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/BSButton.Alert"
         app:srcCompat="@android:drawable/ic_menu_edit"
         android:layout_alignParentEnd="true"
         android:id="@+id/deleteButton" />

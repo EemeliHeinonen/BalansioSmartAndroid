@@ -25,14 +25,12 @@
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal">
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/BSButton"
             android:id="@+id/button1"
             android:layout_gravity="bottom"
             android:hint="button"/>
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/BSButton.Alert"
             android:id="@+id/button2"
             android:layout_gravity="bottom"
             android:hint="button" />
