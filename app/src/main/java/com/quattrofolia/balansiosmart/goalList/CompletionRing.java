@@ -17,9 +17,6 @@ public class CompletionRing extends View {
 
     private static final String TAG = "CompletionRing";
     private Paint paint;
-    private float width;
-    private float strokeWidth;
-    private float radius;
     private float completion;
     private boolean enabled;
 
@@ -27,9 +24,6 @@ public class CompletionRing extends View {
         super(context, attrs);
         paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setStyle(STROKE);
-        strokeWidth = 6;
-        paint.setStrokeWidth(strokeWidth);
         completion = 0;
         enabled = true;
     }
@@ -37,18 +31,21 @@ public class CompletionRing extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        width = getWidth();
-        radius = width / 2 - strokeWidth / 2;
-        float centerX = radius + (strokeWidth / 2);
-        float centerY = radius + (strokeWidth / 2);
 
         if (enabled) {
+
+            float width = getWidth();
+            float strokeWidth = 6;
+            paint.setStrokeWidth(strokeWidth);
+            paint.setStyle(STROKE);
+            float radius = width / 2 - strokeWidth / 2;
+            float center = radius + (strokeWidth / 2);
 
             if (completion >= 1) {
 
                 // Discipline complete, draw a full green circle.
                 paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_ok));
-                canvas.drawCircle(centerX, centerY, radius, paint);
+                canvas.drawCircle(center, center, radius, paint);
 
             } else {
 
@@ -57,14 +54,12 @@ public class CompletionRing extends View {
                 * to discipline frequency. */
 
                 paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_blank));
-                canvas.drawCircle(centerX, centerY, radius, paint);
+                canvas.drawCircle(center, center, radius, paint);
 
-                float arcRectStartingX = centerX - radius;
-                float arcRectStartingY = centerY - radius;
-                float arcRectEndingX = centerX + radius;
-                float arcRectEndingY = centerY + radius;
+                float arcRectStarting = center - radius;
+                float arcRectEnding = center + radius;
                 final RectF oval = new RectF();
-                oval.set(arcRectStartingX, arcRectStartingY, arcRectEndingX, arcRectEndingY);
+                oval.set(arcRectStarting, arcRectStarting, arcRectEnding, arcRectEnding);
 
                 float startAngle = 270;
                 float sweepAngle = completion * 360;
