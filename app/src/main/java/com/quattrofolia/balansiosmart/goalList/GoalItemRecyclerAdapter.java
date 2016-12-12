@@ -45,7 +45,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             super(v);
             itemView = v;
             context = v.getContext();
-            completionRing = (CompletionRing) v.findViewById(R.id.goalItem_completionCircle);
+            completionRing = (CompletionRing) v.findViewById(R.id.goalItem_completionRing);
             textViewAccomplishments = (TextView) v.findViewById(R.id.textView_accomplishments);
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
             textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
