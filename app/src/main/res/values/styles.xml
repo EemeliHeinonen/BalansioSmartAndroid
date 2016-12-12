@@ -10,8 +10,22 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    
-    <style name="Caption">
+
+    <!-- BS button styles -->
+    <style name="BSButton">
+        <item name="android:background">@color/bs_primary</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="BSButton.Alert">
+        <item name="background">@color/bs_alert</item>
+    </style>
+
+    <!-- BS text styles -->
+
+    <style name="BSCaption">
         <item name="android:textColor">@color/bs_content</item>
         <item name="android:padding">@dimen/goalItemContent_padding</item>
         <item name="android:layout_width">wrap_content</item>
@@ -20,7 +34,7 @@
         <item name="android:textSize">15sp</item>
     </style>
 
-    <style name="Caption.Small">
+    <style name="BSCaption.Small">
         <item name="android:textSize">10sp</item>
     </style>
 

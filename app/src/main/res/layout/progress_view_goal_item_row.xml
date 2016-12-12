@@ -22,7 +22,7 @@
 
             <TextView
                 android:id="@+id/textView_period"
-                style="@style/Caption.Small" />
+                style="@style/BSCaption.Small" />
 
             <RelativeLayout
                 android:id="@+id/goalItem_completionCircleView"
@@ -76,7 +76,7 @@
 
             <TextView
                 android:id="@+id/textView_goalItemType"
-                style="@style/Caption" />
+                style="@style/BSCaption" />
 
             <LinearLayout
                 android:id="@+id/layout_goalItemSchedule"
