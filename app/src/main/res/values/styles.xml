@@ -13,10 +13,13 @@
 
     <!-- BS button styles -->
     <style name="BSButton">
-        <item name="android:background">@color/bs_primary</item>
+        <item name="android:background">@drawable/button_shape</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:padding">10dp</item>
         <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/bs_contentLight</item>
     </style>
 
     <style name="BSButton.Alert">

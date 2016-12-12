@@ -39,15 +39,13 @@
 
             <Button
                 android:id="@+id/button_createGoal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/BSButton"
                 android:text="@string/button_text_create_goal" />
 
 
             <Button
                 android:id="@+id/default_goals_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/BSButton"
                 android:text="Create default goals" />
         </LinearLayout>
 
