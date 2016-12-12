@@ -33,16 +33,12 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
 public class ProgressViewActivity extends Activity {
 
     private static final String TAG = "ProgressViewActivity";
-
-    // DEBUG
-    private RealmChangeListener<Realm> realmChangeListener;
 
     // View
     private CardStack cardStack;
@@ -73,25 +69,6 @@ public class ProgressViewActivity extends Activity {
         setContentView(R.layout.activity_progress_view);
 
         realm = Realm.getDefaultInstance();
-
-        // DEBUG
-        realmChangeListener = new RealmChangeListener<Realm>() {
-            @Override
-            public void onChange(Realm element) {
-                Session s = BalansioSmart.currentSession(element);
-                Integer uid = s.getUserId();
-                if (uid == null) {
-                    return;
-                }
-                User u = element.where(User.class).equalTo("id", uid).findFirst();
-                Log.d(TAG, "USER #" + u.getId() + ": " + u.getFirstName() + " " + u.getLastName());
-                for (Goal g : u.getGoals()) {
-                    Log.d(TAG, "GOAL: " + g.getId() + "/ " + g.getType().getLongName());
-                    Log.d(TAG, "DISCIPLINE: " + g.getDiscipline().getFrequency() + " times a " + g.getDiscipline().getMonitoringPeriod().toString());
-                }
-            }
-        };
-        // realm.addChangeListener(realmChangeListener);
 
         // Use storage.save() for saving autoincrementable objects
         storage = new Storage();
@@ -127,61 +104,22 @@ public class ProgressViewActivity extends Activity {
 
         defaultGoalsButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                //Create default goals and entries here
-                final Session session = BalansioSmart.currentSession(realm);
+
                 final HealthDataEntry firstEntry = new HealthDataEntry();
+                final int userId = user.getId();
                 firstEntry.setType(HealthDataType.WEIGHT);
                 firstEntry.setValue(new BigDecimal("4.5"));
                 firstEntry.setInstant(new Instant());
 
-                if (session != null) {
-
-                    final int id = session.getUserId().intValue();
-                    final RealmResults<User> users;
-                    users = realm.where(User.class).equalTo("id", id).findAll();
-
-                    if (users.size() != 1) {
-                        Log.e(TAG, "Incorrect results");
-                        return;
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm bgRealm) {
+                        Incrementable incrementable = firstEntry;
+                        incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
+                        User managedUser = bgRealm.where(User.class).equalTo("id", userId).findFirst();
+                        managedUser.getEntries().add((HealthDataEntry) incrementable);
                     }
-
-            /* Session/User database match.
-            * Set incrementable primary key for goal.
-            * Save goal and add it to user's healthDataEntries of goals. */
-
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm bgRealm) {
-                            Incrementable incrementable = firstEntry;
-                            incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
-                            bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
-                            User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.getEntries().add((HealthDataEntry) incrementable);
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            realm.executeTransaction(new Realm.Transaction() {
-                                @Override
-                                public void execute(Realm bgRealm) {
-                                    User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
-                                    if (updatedUser != null) {
-                                        Log.d(TAG, "Entries updated. Total amount of entries is " + updatedUser.getEntries().size());
-                                        for (HealthDataEntry updatedEntry : updatedUser.getEntries()) {
-                                            Log.d(TAG, "Entry type: " + updatedEntry.getType().getLongName());
-                                            Log.d(TAG, "execute: " + updatedEntry.getInstant().toString());
-                                        }
-                                    }
-                                }
-                            });
-                            //finish();
-                        }
-                    });
-
-                } else {
-                    //displayAuthErrorDialog();
-                    Log.d(TAG, "create entries onClick: Session is null");
-                }
+                });
             }
         });
 
@@ -310,8 +248,7 @@ public class ProgressViewActivity extends Activity {
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
 
         goalItems.clear();
@@ -357,12 +294,12 @@ public class ProgressViewActivity extends Activity {
 
     public void setInterfaceForUser(User user) {
         boolean userExists = (user != null);
+        goalItems.clear();
         if (userExists) {
             userNameTextView.setText(user.getFirstName() + " " + user.getLastName());
             goalItems.addAll(user.getGoals());
         } else {
             userNameTextView.setText("");
-            goalItems.clear();
         }
 
         /* Refresh interface and adapters. */
