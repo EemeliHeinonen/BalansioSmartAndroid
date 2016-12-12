@@ -26,12 +26,12 @@
 
             <RelativeLayout
                 android:id="@+id/goalItem_completionCircleView"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
 
                 <com.quattrofolia.balansiosmart.goalList.CompletionRing
-                    android:id="@+id/goalItem_completionCircle"
+                    android:id="@+id/goalItem_completionRing"
                     android:layout_width="130px"
                     android:layout_height="130px"
                     android:layout_centerHorizontal="true"
@@ -78,13 +78,13 @@
                 android:id="@+id/textView_goalItemType"
                 style="@style/Caption" />
 
-
             <LinearLayout
                 android:id="@+id/layout_goalItemSchedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical">
 
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
