@@ -47,11 +47,7 @@ public class ProgressViewActivity extends Activity {
     private CardStack cardStack;
     private CardsDataAdapter cardAdapter;
     private Button createGoalButton;
-    private Button notificationButton;
     private Button defaultGoalsButton;
-    private Button createMockUserButton;
-    private Button loginButton;
-    private Button logoutButton;
     private List<Goal> goalItems;
     private RecyclerView goalRecyclerView;
     private GoalItemRecyclerAdapter goalAdapter;
@@ -105,7 +101,6 @@ public class ProgressViewActivity extends Activity {
 
         /* Button bar */
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
-        notificationButton = (Button) findViewById(R.id.notification_button);
         defaultGoalsButton = (Button) findViewById(R.id.default_goals_button);
 
         createGoalButton.setOnClickListener(new Button.OnClickListener() {
@@ -115,12 +110,6 @@ public class ProgressViewActivity extends Activity {
             }
         });
 
-        notificationButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                //Send notifications
-                NotificationEventReceiver.setupAlarm(getApplicationContext());
-            }
-        });
 
         defaultGoalsButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -182,62 +171,48 @@ public class ProgressViewActivity extends Activity {
             }
         });
 
-        createMockUserButton = (Button) findViewById(R.id.button_createUser);
-        createMockUserButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String fName = "Mock";
-                String lName = "User";
-                storage.save(new User(fName, lName));
-                UserCreatedDialogFragment fragment = new UserCreatedDialogFragment();
-                fragment.show(getFragmentManager(), "User \"" + fName + " " + lName + "\" created.");
-            }
-        });
-        loginButton = (Button) findViewById(R.id.button_selectUser);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SelectUserDialogFragment fragment = new SelectUserDialogFragment();
-                fragment.show(getFragmentManager(), "Select User:");
-            }
-        });
-        logoutButton = (Button) findViewById(R.id.button_logout);
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        RealmResults<Session> managedSessions;
-                        managedSessions = realm.where(Session.class).findAll();
-                        if (managedSessions.size() == 1) {
-                            managedSessions.get(0).setUserId(null);
-                        } else {
-                            Log.e(TAG, "Amount of managed sessions: " + managedSessions.size());
+        /////// user creation and login/////////////
+        final RealmResults<User> users = realm.where(User.class).findAll();
 
-                            for (int i = 0; i < managedSessions.size(); i++) {
-                                if (i == managedSessions.size() - 1) {
-                                    managedSessions.get(i).setUserId(null);
-                                    break;
-                                } else {
-                                    managedSessions.deleteFromRealm(i);
-                                }
-                            }
+        if(users.size() == 0){
+            String fName = "Joe";
+            String lName = "Type 2 diabetic";
+            storage.save(new User(fName, lName));
+        }
+
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                                              @Override
+                                              public void execute(Realm realm) {
+                                                  RealmResults<User> managedUsers;
+                                                  managedUsers = realm.where(User.class).findAll();
+                                                  final User selected = managedUsers.get(0);
+                                                  RealmResults<Session> managedSessions;
+                                                  managedSessions = realm.where(Session.class).findAll();
+                                                  if (managedSessions.size() == 1) {
+                                                      managedSessions.get(0).setUserId(selected.getId());
+                                                  } else {
+                                                      Log.e(TAG, "managed sessions size shouldn't be " + managedSessions.size());
+                                                  }
+                                              }
+                                          },
+                    new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            RealmResults<User> managedUsers;
+                            managedUsers = realm.where(User.class).findAll();
+                            final User selected = managedUsers.get(0);
+                            Log.d(TAG, "User " + selected.getId() + " logged in");
                         }
-                    }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "User logged out");
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        error.printStackTrace();
-                    }
-                });
-            }
-        });
+                    }, new Realm.Transaction.OnError() {
+                        @Override
+                        public void onError(Throwable error) {
+                            error.printStackTrace();
+                        }
+                    });
+
+
+        ////////////////////////////////////////////
+
 
         cardStack = (CardStack) findViewById(R.id.cardStack);
         cardStack.setContentResource(R.layout.card_content);
@@ -276,7 +251,7 @@ public class ProgressViewActivity extends Activity {
 
                         User managedUser;
                         managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
-                        userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
+                        userNameTextView.setText("User: " + managedUser.getFirstName() + " " + managedUser.getLastName());
                         authorized = true;
                         goalItems.addAll(managedUser.getGoals());
                     }
@@ -293,6 +268,8 @@ public class ProgressViewActivity extends Activity {
         };
         sessionResults = realm.where(Session.class).findAllAsync();
         sessionResults.addChangeListener(sessionResultsListener);
+        NotificationEventReceiver.setupAlarm(getApplicationContext());
+
     }
 
     @Override
@@ -315,28 +292,14 @@ public class ProgressViewActivity extends Activity {
 
     private void setInterfaceAccessibility(boolean authorized) {
         createGoalButton.setEnabled(authorized);
-        logoutButton.setEnabled(authorized);
-        createMockUserButton.setEnabled(!authorized);
-        loginButton.setEnabled(!authorized);
-        notificationButton.setEnabled(authorized);
         defaultGoalsButton.setEnabled(authorized);
         if (authorized) {
             userNameTextView.setVisibility(View.VISIBLE);
             cardStack.setVisibility(View.VISIBLE);
-            createGoalButton.setVisibility(View.VISIBLE);
-            logoutButton.setVisibility(View.VISIBLE);
-            createMockUserButton.setVisibility(View.GONE);
-            loginButton.setVisibility(View.GONE);
-            notificationButton.setVisibility(View.VISIBLE);
             defaultGoalsButton.setVisibility(View.VISIBLE);
         } else {
             userNameTextView.setVisibility(View.INVISIBLE);
             cardStack.setVisibility(View.INVISIBLE);
-            createGoalButton.setVisibility(View.GONE);
-            logoutButton.setVisibility(View.INVISIBLE);
-            createMockUserButton.setVisibility(View.VISIBLE);
-            loginButton.setVisibility(View.VISIBLE);
-            notificationButton.setVisibility(View.INVISIBLE);
             defaultGoalsButton.setVisibility(View.INVISIBLE);
         }
     }
