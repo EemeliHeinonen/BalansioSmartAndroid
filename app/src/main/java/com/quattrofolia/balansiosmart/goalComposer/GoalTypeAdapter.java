@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.quattrofolia.balansiosmart.R;
-import com.quattrofolia.balansiosmart.RecyclerViewClickListener;
 
 import java.util.List;
 import static android.content.ContentValues.TAG;

@@ -15,6 +15,7 @@ import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
 import com.quattrofolia.balansiosmart.dialogs.SelectUserDialogFragment;
 import com.quattrofolia.balansiosmart.dialogs.UserCreatedDialogFragment;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
+import com.quattrofolia.balansiosmart.goalList.GoalItemRecyclerAdapter;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
@@ -63,8 +64,8 @@ public class ProgressViewActivity extends Activity {
     private Storage storage;
     private RealmResults<Session> sessionResults;
     private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
-
-    // Model
+    private User user;
+    private RealmChangeListener<User> userListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,8 @@ public class ProgressViewActivity extends Activity {
         setContentView(R.layout.activity_progress_view);
 
         realm = Realm.getDefaultInstance();
+
+        // DEBUG
         realmChangeListener = new RealmChangeListener<Realm>() {
             @Override
             public void onChange(Realm element) {
@@ -88,7 +91,7 @@ public class ProgressViewActivity extends Activity {
                 }
             }
         };
-        realm.addChangeListener(realmChangeListener);
+        // realm.addChangeListener(realmChangeListener);
 
         // Use storage.save() for saving autoincrementable objects
         storage = new Storage();
@@ -249,48 +252,59 @@ public class ProgressViewActivity extends Activity {
         cardAdapter.add("test5");
         cardStack.setAdapter(cardAdapter);
 
-        /* Instantiate Realm for ProgressView's UI thread.
-        Instantiate RealmChangeListener for observing any changes
-        in the model and updating the view accordingly. */
+
+        userListener = new RealmChangeListener<User>() {
+            @Override
+            public void onChange(User element) {
+                setInterfaceForUser(element);
+            }
+        };
+
+        /* Instantiate RealmChangeListener for observing Session objects.
+        *  In the listener manage authorization between session userId
+        *  and view's User object. If authorized, create a query for
+        *  the User object and register a listener. Otherwise remove
+        *  listeners and uninstantiate. Finally call the function that
+        *  refreshes the view for the user. */
 
         sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
             @Override
             public void onChange(RealmResults<Session> sessionResults) {
-                Boolean authorized = false;
-                goalItems.clear();
-
-                if (!sessionResults.isEmpty()) {
+                if (sessionResults.isEmpty()) {
+                    storage.save(new Session());
+                } else {
                     if (sessionResults.size() > 1) {
                         Log.e(TAG, "sessionResults size shouldn't be " + sessionResults.size());
                     }
-
-                    // Get last session.
                     Session currentSession = sessionResults.last();
+                    boolean loggedIn = (currentSession.getUserId() != null);
+                    boolean previousUserFound = (user != null);
 
-                    if (currentSession.getUserId() != null) {
+                    if (loggedIn) {
 
-                        /* userId found: User is logged in.
-                        * Get user object by id.
-                        * Update interface.
-                        * Populate adapter datasets with responding data. */
+                        int userId = currentSession.getUserId().intValue();
 
-                        User managedUser;
-                        managedUser = realm.where(User.class).equalTo("id", currentSession.getUserId().intValue()).findFirst();
-                        userNameTextView.setText("#" + managedUser.getId() + ": " + managedUser.getFirstName() + " " + managedUser.getLastName());
-                        authorized = true;
-                        goalItems.addAll(managedUser.getGoals());
+                        if (previousUserFound) {
+
+                            boolean authorized = (user.getId() == userId);
+
+                            if (!authorized) {
+                                user.removeChangeListeners();
+                            }
+                        }
+                        user = realm.where(User.class).equalTo("id", userId).findFirst();
+                        user.addChangeListener(userListener);
+                    } else {
+                        if (previousUserFound) {
+                            user.removeChangeListeners();
+                            user = null;
+                        }
                     }
-                } else {
-                    storage.save(new Session());
-
+                    setInterfaceForUser(user);
                 }
-
-                /* Update UI and adapters. */
-
-                setInterfaceAccessibility(authorized);
-                goalAdapter.setItemList(goalItems);
             }
         };
+
         sessionResults = realm.where(Session.class).findAllAsync();
         sessionResults.addChangeListener(sessionResultsListener);
     }
@@ -339,6 +353,22 @@ public class ProgressViewActivity extends Activity {
             notificationButton.setVisibility(View.INVISIBLE);
             defaultGoalsButton.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void setInterfaceForUser(User user) {
+        boolean userExists = (user != null);
+        if (userExists) {
+            userNameTextView.setText(user.getFirstName() + " " + user.getLastName());
+            goalItems.addAll(user.getGoals());
+        } else {
+            userNameTextView.setText("");
+            goalItems.clear();
+        }
+
+        /* Refresh interface and adapters. */
+
+        setInterfaceAccessibility(userExists);
+        goalAdapter.setItemList(goalItems);
     }
 
     @Override

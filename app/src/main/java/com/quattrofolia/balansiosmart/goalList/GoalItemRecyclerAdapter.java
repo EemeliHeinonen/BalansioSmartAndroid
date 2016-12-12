@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalList;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.quattrofolia.balansiosmart.GoalDetailsActivity;
+import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
@@ -43,7 +45,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             super(v);
             itemView = v;
             context = v.getContext();
-            completionRing = (CompletionRing) v.findViewById(R.id.goalItem_completionCircle);
+            completionRing = (CompletionRing) v.findViewById(R.id.goalItem_completionRing);
             textViewAccomplishments = (TextView) v.findViewById(R.id.textView_accomplishments);
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
             textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
