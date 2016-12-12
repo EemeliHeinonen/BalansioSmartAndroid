@@ -21,14 +21,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity  android:name=".goalComposer.GoalComposerActivity">
+        <activity android:name=".goalComposer.GoalComposerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".GoalDetailsActivity"></activity>
-        <activity android:name=".ProgressViewActivity"></activity>
+        <activity android:name=".GoalDetailsActivity" />
+        <activity android:name=".ProgressViewActivity" />
 
         <service
             android:name=".notifications.NotificationIntentService"
@@ -43,7 +42,6 @@
                 <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>
