@@ -114,7 +114,8 @@ public class NotificationIntentService extends IntentService {
             }
             if (ACTION_REMOVE_GOAL_NOTIFICATIONS.equals(action)) {
                 Log.d(TAG, "onHandleIntent: ACTION_REMOVE_GOAL_NOTIFICATIONS");
-                removeGoalNotifications(intent.getStringExtra("type"));
+                removeGoalNotifications(intent.getIntExtra("notificationId", 0), intent.getStringExtra("type"));
+
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent);
@@ -127,16 +128,15 @@ public class NotificationIntentService extends IntentService {
         Log.d(TAG, "processDeleteNotification: ");
     }
 
-    private void removeGoalNotifications(String goalType) {
+    private void removeGoalNotifications(int notificationId, String goalType) {
         // TODO: get goal and change notificationstyle, and store with storage
         Log.d(TAG, "removeGoalNotifications: for " + goalType);
         realm = Realm.getDefaultInstance();
-        //storage = new Storage();
-
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (realm != null) {
             realm.beginTransaction();
-            Goal targetGoal = realm.where(Goal.class).equalTo("type", "WEIGHT").findFirst();
+            Goal targetGoal = realm.where(Goal.class).equalTo("type", goalType).findFirst();
             if (targetGoal != null) {
                 Log.d(TAG, "removeGoalNotifications: targetGoal: " + targetGoal.getNotificationStyle());
                 targetGoal.setNotificationStyle("none");
@@ -146,6 +146,7 @@ public class NotificationIntentService extends IntentService {
             //storage.save(targetGoal);
             Log.d(TAG, "removeGoalNotifications: targetGoal saved, with new notificationStyle: "+targetGoal.getNotificationStyle());
             realm.commitTransaction();
+            manager.cancel(notificationId);
         } else {
             Log.d(TAG, "removeGoalNotifications: realm is null");
         }
@@ -192,20 +193,29 @@ public class NotificationIntentService extends IntentService {
         }*/
     }
 
-    private void sendNotification(String title, String text, String goalType) {
+    private void sendNotification(String title, String text, HealthDataType goalType) {
+        final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        //goalComposerIntent needs to use the HealthDataType's getLongName, whereas the removeNotificationsIntent needs the all caps version.
 
         PendingIntent progressViewIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID,
                 new Intent(this, ProgressViewActivity.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
+
         PendingIntent goalComposerIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID,
-                new Intent(this, GoalComposerActivity.class).putExtra("type", goalType),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                new Intent(this, GoalComposerActivity.class)
+                        .putExtra("type", goalType.getLongName())
+                        .putExtra("notificationId", NOTIFICATION_ID),
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
         PendingIntent removeNotificationsIntent = PendingIntent.getService(this,
                 NOTIFICATION_ID,
-                new Intent(this, NotificationIntentService.class).putExtra("type", goalType).setAction(ACTION_REMOVE_GOAL_NOTIFICATIONS),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+                new Intent(this, NotificationIntentService.class)
+                        .putExtra("type", goalType.name())
+                        .putExtra("notificationId", NOTIFICATION_ID)
+                        .setAction(ACTION_REMOVE_GOAL_NOTIFICATIONS),
+                        PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
@@ -214,15 +224,15 @@ public class NotificationIntentService extends IntentService {
                 .setColor(getResources().getColor(R.color.colorAccent))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.bg)
-                .addAction(R.drawable.bg, "jee", progressViewIntent)
-                .addAction(R.drawable.bg, "joo", goalComposerIntent)
-                .addAction(R.drawable.bg, "remove not", removeNotificationsIntent);
+                .addAction(R.drawable.bg, "Remind later", progressViewIntent)
+                .addAction(R.drawable.bg, "Edit", goalComposerIntent).setAutoCancel(true)
+                .addAction(R.drawable.bg, "Do not notify about this", removeNotificationsIntent).setAutoCancel(true);
 
 
         builder.setContentIntent(progressViewIntent);
         builder.setDeleteIntent(NotificationEventReceiver.getDeleteIntent(this));
 
-        final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
         manager.notify(NOTIFICATION_ID, builder.build());
     }
 
@@ -292,13 +302,13 @@ public class NotificationIntentService extends IntentService {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType().getLongName());
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType());
                         } else if (currentNotificationEntries
                                 .last().getInstant().isBefore(now.minus(twoHours))) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType().getLongName());
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType());
                         }
                     } else {
                         Log.d(TAG, "easyDisciplineCheck: goal accomplished / has already been notified about");
@@ -358,7 +368,7 @@ public class NotificationIntentService extends IntentService {
                     Log.d(TAG, "easyClinicalCheck: number of failed Entries: " + numberOfFailedEntries);
                     if (numberOfFailedEntries >= 5) {
                         writeNotificationEntry(goal.getType(), "easyClinical");
-                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType().getLongName());
+                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType());
                     } else {
                         Log.d(TAG, "easyClinicalCheck: " + goal.getType().getLongName() + " clinical goal accomplished.");
                     }

@@ -1,5 +1,7 @@
 package com.quattrofolia.balansiosmart.goalComposer;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -32,6 +34,11 @@ public class GoalComposerActivity extends FragmentActivity {
         realm = Realm.getDefaultInstance();
         storage = new Storage(realm);
         setContentView(R.layout.activity_main);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (getIntent().hasExtra("notificationId")){
+            manager.cancel(getIntent().getIntExtra("notificationId", 0));
+        }
 
 
         // Check that the activity is using the layout version with
