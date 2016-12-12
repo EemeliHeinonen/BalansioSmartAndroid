@@ -127,7 +127,7 @@ public class ProgressViewActivity extends Activity {
                 //Create default goals and entries here
                 final Session session = BalansioSmart.currentSession(realm);
                 final HealthDataEntry firstEntry = new HealthDataEntry();
-                firstEntry.setType(HealthDataType.BLOOD_GLUCOSE);
+                firstEntry.setType(HealthDataType.WEIGHT);
                 firstEntry.setValue(new BigDecimal("4.5"));
                 firstEntry.setInstant(new Instant());
 
