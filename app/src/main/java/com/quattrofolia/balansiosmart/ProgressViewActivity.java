@@ -233,10 +233,22 @@ public class ProgressViewActivity extends Activity {
                         user = realm.where(User.class).equalTo("id", userId).findFirst();
                         user.addChangeListener(userListener);
                     } else {
-                        if (previousUserFound) {
-                            user.removeChangeListeners();
-                            user = null;
-                        }
+
+                        /* This block automatically creates a user and logs in. */
+                        
+                        realm.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                User u = new User("AutomaticallyCreated", "User");
+                                u.setPrimaryKey(u.getNextPrimaryKey(realm));
+                                realm.copyToRealm(u);
+                            }
+                        }, new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                storage.save(new Session(realm.where(User.class).findAll().last().getId()));
+                            }
+                        });
                     }
                     setInterfaceForUser(user);
                 }
