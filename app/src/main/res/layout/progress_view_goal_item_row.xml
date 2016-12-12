@@ -26,18 +26,19 @@
 
             <RelativeLayout
                 android:id="@+id/goalItem_completionCircleView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="130px"
+                android:layout_height="130px"
                 android:layout_gravity="center">
 
                 <com.quattrofolia.balansiosmart.goalList.CompletionRing
                     android:id="@+id/goalItem_completionRing"
-                    android:layout_width="130px"
-                    android:layout_height="130px"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true" />
 
                 <LinearLayout
+                    android:id="@+id/layout_accomplishments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"

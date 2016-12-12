@@ -7,10 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.quattrofolia.balansiosmart.GoalDetailsActivity;
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalDetails.GoalDetailsActivity;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
@@ -35,6 +36,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         // Declare required views for goal items
         private View itemView;
         private CompletionRing completionRing;
+        private LinearLayout accomplishmentsLayout;
         private TextView textViewAccomplishments;
         private TextView textViewFrequency;
         private TextView textViewPeriod;
@@ -46,6 +48,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             itemView = v;
             context = v.getContext();
             completionRing = (CompletionRing) v.findViewById(R.id.goalItem_completionRing);
+            accomplishmentsLayout = (LinearLayout) v.findViewById(R.id.layout_accomplishments);
             textViewAccomplishments = (TextView) v.findViewById(R.id.textView_accomplishments);
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
             textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
@@ -86,6 +89,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
         final Goal goal = goals.get(position);
         Discipline discipline = goal.getDiscipline();
+        holder.textViewType.setText(goal.getType().getLongName());
 
         if (discipline != null) {
             int frequency = discipline.getFrequency();
@@ -108,8 +112,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.completionRing.setCompletion(completion);
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
-            holder.textViewPeriod.setText(discipline.getMonitoringPeriod().getDescriptiveName() + " measurements");
-            holder.textViewType.setText(goal.getType().getLongName());
+            holder.textViewPeriod.setText("measurements");
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +122,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
                 }
             });
         } else {
+            holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);
             holder.completionRing.disable();
         }
     }

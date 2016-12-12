@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    style="@style/BSCenteredFragment">
 
-    <TextView android:id="@+id/tvOverviewType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <LinearLayout style="@style/BSCenteredContainer">
 
-    <TextView android:id="@+id/tvOverviewFrequency"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvOverviewType"/>
+        <TextView
+            android:id="@+id/tvOverviewType"
+            style="@style/BSContent" />
 
-    <TextView android:id="@+id/tvOverviewRangeMin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvOverviewFrequency"/>
+        <TextView
+            android:id="@+id/tvOverviewFrequency"
+            style="@style/BSContent" />
 
-    <TextView android:id="@+id/tvOverviewRangeMax"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvOverviewRangeMin"/>
+        <TextView
+            android:id="@+id/tvOverviewRangeMin"
+            style="@style/BSContent" />
 
-    <Button android:id="@+id/btnOverviewFinish"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create goal and finish"
-        android:layout_alignParentBottom="true"/>
+        <TextView
+            android:id="@+id/tvOverviewRangeMax"
+            style="@style/BSContent" />
 
-    <Button android:id="@+id/btnOverviewAnother"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create another goal"
-        android:layout_above="@id/btnOverviewFinish"/>
+        <LinearLayout style="@style/BSCenteredContainer">
+
+            <Button
+                android:id="@+id/btnOverviewFinish"
+                style="@style/BSButton.SpanWidth"
+                android:text="Create goal and finish" />
+
+            <Button
+                android:id="@+id/btnOverviewAnother"
+                style="@style/BSButton.SpanWidth"
+                android:text="Create another goal" />
+
+        </LinearLayout>
+    </LinearLayout>
+
 </RelativeLayout>

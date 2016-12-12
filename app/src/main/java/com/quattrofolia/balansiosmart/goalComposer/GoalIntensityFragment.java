@@ -179,7 +179,6 @@ public class GoalIntensityFragment extends Fragment {
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
         tvFrequency.setText("Number of measurements a day");
-        tvFrequency.setPaddingRelative(0,300,0,0);
         Log.d(TAG, "bgMode: ");
     }
 
@@ -189,7 +188,6 @@ public class GoalIntensityFragment extends Fragment {
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
         tvFrequency.setText("Times of exercise a week");
-        tvFrequency.setPaddingRelative(0,300,0,0);
         Log.d(TAG, "exerciseMode: ");
     }
 }

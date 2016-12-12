@@ -6,9 +6,7 @@
 
 
     <Button
-        android:text="@string/header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/BSButton.SpanWidth"
         android:id="@+id/button"
         android:layout_weight="1" />
 

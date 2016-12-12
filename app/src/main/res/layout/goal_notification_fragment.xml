@@ -1,56 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="1">
+    style="@style/BSCenteredFragment"
+    android:orientation="vertical">
 
-    <TextView
-        android:text="Great! I can help you to achieve your goal by reminding you."
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvNotificationIntro"
-        android:textSize="20sp" />
+    <LinearLayout style="@style/BSCenteredContainer">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="textView2"
-        android:id="@+id/tvNotificationRemind"
-        android:text="Remind me to measure blood glucose."
-        android:textSize="20sp"
-        android:layout_below="@id/tvNotificationIntro"
-        android:paddingBottom="25dp"/>
+        <TextView
+            android:id="@+id/tvNotificationIntro"
+            style="@style/BSContent"
+            android:text="Great! I can help you to achieve your goal by reminding you."
+            />
 
-        <RadioGroup android:id="@+id/radioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tvNotificationRemind">
+        <TextView
+            android:id="@+id/tvNotificationRemind"
+            style="@style/BSContent"/>
 
-                <RadioButton
-                    android:text="Strict"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rbStrict" />
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            style="@style/BSCenteredContainer">
 
-                <RadioButton
-                    android:text="Easy"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rbEasy" />
+            <RadioButton
+                android:id="@+id/rbStrict"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Strict" />
 
-                <RadioButton
-                    android:text="None"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rbNone" />
+            <RadioButton
+                android:id="@+id/rbEasy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Easy" />
+
+            <RadioButton
+                android:id="@+id/rbNone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="None" />
         </RadioGroup>
 
-    <Button
-        android:text=">"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnNotificationNext"
-        android:layout_alignParentBottom="true"
-        android:textSize="20sp"/>
+        <Button
+            android:id="@+id/btnNotificationNext"
+            style="@style/BSButton.SpanWidth"
+            android:text="Set" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -1,16 +1,14 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalDetails;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.quattrofolia.balansiosmart.models.Goal;
-import com.quattrofolia.balansiosmart.models.HealthDataEntry;
-import com.quattrofolia.balansiosmart.storage.Storage;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
+import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.models.HealthDataEntry;
+
 import io.realm.RealmResults;
 
 /**

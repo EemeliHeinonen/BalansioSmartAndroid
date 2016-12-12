@@ -47,7 +47,7 @@
                 android:id="@+id/default_goals_button"
                 style="@style/BSButton"
                 android:text="Create default goals" />
-            
+
         </LinearLayout>
 
         <!-- Goal RecyclerView -->

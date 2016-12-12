@@ -1,51 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    style="@style/BSCenteredFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Minimum value of the goal range"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/textViewGoalRangeMin"/>
+    <LinearLayout style="@style/BSCenteredContainer">
 
-    <NumberPicker
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/numberPicker_min"
-        android:layout_below="@id/textViewGoalRangeMin"
-        />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Maximum value of the goal range"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/textViewGoalRangeMax"
-        android:layout_below="@id/numberPicker_min"/>
+            <LinearLayout style="@style/BSCenteredContainer">
+                <TextView
+                    android:id="@+id/textViewGoalRangeMin"
+                    style="@style/BSCaption"
+                    android:text="Min" />
 
-    <NumberPicker
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/numberPicker_max"
-        android:layout_below="@id/textViewGoalRangeMax"
-        />
+                <NumberPicker
+                    android:id="@+id/numberPicker_min"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/btnRangeNext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=">"
-        android:layout_alignParentBottom="true"
-        android:textSize="20sp"/>
+            <LinearLayout
+                style="@style/BSCenteredContainer"
+                android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnRangeSkip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Skip"
-        android:layout_above="@id/btnRangeNext"
-        android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/textViewGoalRangeMax"
+                    style="@style/BSCaption"
+                    android:text="Max" />
 
+                <NumberPicker
+                    android:id="@+id/numberPicker_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnRangeNext"
+                style="@style/BSButton.SpanWidth"
+                android:text="Set" />
+
+            <Button
+                android:id="@+id/btnRangeSkip"
+                style="@style/BSButton.Dismiss.Spanwidth"
+                android:text="Skip" />
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

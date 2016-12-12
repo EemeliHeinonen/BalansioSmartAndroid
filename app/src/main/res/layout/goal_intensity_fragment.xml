@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    style="@style/BSCenteredFragment">
 
-    <TextView
-        android:id="@+id/textViewGoalIntensity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="textView2"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="30dp"/>
+    <LinearLayout
+        style="@style/BSCenteredContainer">
 
-    <NumberPicker
-        android:id="@+id/npGoalIntensityAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/textViewGoalIntensity"
-        />
+        <TextView
+            android:id="@+id/textViewGoalIntensity"
+            style="@style/BSCaption"
+            android:hint="textView2" />
 
-    <TextView
-        android:id="@+id/textViewGoalIntensityDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="times a"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/npGoalIntensityAmount"
-        />
+        <NumberPicker
+            android:id="@+id/npGoalIntensityAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
 
-    <NumberPicker
-        android:id="@+id/npGoalIntensityTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/textViewGoalIntensityDesc"
-        />
+        <TextView
+            android:id="@+id/textViewGoalIntensityDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="times a" />
 
-    <Button
-        android:id="@+id/btnIntensityNext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=">"
-        android:layout_alignParentBottom="true"
-        android:textSize="20sp"/>
+        <NumberPicker
+            android:id="@+id/npGoalIntensityTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
 
-    <Button
-        android:id="@+id/btnIntensitySkip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Skip"
-        android:layout_above="@id/btnIntensityNext"
-        android:textSize="20sp"/>
+        <LinearLayout
+            style="@style/BSCenteredContainer">
+
+            <Button
+                android:id="@+id/btnIntensityNext"
+                style="@style/BSButton.SpanWidth"
+                android:text="Set" />
+
+            <Button
+                android:id="@+id/btnIntensitySkip"
+                style="@style/BSButton.Dismiss.Spanwidth"
+                android:text="Skip" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

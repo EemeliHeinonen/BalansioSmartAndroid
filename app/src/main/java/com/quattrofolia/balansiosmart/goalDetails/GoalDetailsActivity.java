@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.goalDetails;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quattrofolia.balansiosmart.BalansioSmart;
+import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.goalComposer.GoalTypeAdapter;
 import com.quattrofolia.balansiosmart.models.Discipline;

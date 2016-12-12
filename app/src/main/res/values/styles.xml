@@ -17,7 +17,7 @@
         <item name="android:background">@drawable/button_background</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">3dp</item>
+        <item name="android:layout_margin">6dp</item>
         <item name="android:padding">10dp</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/bs_contentLight</item>
@@ -27,19 +27,57 @@
         <item name="android:background">@drawable/alert_button_background</item>
     </style>
 
+    <style name="BSButton.SpanWidth">
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="BSButton.Dismiss">
+        <item name="android:background">@drawable/dismiss_button_background</item>
+    </style>
+
+    <style name="BSButton.Dismiss.Spanwidth">
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
     <!-- BS text styles -->
 
+    <style name="BSContent">
+        <item name="android:textColor">@color/bs_content</item>
+        <item name="android:padding">@dimen/bs_generalContentPadding</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+    </style>
     <style name="BSCaption">
         <item name="android:textColor">@color/bs_content</item>
-        <item name="android:padding">@dimen/goalItemContent_padding</item>
+        <item name="android:padding">@dimen/bs_generalContentPadding</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="BSCaption.Small">
-        <item name="android:textSize">10sp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- BS positioning styles -->
+
+    <style name="BSCenteredContainer">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">@dimen/bs_generalContentPadding</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+
+    <style name="BSCenteredFragment">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

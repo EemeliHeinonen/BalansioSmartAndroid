@@ -5,8 +5,9 @@
 
     <!-- Goal item list margins -->
     <dimen name="goalItemList_padding">16dp</dimen>
-    <dimen name="goalItemContent_padding">8dp</dimen>
+    <dimen name="bs_generalContentPadding">8dp</dimen>
 
+    <dimen name="bs_rounding">2dp</dimen>
 
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="dots_height">30dp</dimen>
