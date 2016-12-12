@@ -127,7 +127,7 @@ public class ProgressViewActivity extends Activity {
                 //Create default goals and entries here
                 final Session session = BalansioSmart.currentSession(realm);
                 final HealthDataEntry firstEntry = new HealthDataEntry();
-                firstEntry.setType(HealthDataType.BLOOD_GLUCOSE);
+                firstEntry.setType(HealthDataType.WEIGHT);
                 firstEntry.setValue(new BigDecimal("4.5"));
                 firstEntry.setInstant(new Instant());
 
@@ -294,6 +294,24 @@ public class ProgressViewActivity extends Activity {
         sessionResults = realm.where(Session.class).findAllAsync();
         sessionResults.addChangeListener(sessionResultsListener);
     }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        goalItems.clear();
+
+        Session currentSession = sessionResults.last(null);
+        if (currentSession == null || currentSession.getUserId() == null) {
+            return;
+        }
+
+        User user = realm.where(User.class).equalTo("id", currentSession.getUserId()).findFirst();
+        goalItems.addAll(user.getGoals());
+        goalAdapter.setItemList(goalItems);
+    }
+
 
     private void setInterfaceAccessibility(boolean authorized) {
         createGoalButton.setEnabled(authorized);

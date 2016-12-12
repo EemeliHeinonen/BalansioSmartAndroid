@@ -1,7 +1,10 @@
 package com.quattrofolia.balansiosmart.goalComposer;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
@@ -29,6 +32,12 @@ public class GoalComposerActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         realm = Realm.getDefaultInstance();
         setContentView(R.layout.activity_main);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (getIntent().hasExtra("notificationId")){
+            manager.cancel(getIntent().getIntExtra("notificationId", 0));
+        }
+
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -40,17 +49,36 @@ public class GoalComposerActivity extends FragmentActivity {
             if (savedInstanceState != null) {
                 return;
             }
+            /*!getIntent().getExtras().getString("type").isEmpty()*/
+            if (getIntent().hasExtra("type")){
+                Log.d(TAG, "onCreate: getExtras not empty, type:" + getIntent().getStringExtra("type"));
 
-            // Create a new Fragment to be placed in the activity layout
-            GoalTypeFragment typeFragment = new GoalTypeFragment();
+                GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(getIntent().getStringExtra("type"));
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack so the user can navigate back
+                transaction.replace(R.id.fragment_container, newFragment);
+                // Commit the transaction
+                transaction.commit();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            typeFragment.setArguments(getIntent().getExtras());
+                // Create a new Fragment to be placed in the activity layout
+                //GoalIntensityFragment intensityFragment = GoalIntensityFragment.newInstance(getIntent().getExtras().getString("type"));
 
-            // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, typeFragment).commit();
+                //getSupportFragmentManager().beginTransaction()
+                  //      .add(R.id.fragment_container, intensityFragment).commit();
+            } else {
+                // Create a new Fragment to be placed in the activity layout
+                GoalTypeFragment typeFragment = new GoalTypeFragment();
+
+                // In case this activity was started with special instructions from an
+                // Intent, pass the Intent's extras to the fragment as arguments
+                typeFragment.setArguments(getIntent().getExtras());
+
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, typeFragment).commit();
+            }
+
         }
     }
 

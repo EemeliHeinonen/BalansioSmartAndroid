@@ -19,11 +19,7 @@ import io.realm.RealmResults;
 
 public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDetailsRecyclerViewAdapter.View_Holder>{
 
-    private Storage storage;
-    private Realm realm;
-    private RealmResults<Goal> allGoals;
     private RealmResults<HealthDataEntry> list;
-    private RealmChangeListener realmChangeListener;
 
 
 
@@ -72,18 +68,4 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
         }
     }
 
-    public void deleteAll() {
-//        Storage storage = new Storage();
-//        storage.executeTransaction(new Realm.Transaction() {
-//            @Override
-//            public void execute(Realm realm) {
-//                healthDataEntries.deleteAllFromRealm();
-//            }
-//        });
-    }
-
-    //function to be finished
-    public void deleteGoal(){
-
-    }
 }

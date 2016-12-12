@@ -26,6 +26,7 @@ import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 import static android.widget.Toast.*;
@@ -68,7 +69,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         if (goalId == -1) {
             finish();
         }
-        Goal goal = realm.where(Goal.class)
+        final Goal goal = realm.where(Goal.class)
                 .equalTo("id", goalId)
                 .findFirst();
 
@@ -97,7 +98,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Show target range
         TextView targetRange = (TextView) findViewById(R.id.targetRange);
         Range range = goal.getTargetRange();
-        targetRange.setText(range.getLow() + " - " + range.getHigh());
+        if (range != null) {
+            targetRange.setText(range.getLow() + " - " + range.getHigh());
+        }
 
         // Show notification frequency
         TextView notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
@@ -117,6 +120,11 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 View content = inflater.inflate(R.layout.activity_goal_details_edit, null);
                 final Button editGoal = (Button) content.findViewById(R.id.editGoal);
                 final Button deleteGoal = (Button) content.findViewById(R.id.deleteGoal);
+                AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
+                builder.setView(content)
+                        .setTitle("Edit");
+                final AlertDialog dialog = builder.create();
+                dialog.show();
 
                 editGoal.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -129,16 +137,25 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 deleteGoal.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        adapter.deleteGoal();
-                        Toast.makeText(self, "Goal deleted", LENGTH_LONG).show();
+                        dialog.dismiss();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                RealmList<HealthDataEntry> userEntries = user.getEntries();
+                                userEntries.removeAll(healthDataEntries);
+                                healthDataEntries.deleteAllFromRealm();
+
+                                RealmList<Goal> userGoals = user.getGoals();
+                                userGoals.remove(goal);
+                                goal.deleteFromRealm();
+                                Toast.makeText(self, "Goal deleted", LENGTH_LONG).show();
+                                self.finish();
+                            }
+                        });
+
                     }
                 });
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
-                builder.setView(content)
-                        .setTitle("Edit");
-                AlertDialog dialog = builder.create();
-                dialog.show();
             }
 
         });
