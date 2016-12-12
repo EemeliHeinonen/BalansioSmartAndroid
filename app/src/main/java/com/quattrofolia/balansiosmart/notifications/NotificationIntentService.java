@@ -103,17 +103,16 @@ public class NotificationIntentService extends IntentService {
         Log.d(getClass().getSimpleName(), "onHandleIntent, started handling a notification event");
         try {
             String action = intent.getAction();
+            Log.d(TAG, "onHandleIntent: Action: " + action);
             if (ACTION_START.equals(action)) {
                 Log.d(TAG, "onHandleIntent: actionstart equals action");
                 processStartNotification();
-
-
             }
             if (ACTION_DELETE.equals(action)) {
                 Log.d(TAG, "onHandleIntent: action delete equals action");
                 processDeleteNotification(intent);
             }
-            if (ACTION_REMOVE_GOAL_NOTIFICATIONS.equals(action)){
+            if (ACTION_REMOVE_GOAL_NOTIFICATIONS.equals(action)) {
                 Log.d(TAG, "onHandleIntent: ACTION_REMOVE_GOAL_NOTIFICATIONS");
                 removeGoalNotifications(intent.getStringExtra("type"));
             }
@@ -128,8 +127,28 @@ public class NotificationIntentService extends IntentService {
         Log.d(TAG, "processDeleteNotification: ");
     }
 
-    private void removeGoalNotifications(String goalType){
+    private void removeGoalNotifications(String goalType) {
         // TODO: get goal and change notificationstyle, and store with storage
+        Log.d(TAG, "removeGoalNotifications: for " + goalType);
+        realm = Realm.getDefaultInstance();
+        //storage = new Storage();
+
+
+        if (realm != null) {
+            realm.beginTransaction();
+            Goal targetGoal = realm.where(Goal.class).equalTo("type", "WEIGHT").findFirst();
+            if (targetGoal != null) {
+                Log.d(TAG, "removeGoalNotifications: targetGoal: " + targetGoal.getNotificationStyle());
+                targetGoal.setNotificationStyle("none");
+            } else {
+                Log.d(TAG, "removeGoalNotifications: TargetGoal is null");
+            }
+            //storage.save(targetGoal);
+            Log.d(TAG, "removeGoalNotifications: targetGoal saved, with new notificationStyle: "+targetGoal.getNotificationStyle());
+            realm.commitTransaction();
+        } else {
+            Log.d(TAG, "removeGoalNotifications: realm is null");
+        }
     }
 
 
@@ -185,7 +204,7 @@ public class NotificationIntentService extends IntentService {
                 PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent removeNotificationsIntent = PendingIntent.getService(this,
                 NOTIFICATION_ID,
-                new Intent(this, NotificationIntentService.class).putExtra("type", goalType),
+                new Intent(this, NotificationIntentService.class).putExtra("type", goalType).setAction(ACTION_REMOVE_GOAL_NOTIFICATIONS),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
 
@@ -195,9 +214,9 @@ public class NotificationIntentService extends IntentService {
                 .setColor(getResources().getColor(R.color.colorAccent))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.bg)
-                .addAction(R.drawable.bg,"jee",progressViewIntent)
-                .addAction(R.drawable.bg,"joo",goalComposerIntent)
-                .addAction(R.drawable.bg,"remove not",removeNotificationsIntent);
+                .addAction(R.drawable.bg, "jee", progressViewIntent)
+                .addAction(R.drawable.bg, "joo", goalComposerIntent)
+                .addAction(R.drawable.bg, "remove not", removeNotificationsIntent);
 
 
         builder.setContentIntent(progressViewIntent);
@@ -230,9 +249,9 @@ public class NotificationIntentService extends IntentService {
         nutritionEntries = realm.where(HealthDataEntry.class).equalTo("type", "NUTRITION").findAll();
     }
 
-    private void initNotificationEntries(){
+    private void initNotificationEntries() {
         allNotificationEntries = realm.where(NotificationEntry.class).findAll();
-        easyDisciplineNotificationEntries = realm.where(NotificationEntry.class).equalTo("value","easyDiscipline").findAll();
+        easyDisciplineNotificationEntries = realm.where(NotificationEntry.class).equalTo("value", "easyDiscipline").findAll();
 
     }
 
@@ -244,49 +263,47 @@ public class NotificationIntentService extends IntentService {
 
             for (int i = 0; i < easyDisciplineGoals.size(); i++) {
                 if (isLastHourOfMonitoringPeriod(easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().quantizedInterval(now, 0).getEnd())) {
-                RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i)
-                        .getType().toString()).findAll();
-                int entryIsInPeriodCounter = 0;
-                String currentMonitoringPeriod = easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().toString();
-                Log.d(TAG, "easyDisciplineCheck: monitoringPeriod: " + currentMonitoringPeriod);
-                for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++) {
+                    RealmResults<HealthDataEntry> currentEasyDiscliplineEntries = allEntries.where().equalTo("type", easyDisciplineGoals.get(i)
+                            .getType().toString()).findAll();
+                    int entryIsInPeriodCounter = 0;
+                    String currentMonitoringPeriod = easyDisciplineGoals.get(i).getDiscipline().getMonitoringPeriod().toString();
+                    Log.d(TAG, "easyDisciplineCheck: monitoringPeriod: " + currentMonitoringPeriod);
+                    for (int j = 0; j < currentEasyDiscliplineEntries.size(); j++) {
 
-                    if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("day")) {
-                        entryIsInPeriodCounter++;
+                        if (isToday(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("day")) {
+                            entryIsInPeriodCounter++;
+                        }
+                        if (isThisWeek(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("week")) {
+                            entryIsInPeriodCounter++;
+                        }
+                        if (isThisMonth(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("month")) {
+                            entryIsInPeriodCounter++;
+                        }
                     }
-                    if (isThisWeek(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("week")) {
-                        entryIsInPeriodCounter++;
-                    }
-                    if (isThisMonth(currentEasyDiscliplineEntries.get(j).getInstant().toDateTime()) && currentMonitoringPeriod.equals("month")) {
-                        entryIsInPeriodCounter++;
-                    }
-                }
-                    Log.d(TAG, "easyDisciplineCheck: easydisciplinenotificationentries size: "+easyDisciplineNotificationEntries.size());
+                    Log.d(TAG, "easyDisciplineCheck: easydisciplinenotificationentries size: " + easyDisciplineNotificationEntries.size());
                     RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where()
-                            .equalTo("type",easyDisciplineGoals
+                            .equalTo("type", easyDisciplineGoals
                                     .get(i)
                                     .getType()
-                                    .toString()).equalTo("value","easyDiscipline").findAll();
+                                    .toString()).equalTo("value", "easyDiscipline").findAll();
 
-                    if(easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter) {
-                        if(currentNotificationEntries.isEmpty()){
+                    if (easyDisciplineGoals.get(i).getDiscipline().getFrequency() > entryIsInPeriodCounter) {
+                        if (currentNotificationEntries.isEmpty()) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time",easyDisciplineGoals.get(i).getType().getLongName());
-                        }
-                        else if (currentNotificationEntries
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType().getLongName());
+                        } else if (currentNotificationEntries
                                 .last().getInstant().isBefore(now.minus(twoHours))) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time",easyDisciplineGoals.get(i).getType().getLongName());
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType().getLongName());
                         }
-                    }
-                    else {
+                    } else {
                         Log.d(TAG, "easyDisciplineCheck: goal accomplished / has already been notified about");
                     }
-            }
+                }
             }
 
             //Log.d(TAG, "easyDisciplineCheck: number of entrys of the first item in the easyDisciplineGoals list: "+ i);
@@ -310,9 +327,9 @@ public class NotificationIntentService extends IntentService {
                     RealmResults<HealthDataEntry> currentEasyClinicalEntries = allEntries.where().equalTo("type", goal
                             .getType().toString()).findAll();
                     if (currentEasyClinicalEntries.size() > 4) {
-                        RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where().equalTo("type",goal.getType().toString()).equalTo("value","easyClinical").findAll();
+                        RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where().equalTo("type", goal.getType().toString()).equalTo("value", "easyClinical").findAll();
                         if (currentNotificationEntries.isEmpty()) {
-                            Log.d(TAG, "easyClinicalCheck: currentNotificationEntries"+currentNotificationEntries.size());
+                            Log.d(TAG, "easyClinicalCheck: currentNotificationEntries" + currentNotificationEntries.size());
                             BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
                             BigDecimal currentGoalMaxRange = goal.getTargetRange().getHigh();
 
@@ -324,8 +341,7 @@ public class NotificationIntentService extends IntentService {
 
                                 }
                             }
-                        }
-                        else if(currentNotificationEntries.last().getInstant().isBefore(currentEasyClinicalEntries.get(currentEasyClinicalEntries.size()-5).getInstant())){
+                        } else if (currentNotificationEntries.last().getInstant().isBefore(currentEasyClinicalEntries.get(currentEasyClinicalEntries.size() - 5).getInstant())) {
                             BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
                             BigDecimal currentGoalMaxRange = goal.getTargetRange().getHigh();
 
@@ -339,12 +355,12 @@ public class NotificationIntentService extends IntentService {
                             }
                         }
                     }
-                    Log.d(TAG, "easyClinicalCheck: number of failed Entries: "+numberOfFailedEntries);
+                    Log.d(TAG, "easyClinicalCheck: number of failed Entries: " + numberOfFailedEntries);
                     if (numberOfFailedEntries >= 5) {
                         writeNotificationEntry(goal.getType(), "easyClinical");
-                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time",goal.getType().getLongName());
+                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType().getLongName());
                     } else {
-                        Log.d(TAG, "easyClinicalCheck: "+ goal.getType().getLongName() + " clinical goal accomplished.");
+                        Log.d(TAG, "easyClinicalCheck: " + goal.getType().getLongName() + " clinical goal accomplished.");
                     }
                 }
             } else {
@@ -411,7 +427,7 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
-    private void writeNotificationEntry(HealthDataType type, String value){
+    private void writeNotificationEntry(HealthDataType type, String value) {
         NotificationEntry entry = new NotificationEntry();
         entry.setType(type);
         entry.setValue(value);
