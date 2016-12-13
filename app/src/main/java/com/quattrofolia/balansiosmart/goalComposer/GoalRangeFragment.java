@@ -25,8 +25,8 @@ import static java.lang.String.format;
 // Fragment class for selcting progress_view_goal_item_row's range
 
 public class GoalRangeFragment extends Fragment {
-    private NumberPicker npMin;
-    private NumberPicker npMax;
+    private NumberPicker numberPickerMin;
+    private NumberPicker numberPickerMax;
     private int minRangeMin;
     private int minRangeMax;
     private int minRangeDefault;
@@ -89,18 +89,20 @@ public class GoalRangeFragment extends Fragment {
         RelativeLayout myView =(RelativeLayout) inflater.inflate(R.layout.goal_range_fragment, container, false);
         tvRangeMin = (TextView) myView.findViewById(R.id.textViewGoalRangeMin);
         tvRangeMax = (TextView) myView.findViewById(R.id.textViewGoalRangeMax);
-        npMin = (NumberPicker) myView.findViewById(R.id.numberPicker_min);
-        npMax = (NumberPicker) myView.findViewById(R.id.numberPicker_max);
+        numberPickerMin = (NumberPicker) myView.findViewById(R.id.numberPicker_min);
+        numberPickerMax = (NumberPicker) myView.findViewById(R.id.numberPicker_max);
         btnNext = (Button) myView.findViewById(R.id.btnRangeNext);
         btnSkip = (Button) myView.findViewById(R.id.btnRangeSkip);
 
         // Initialize the pickers
-        npMin.setMaxValue(minRangeMax);
-        npMin.setMinValue(minRangeMin);
-        npMin.setValue(minRangeDefault);
-        npMax.setMaxValue(maxRangeMax);
-        npMax.setMinValue(maxRangeMin);
-        npMax.setValue(maxRangeDefault);
+        numberPickerMin.setMaxValue(minRangeMax);
+        numberPickerMin.setMinValue(minRangeMin);
+        numberPickerMin.setValue(minRangeDefault);
+        numberPickerMin.setWrapSelectorWheel(false);
+        numberPickerMax.setMaxValue(maxRangeMax);
+        numberPickerMax.setMinValue(maxRangeMin);
+        numberPickerMax.setValue(maxRangeDefault);
+        numberPickerMax.setWrapSelectorWheel(false);
 
         //check if a certain progress_view_goal_item_row type has been selected & modify the fragment accordingly
         if (goalType.equals("Weight")) {
@@ -115,7 +117,7 @@ public class GoalRangeFragment extends Fragment {
             bgMode();
         }
 
-        npMin.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        numberPickerMin.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Check data type and display the newly selected number from picker
@@ -133,7 +135,7 @@ public class GoalRangeFragment extends Fragment {
             }
         });
 
-        npMax.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        numberPickerMax.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Check data type and display the newly selected number from picker
@@ -188,46 +190,46 @@ public class GoalRangeFragment extends Fragment {
         int defaultMax = userWeight+5;
         minSelectedValue = Integer.toString(defaultMin);
         maxSelectedValue = Integer.toString(defaultMax);
-        npMin.setMinValue(userWeight-10);
-        npMin.setMaxValue(userWeight);
-        npMin.setValue(defaultMin);
-        npMax.setMinValue(userWeight);
-        npMax.setMaxValue(userWeight+10);
-        npMax.setValue(defaultMax);
+        numberPickerMin.setMinValue(userWeight-10);
+        numberPickerMin.setMaxValue(userWeight);
+        numberPickerMin.setValue(defaultMin);
+        numberPickerMax.setMinValue(userWeight);
+        numberPickerMax.setMaxValue(userWeight+10);
+        numberPickerMax.setValue(defaultMax);
         Log.d(TAG, "weightMode: called");
     }
 
     public void sleepMode(){
-        npMin.setMinValue(4);
-        npMin.setMaxValue(9);
-        npMin.setValue(8);
+        numberPickerMin.setMinValue(4);
+        numberPickerMin.setMaxValue(9);
+        numberPickerMin.setValue(8);
         minSelectedValue = "8";
         maxSelectedValue = "8";
-        npMin.setWrapSelectorWheel(false);
-        npMax.setVisibility(View.GONE);
+        numberPickerMin.setWrapSelectorWheel(false);
+        numberPickerMax.setVisibility(View.GONE);
         tvRangeMax.setVisibility(View.GONE);
         tvRangeMin.setText("How many hours should you try to sleep a night?");
-        //npMin.setPaddingRelative(0,300,0,0);
+        //numberPickerMin.setPaddingRelative(0,300,0,0);
     }
 
     public void bpSystolicMode(){
-        npMin.setMinValue(90);
-        npMin.setMaxValue(110);
-        npMax.setMinValue(140);
-        npMax.setMaxValue(160);
-        npMin.setValue(100);
-        npMax.setValue(150);
+        numberPickerMin.setMinValue(90);
+        numberPickerMin.setMaxValue(110);
+        numberPickerMax.setMinValue(140);
+        numberPickerMax.setMaxValue(160);
+        numberPickerMin.setValue(100);
+        numberPickerMax.setValue(150);
         minSelectedValue = "100";
         maxSelectedValue = "150";
     }
 
     public void bpDiastolicMode(){
-        npMin.setMinValue(60);
-        npMin.setMaxValue(80);
-        npMax.setMinValue(80);
-        npMax.setMaxValue(100);
-        npMin.setValue(70);
-        npMax.setValue(90);
+        numberPickerMin.setMinValue(60);
+        numberPickerMin.setMaxValue(80);
+        numberPickerMax.setMinValue(80);
+        numberPickerMax.setMaxValue(100);
+        numberPickerMin.setValue(70);
+        numberPickerMax.setValue(90);
         minSelectedValue = "70";
         maxSelectedValue = "90";
     }
@@ -250,13 +252,13 @@ public class GoalRangeFragment extends Fragment {
             Log.d(TAG, "bgMode: maxVal i: "+maxValues[i]);
         }
 
-        npMin.setMaxValue(minValues.length-1);
-        npMin.setMinValue(0);
-        npMin.setValue(0);
-        npMin.setDisplayedValues(minValues);
-        npMax.setMaxValue(maxValues.length-1);
-        npMax.setMinValue(0);
-        npMax.setValue(0);
-        npMax.setDisplayedValues(maxValues);
+        numberPickerMin.setMaxValue(minValues.length-1);
+        numberPickerMin.setMinValue(0);
+        numberPickerMin.setValue(0);
+        numberPickerMin.setDisplayedValues(minValues);
+        numberPickerMax.setMaxValue(maxValues.length-1);
+        numberPickerMax.setMinValue(0);
+        numberPickerMax.setValue(0);
+        numberPickerMax.setDisplayedValues(maxValues);
     }
 }

@@ -75,7 +75,7 @@ public class GoalIntensityFragment extends Fragment {
         btnSkip = (Button) myView.findViewById(R.id.btnIntensitySkip);
         npFrequency = (NumberPicker) myView.findViewById(R.id.npGoalIntensityAmount);
         npMonitoringPeriod = (NumberPicker) myView.findViewById(R.id.npGoalIntensityTime);
-        tvFrequency.setText("Number of measurements");
+        tvFrequency.setText("Select ");
 
         //Initialize the NumberPickers
         npFrequency.setMinValue(frequencyMin);

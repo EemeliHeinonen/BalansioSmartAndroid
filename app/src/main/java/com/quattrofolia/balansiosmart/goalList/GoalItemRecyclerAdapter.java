@@ -90,6 +90,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         final Goal goal = goals.get(position);
         Discipline discipline = goal.getDiscipline();
         holder.textViewType.setText(goal.getType().getLongName());
+        holder.textViewPeriod.setText("measurements");
 
         if (discipline != null) {
             int frequency = discipline.getFrequency();
@@ -112,7 +113,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.completionRing.setCompletion(completion);
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
-            holder.textViewPeriod.setText("measurements");
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
