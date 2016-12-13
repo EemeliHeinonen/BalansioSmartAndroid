@@ -131,7 +131,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 editGoal.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent goalComposerActivity = new Intent(self, GoalComposerActivity.class);
+                        Intent goalComposerActivity = new Intent(self, GoalComposerActivity.class)
+                                .putExtra("type", goal.getType().getLongName())
+                                .putExtra("goalId", goal.getId());
                         startActivity(goalComposerActivity);
                     }
                 });
