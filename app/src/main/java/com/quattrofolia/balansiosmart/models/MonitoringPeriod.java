@@ -74,7 +74,7 @@ public enum MonitoringPeriod {
         this.descriptiveName = descriptiveName;
     }
 
-    public String toString() {
+    public String getName() {
         return this.name;
     }
 

@@ -48,7 +48,9 @@ public class GoalOverviewFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("goalType", dataType.toString());
         args.putInt("frequency", frequency);
-        args.putString("monitoringPeriod", monitoringPeriod.toString());
+        if (monitoringPeriod != null) {
+            args.putString("monitoringPeriod", monitoringPeriod.toString());
+        }
         args.putString("rangeMin", idealRangeMin);
         args.putString("rangeMax", idealRangeMax);
         args.putString("notificationStyle", notificationStyle);
@@ -64,7 +66,10 @@ public class GoalOverviewFragment extends Fragment {
         if (getArguments() != null) {
             dataType = HealthDataType.valueOf(getArguments().getString("goalType"));
             frequency = getArguments().getInt("frequency");
-            monitoringPeriod = MonitoringPeriod.valueOf(getArguments().getString("monitoringPeriod"));
+            String p = getArguments().getString("monitoringPeriod");
+            if (p != null) {
+                monitoringPeriod = MonitoringPeriod.valueOf(p);
+            }
             idealRangeMin = getArguments().getString("rangeMin");
             idealRangeMax = getArguments().getString("rangeMax");
             notificationStyle = getArguments().getString("notificationStyle");
@@ -111,7 +116,9 @@ public class GoalOverviewFragment extends Fragment {
         Button btnOverviewAnother = (Button) myView.findViewById(R.id.btnOverviewAnother);
 
         tvType.setText("Goal type: " + dataType.getLongName());
-        tvFrequency.setText(frequency + " Measurement(s) a " + monitoringPeriod.name());
+        if (monitoringPeriod != null) {
+            tvFrequency.setText(frequency + " Measurement(s) a " + monitoringPeriod.name());
+        }
         if (!idealRangeMin.equals("0") && !idealRangeMax.equals("0")) {
             tvRangeMin.setText("Goal range minimum value: " + idealRangeMin);
             tvRangeMax.setText("Goal range maximum value: " + idealRangeMax);

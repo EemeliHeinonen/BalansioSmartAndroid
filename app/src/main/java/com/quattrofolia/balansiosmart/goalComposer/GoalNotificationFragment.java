@@ -44,7 +44,9 @@ public class GoalNotificationFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("goalType", dataType.toString());
         args.putInt("frequency", frequency);
-        args.putString("monitoringPeriod", monitoringPeriod.toString());
+        if (monitoringPeriod != null) {
+            args.putString("monitoringPeriod", monitoringPeriod.toString());
+        }
         args.putString("rangeMin", idealRangeMin);
         args.putString("rangeMax", idealRangeMax);
         fragment.setArguments(args);
@@ -58,7 +60,10 @@ public class GoalNotificationFragment extends Fragment {
         if (getArguments() != null) {
             dataType = HealthDataType.valueOf(getArguments().getString("goalType"));
             frequency = getArguments().getInt("frequency");
-            monitoringPeriod = MonitoringPeriod.valueOf(getArguments().getString("monitoringPeriod"));
+            String p = getArguments().getString("monitoringPeriod");
+            if (p != null) {
+                monitoringPeriod = MonitoringPeriod.valueOf(p);
+            }
             idealRangeMin = getArguments().getString("rangeMin");
             idealRangeMax = getArguments().getString("rangeMax");
         } else {
@@ -67,22 +72,19 @@ public class GoalNotificationFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView =(RelativeLayout) inflater.inflate(R.layout.goal_notification_fragment, container, false);
+        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_notification_fragment, container, false);
         TextView tv = (TextView) myView.findViewById(R.id.tvNotificationRemind);
         Button btnNext = (Button) myView.findViewById(R.id.btnNotificationNext);
-        radioButtonGroup = (RadioGroup)myView.findViewById(R.id.radioGroup);
-        rbStrict = (RadioButton)myView.findViewById(R.id.rbStrict);
-        rbEasy = (RadioButton)myView.findViewById(R.id.rbEasy);
-        rbNone = (RadioButton)myView.findViewById(R.id.rbNone);
-        tv.setText("Remind me to measure "+dataType.getLongName());
+        radioButtonGroup = (RadioGroup) myView.findViewById(R.id.radioGroup);
+        rbStrict = (RadioButton) myView.findViewById(R.id.rbStrict);
+        rbEasy = (RadioButton) myView.findViewById(R.id.rbEasy);
+        rbNone = (RadioButton) myView.findViewById(R.id.rbNone);
+        tv.setText("Remind me to measure " + dataType.getLongName());
 
         radioButtonGroup.check(R.id.rbStrict);
-        radioButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
-                switch(checkedId)
-                {
+        radioButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
                     case R.id.rbStrict:
                         Log.d(TAG, "onCheckedChanged: Strict");
                         notificationStyle = "Strict";

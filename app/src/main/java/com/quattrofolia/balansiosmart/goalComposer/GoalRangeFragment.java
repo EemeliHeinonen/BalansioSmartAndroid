@@ -52,14 +52,16 @@ public class GoalRangeFragment extends Fragment {
     private String[] maxValues = new String[8];
 
 
-
-
     public static GoalRangeFragment newInstance(HealthDataType dataType, int frequency, MonitoringPeriod period) {
         GoalRangeFragment fragment = new GoalRangeFragment();
         Bundle args = new Bundle();
-        args.putString("dataType", dataType.toString());
+        if (dataType != null) {
+            args.putString("dataType", dataType.toString());
+        }
         args.putInt("frequency", frequency);
-        args.putString("monitoringPeriod", period.toString());
+        if (period != null) {
+            args.putString("monitoringPeriod", period.toString());
+        }
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,7 +82,10 @@ public class GoalRangeFragment extends Fragment {
         if (getArguments() != null) {
             dataType = HealthDataType.valueOf(getArguments().getString("dataType"));
             frequency = getArguments().getInt("frequency");
-            monitoringPeriod = MonitoringPeriod.valueOf(getArguments().getString("monitoringPeriod"));
+            String p = getArguments().getString("monitoringPeriod");
+            if (p != null) {
+                monitoringPeriod = MonitoringPeriod.valueOf(p);
+            }
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
@@ -88,7 +93,7 @@ public class GoalRangeFragment extends Fragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView =(RelativeLayout) inflater.inflate(R.layout.goal_range_fragment, container, false);
+        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_range_fragment, container, false);
         tvRangeMin = (TextView) myView.findViewById(R.id.textViewGoalRangeMin);
         tvRangeMax = (TextView) myView.findViewById(R.id.textViewGoalRangeMax);
         tvUnit = (TextView) myView.findViewById(R.id.textView_unit);
@@ -112,24 +117,24 @@ public class GoalRangeFragment extends Fragment {
         //check if a certain progress_view_goal_item_row type has been selected & modify the fragment accordingly
         if (dataType.equals("Weight")) {
             weightMode();
-        } else if(dataType.equals("Sleep")) {
+        } else if (dataType.equals("Sleep")) {
             sleepMode();
-        } else if(dataType.equals("Blood Pressure Systolic")) {
+        } else if (dataType.equals("Blood Pressure Systolic")) {
             bpSystolicMode();
-        } else if(dataType.equals("Blood Pressure Diastolic")) {
+        } else if (dataType.equals("Blood Pressure Diastolic")) {
             bpDiastolicMode();
-        } else if(dataType.equals("Blood Glucose")) {
+        } else if (dataType.equals("Blood Glucose")) {
             bgMode();
         }
 
         numberPickerMin.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal){
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Check data type and display the newly selected number from picker
-                if (dataType.equals("Sleep")){
+                if (dataType.equals("Sleep")) {
                     minSelectedValue = Integer.toString(newVal);
                     maxSelectedValue = Integer.toString(newVal);
-                } else if (dataType.equals("Blood Glucose")){
+                } else if (dataType.equals("Blood Glucose")) {
                     minSelectedValue = minValues[newVal];
                 } else {
                     minSelectedValue = Integer.toString(newVal);
@@ -139,9 +144,9 @@ public class GoalRangeFragment extends Fragment {
 
         numberPickerMax.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal){
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Check data type and display the newly selected number from picker
-                if (dataType.equals("Blood Glucose")){
+                if (dataType.equals("Blood Glucose")) {
                     maxSelectedValue = maxValues[newVal];
                 } else {
                     maxSelectedValue = Integer.toString(newVal);
@@ -185,20 +190,20 @@ public class GoalRangeFragment extends Fragment {
     }
 
     //Methods for initializing the fragment for different progress_view_goal_item_row types.
-    public void weightMode(){
-        int defaultMin = userWeight-5;
-        int defaultMax = userWeight+5;
+    public void weightMode() {
+        int defaultMin = userWeight - 5;
+        int defaultMax = userWeight + 5;
         minSelectedValue = Integer.toString(defaultMin);
         maxSelectedValue = Integer.toString(defaultMax);
-        numberPickerMin.setMinValue(userWeight-10);
+        numberPickerMin.setMinValue(userWeight - 10);
         numberPickerMin.setMaxValue(userWeight);
         numberPickerMin.setValue(defaultMin);
         numberPickerMax.setMinValue(userWeight);
-        numberPickerMax.setMaxValue(userWeight+10);
+        numberPickerMax.setMaxValue(userWeight + 10);
         numberPickerMax.setValue(defaultMax);
     }
 
-    public void sleepMode(){
+    public void sleepMode() {
         numberPickerMin.setMinValue(4);
         numberPickerMin.setMaxValue(9);
         numberPickerMin.setValue(8);
@@ -210,7 +215,7 @@ public class GoalRangeFragment extends Fragment {
         tvRangeMax.setVisibility(View.GONE);
     }
 
-    public void bpSystolicMode(){
+    public void bpSystolicMode() {
         numberPickerMin.setMinValue(90);
         numberPickerMin.setMaxValue(110);
         numberPickerMax.setMinValue(140);
@@ -221,7 +226,7 @@ public class GoalRangeFragment extends Fragment {
         maxSelectedValue = "150";
     }
 
-    public void bpDiastolicMode(){
+    public void bpDiastolicMode() {
         numberPickerMin.setMinValue(60);
         numberPickerMin.setMaxValue(80);
         numberPickerMax.setMinValue(80);
@@ -232,12 +237,12 @@ public class GoalRangeFragment extends Fragment {
         maxSelectedValue = "90";
     }
 
-    public void bgMode(){
+    public void bgMode() {
         double minNum = 3;
         double maxNum = 6;
 
         //Loop for populating the pickers with numbers that have decimals
-        for (int i = 0; i< minValues.length; i++) {
+        for (int i = 0; i < minValues.length; i++) {
             minNum += 0.5;
             maxNum += 0.5;
             String number = format("%.1f", minNum);
@@ -246,11 +251,11 @@ public class GoalRangeFragment extends Fragment {
             maxValues[i] = maxNumber;
         }
 
-        numberPickerMin.setMaxValue(minValues.length-1);
+        numberPickerMin.setMaxValue(minValues.length - 1);
         numberPickerMin.setMinValue(0);
         numberPickerMin.setValue(0);
         numberPickerMin.setDisplayedValues(minValues);
-        numberPickerMax.setMaxValue(maxValues.length-1);
+        numberPickerMax.setMaxValue(maxValues.length - 1);
         numberPickerMax.setMinValue(0);
         numberPickerMax.setValue(0);
         numberPickerMax.setDisplayedValues(maxValues);
