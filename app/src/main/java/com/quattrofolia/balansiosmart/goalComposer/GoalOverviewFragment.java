@@ -45,6 +45,7 @@ public class GoalOverviewFragment extends Fragment {
     private String monitoringPeriod;
     private String idealRangeMin;
     private String idealRangeMax;
+    private String notificationStyle;
     private Goal goal;
     private Discipline discipline;
     private Range range;
