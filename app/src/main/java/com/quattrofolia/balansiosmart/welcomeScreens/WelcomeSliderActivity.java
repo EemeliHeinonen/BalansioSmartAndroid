@@ -37,8 +37,8 @@ public class WelcomeSliderActivity extends AppCompatActivity {
         // Checking for first time launch - before calling setContentView()
         prefManager = new PreferenceManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
-//        for testing use this condition
-//        if (false && !prefManager.isFirstTimeLaunch()) {
+        // For testing use this condition
+        // if (false && !prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
         }
@@ -127,7 +127,7 @@ public class WelcomeSliderActivity extends AppCompatActivity {
         finish();
     }
 
-    //  viewpager change listener
+    // Viewpager change listener
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
 
         @Override
@@ -157,9 +157,8 @@ public class WelcomeSliderActivity extends AppCompatActivity {
         }
     };
 
-    /**
-     * Making notification bar transparent
-     */
+
+    // Making notification bar transparent
     private void changeStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -168,9 +167,7 @@ public class WelcomeSliderActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * View pager adapter
-     */
+    // View pager adapter
     public class MyViewPagerAdapter extends PagerAdapter {
         private LayoutInflater layoutInflater;
 

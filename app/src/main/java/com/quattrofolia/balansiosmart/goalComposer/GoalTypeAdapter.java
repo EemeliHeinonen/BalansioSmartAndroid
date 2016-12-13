@@ -12,12 +12,7 @@ import com.quattrofolia.balansiosmart.models.HealthDataType;
 
 import java.util.List;
 
-/**
- * Created by mrbeva on 10/29/16.
- */
-
 //Class for populating the recyclerView in GoalTypeFragment
-
 public class GoalTypeAdapter extends RecyclerView.Adapter<GoalTypeAdapter.ListDataHolder>{
 
     private List<GoalTypeListItem> listData;
