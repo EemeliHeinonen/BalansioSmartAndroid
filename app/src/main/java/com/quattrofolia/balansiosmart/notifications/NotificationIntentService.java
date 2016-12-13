@@ -124,6 +124,7 @@ public class NotificationIntentService extends IntentService {
         Log.d(TAG, "processDeleteNotification: ");
     }
 
+    //sets goals notifcation mode to no notifications.
     private void removeGoalNotifications(int notificationId, String goalType) {
         // TODO: get goal and change notificationstyle, and store with storage
         Log.d(TAG, "removeGoalNotifications: for " + goalType);
@@ -148,7 +149,7 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
-
+    //main method for initialization and starting notification logic.
     private void processStartNotification() {
         Log.d(TAG, "processStartNotification: ");
         // Do something. For example, fetch fresh data from backend to create a rich notification?
@@ -169,6 +170,7 @@ public class NotificationIntentService extends IntentService {
 
     }
 
+    //method for creating the actual notification with set parameters
     private void sendNotification(String title, String text, HealthDataType goalType) {
         final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         //goalComposerIntent needs to use the HealthDataType's getLongName, whereas the removeNotificationsIntent needs the all caps version.
@@ -198,7 +200,7 @@ public class NotificationIntentService extends IntentService {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setContentTitle(title)
                 .setAutoCancel(true)
-                .setColor(getResources().getColor(R.color.colorAccent))
+                .setColor(getResources().getColor(R.color.bs_primary))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.bg)
                 .addAction(R.drawable.bg, "Remind later", progressViewIntent)
@@ -213,7 +215,7 @@ public class NotificationIntentService extends IntentService {
         manager.notify(NOTIFICATION_ID, builder.build());
     }
 
-
+    //initializing goals from Realm
     private void initGoals() {
         allGoals = realm.where(Goal.class).findAll();
         weightGoal = realm.where(Goal.class).equalTo("type", "WEIGHT").findFirst();
@@ -225,6 +227,7 @@ public class NotificationIntentService extends IntentService {
         nutritionGoal = realm.where(Goal.class).equalTo("type", "NUTRITION").findFirst();
     }
 
+    //initializing entries from Realm
     private void initEntries() {
         allEntries = realm.where(HealthDataEntry.class).findAll();
         bgEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_GLUCOSE").findAll();
@@ -236,6 +239,7 @@ public class NotificationIntentService extends IntentService {
         nutritionEntries = realm.where(HealthDataEntry.class).equalTo("type", "NUTRITION").findAll();
     }
 
+    //initializing notification entries (=previously sent notifications) from Realm
     private void initNotificationEntries() {
         allNotificationEntries = realm.where(NotificationEntry.class).findAll();
         easyDisciplineNotificationEntries = realm.where(NotificationEntry.class).equalTo("value", "easyDiscipline").findAll();
@@ -244,9 +248,8 @@ public class NotificationIntentService extends IntentService {
 
 
 
-
+    //check if discipline goals with easy notification setting need to send notifications
     private void easyDisciplineCheck() {
-        // TODO: check that goals monitoringperiod is day
         RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("discipline").findAll();
         if (easyDisciplineGoals.size() > 0) {
             Log.d(TAG, "easyDisciplineCheck: easyDiscipline Typen Test log: " + easyDisciplineGoals.first().getType().toString());
@@ -305,6 +308,7 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
+    //check if clinical goals with easy notification setting need to send notifications
     private void easyClinicalCheck() {
 
         if (isWakingHours()) {
@@ -393,7 +397,7 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
-
+    //returns true if currently is the last hour a monitoring period
     private boolean isLastHourOfMonitoringPeriod(DateTime dt) {
         Interval window = new Interval(dt.minusHours(15), dt.minusHours(2));
         if (window.contains(now)) {
@@ -406,6 +410,7 @@ public class NotificationIntentService extends IntentService {
 
     }
 
+    //returns true if currently is tha waking hours (8-22)
     private boolean isWakingHours() {
         Interval wakingHours = new Interval(now.toDateTime().withHourOfDay(8).withMinuteOfHour(0), now.toDateTime().withHourOfDay(22).withMinuteOfHour(0));
         if (wakingHours.contains(now)) {
@@ -417,6 +422,7 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
+    //create notification entry to the model, to keep track of what notifications has been sent.
     private void writeNotificationEntry(HealthDataType type, String value, String notificationText) {
         NotificationEntry entry = new NotificationEntry();
         entry.setType(type);

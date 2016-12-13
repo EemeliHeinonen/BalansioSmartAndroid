@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-import com.quattrofolia.balansiosmart.animation.RelativeLayoutParamsEvaluator;
+import com.quattrofolia.balansiosmart.cardstack.animation.RelativeLayoutParamsEvaluator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
