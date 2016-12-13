@@ -22,7 +22,7 @@ import static java.lang.String.format;
  * Created by eemeliheinonen on 27/10/2016.
  */
 
-// Fragment class for selcting progress_view_goal_item_row's range
+// Fragment class for selecting progress_view_goal_item_row's range
 
 public class GoalRangeFragment extends Fragment {
     private NumberPicker numberPickerMin;
@@ -39,8 +39,8 @@ public class GoalRangeFragment extends Fragment {
     private String goalType;
     private int frequency;
     private String monitoringPeriod;
-    private Button btnNext;
-    private Button btnSkip;
+    Button btnNext;
+    Button btnSkip;
     private TextView tvRangeMin;
     private TextView tvRangeMax;
     private String[] minValues = new String[8];
@@ -76,9 +76,6 @@ public class GoalRangeFragment extends Fragment {
             goalType = getArguments().getString("goalType");
             frequency = getArguments().getInt("frequency");
             monitoringPeriod = getArguments().getString("monitoringPeriod");
-            Log.d(TAG, "onCreate: goalType is "+goalType);
-            Log.d(TAG, "onCreate: frequency is "+frequency);
-            Log.d(TAG, "onCreate: monitoringPeriod is "+monitoringPeriod);
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
@@ -122,14 +119,11 @@ public class GoalRangeFragment extends Fragment {
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Check data type and display the newly selected number from picker
                 if (goalType.equals("Sleep")){
-                    Log.d(TAG, "onValueChange: min: "+newVal);
                     minSelectedValue = Integer.toString(newVal);
                     maxSelectedValue = Integer.toString(newVal);
                 } else if (goalType.equals("Blood Glucose")){
-                    Log.d(TAG, "onValueChange: "+minValues[newVal]);
                     minSelectedValue = minValues[newVal];
                 } else {
-                    Log.d(TAG, "onValueChange: min: "+newVal);
                     minSelectedValue = Integer.toString(newVal);
                 }
             }
@@ -140,10 +134,8 @@ public class GoalRangeFragment extends Fragment {
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Check data type and display the newly selected number from picker
                 if (goalType.equals("Blood Glucose")){
-                    Log.d(TAG, "onValueChange: String "+maxValues[newVal]);
                     maxSelectedValue = maxValues[newVal];
                 } else {
-                    Log.d(TAG, "onValueChange: max: " + newVal);
                     maxSelectedValue = Integer.toString(newVal);
                 }
             }
@@ -235,7 +227,6 @@ public class GoalRangeFragment extends Fragment {
     }
 
     public void bgMode(){
-        Log.d(TAG, "bgMode: called");
         double minNum = 3;
         double maxNum = 6;
 
@@ -245,11 +236,8 @@ public class GoalRangeFragment extends Fragment {
             maxNum += 0.5;
             String number = format("%.1f", minNum);
             String maxNumber = format("%.1f", maxNum);
-            Log.d(TAG, "bgMode: number: "+number);
             minValues[i] = number;
             maxValues[i] = maxNumber;
-            Log.d(TAG, "bgMode: minVal i: "+minValues[i]);
-            Log.d(TAG, "bgMode: maxVal i: "+maxValues[i]);
         }
 
         numberPickerMin.setMaxValue(minValues.length-1);

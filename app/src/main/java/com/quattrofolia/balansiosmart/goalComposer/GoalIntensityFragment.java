@@ -20,7 +20,7 @@ import static android.content.ContentValues.TAG;
  * Created by eemeliheinonen on 27/10/2016.
  */
 
-// Fragment class for selcting progress_view_goal_item_row's intensity
+// Fragment class for selecting progress_view_goal_item_row's intensity
 public class GoalIntensityFragment extends Fragment {
     private int frequencyMin;
     private int frequencyMax;
@@ -30,8 +30,8 @@ public class GoalIntensityFragment extends Fragment {
     private int periodDefault;
     private TextView tvFrequency;
     private TextView tvMonitoringPeriod;
-    private Button btnNext;
-    private Button btnSkip;
+    Button btnNext;
+    Button btnSkip;
     private int selectedFrequency;
     private String selectedMonitoringPeriod;
     private NumberPicker npMonitoringPeriod;
@@ -49,6 +49,8 @@ public class GoalIntensityFragment extends Fragment {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Init default values
         frequencyMin = 1;
         frequencyMax = 10;
         frequencyDefault = 5;
@@ -64,7 +66,6 @@ public class GoalIntensityFragment extends Fragment {
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
-        Log.d(TAG, "onCreate: selected type: "+goalType);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,9 +93,7 @@ public class GoalIntensityFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Set the selected value to a variable
-                selectedFrequency = newVal;
-                Log.d(TAG, "onValueChange: selectedFrequency: "+selectedFrequency);
-            }
+                selectedFrequency = newVal;}
         });
 
         //Set a value change listener for time frame NumberPicker
@@ -103,7 +102,6 @@ public class GoalIntensityFragment extends Fragment {
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Set the selected value to a variable
                 selectedMonitoringPeriod = values[newVal];
-                Log.d(TAG, "onValueChange: selectedMonitoringPeriod: "+selectedMonitoringPeriod);
             }
         });
 
@@ -133,11 +131,10 @@ public class GoalIntensityFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-        //handle the swiping to the next fragment by clicking on the button
-                //Move to the next fragment
+                //handle the navigation and data passing to the next fragment by clicking on the button,
+                // depending on which goalType has been selected
                 if (goalType.equals("Exercise")) {
                     // Create fragment and pass the selected values as arguments to the next fragment
-                    Log.d(TAG, "onClick: about to create a fragment, goalType: " + goalType + " selected amount: " + selectedFrequency + " selected timeframe: " + selectedMonitoringPeriod);
                     GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(goalType, selectedFrequency, selectedMonitoringPeriod, "0", "0");
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
@@ -150,7 +147,6 @@ public class GoalIntensityFragment extends Fragment {
                     // Commit the transaction
                     transaction.commit();
                 } else {
-                    Log.d(TAG, "onClick: about to create a fragment, goalType: " + goalType + " selected amount: " + selectedFrequency + " selected timeframe: " + selectedMonitoringPeriod);
                     GoalRangeFragment newFragment = GoalRangeFragment.newInstance(goalType, selectedFrequency, selectedMonitoringPeriod);
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
@@ -171,7 +167,6 @@ public class GoalIntensityFragment extends Fragment {
         npFrequency.setValue(weightDefaultFrequency);
         selectedFrequency = weightDefaultFrequency;
         selectedMonitoringPeriod = values[0];
-        Log.d(TAG, "weightMode: ");
     }
 
     public void bgMode(){

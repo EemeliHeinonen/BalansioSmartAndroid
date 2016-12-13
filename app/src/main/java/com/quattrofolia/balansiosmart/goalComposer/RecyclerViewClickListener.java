@@ -8,7 +8,7 @@ import android.view.View;
 
 //Interface for passing an item selected from the recyclerView in GoalTypeAdapter to GoalTypeFragment class
 
-public interface RecyclerViewClickListener {
+interface RecyclerViewClickListener {
 
     void recyclerViewListClicked(View v, int position, String itemName);
 }

@@ -18,21 +18,17 @@ import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.NotificationEntry;
 import com.quattrofolia.balansiosmart.models.Session;
-import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.joda.time.Interval;
-import org.joda.time.Minutes;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
@@ -43,11 +39,11 @@ import io.realm.RealmResults;
 public class NotificationIntentService extends IntentService {
 
     private static final int NOTIFICATION_ID = 1;
+    private static final int GOAL_ID = 1;
     private static final String ACTION_START = "ACTION_START";
     private static final String ACTION_DELETE = "ACTION_DELETE";
     private static final String ACTION_REMOVE_GOAL_NOTIFICATIONS = "ACTION_REMOVE_GOAL_NOTIFICATIONS";
     private static String TAG = "jeee";
-    private String realmTestString;
 
     // Storage
     private Realm realm;
@@ -186,7 +182,8 @@ public class NotificationIntentService extends IntentService {
                 NOTIFICATION_ID,
                 new Intent(this, GoalComposerActivity.class)
                         .putExtra("type", goalType.getLongName())
-                        .putExtra("notificationId", NOTIFICATION_ID),
+                        .putExtra("notificationId", NOTIFICATION_ID)
+                        .putExtra("goalId", GOAL_ID),
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
         PendingIntent removeNotificationsIntent = PendingIntent.getService(this,
