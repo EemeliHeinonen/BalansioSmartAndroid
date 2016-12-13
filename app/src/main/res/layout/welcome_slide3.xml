@@ -10,11 +10,6 @@
 
         <TextView
             style="@style/BSContent.Intro"
-            android:text="@string/slide_3_instructions_1" />
-
-
-        <TextView
-            style="@style/BSContent.Intro"
             android:text="@string/slide_3_instructions_2" />
 
     </LinearLayout>
