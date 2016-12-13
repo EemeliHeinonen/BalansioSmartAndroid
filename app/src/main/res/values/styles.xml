@@ -64,7 +64,8 @@
     </style>
     
     <style name="BSCaption.Intro">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/bs_contentLight</item>
     </style>
 
@@ -73,10 +74,12 @@
     </style>
 
     <style name="BSSplashImage">
-        <item name="android:layout_width">@dimen/splash_img_diameter</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/splash_img_diameter</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">@dimen/bs_generalContentPadding</item>
+        <item name="android:layout_marginBottom">@dimen/bs_generalContentPadding</item>
     </style>
 
     <!-- BS positioning styles -->
