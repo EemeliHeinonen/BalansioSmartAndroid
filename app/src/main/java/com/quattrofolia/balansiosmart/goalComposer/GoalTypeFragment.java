@@ -14,13 +14,7 @@ import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
-
-/**
- * Created by eemeliheinonen on 27/10/2016.
- */
-
 // Fragment for selecting the progress_view_goal_item_row data type.
-
 public class GoalTypeFragment extends Fragment implements RecyclerViewClickListener {
     RecyclerView recyclerView;
     GoalTypeAdapter goalTypeAdapter;
@@ -44,27 +38,21 @@ public class GoalTypeFragment extends Fragment implements RecyclerViewClickListe
     }
 
     //Move to the next fragment and pass the selected data to it by clicking a button on the recyclerView
-
     @Override
     public void recyclerViewListClicked(View v, int position, HealthDataType dataType) {
-
-        /* Create fragment for the selected type, pass the selected values
-        * as arguments to the next fragment and give the fragment change
-        * transaction an animation. */
+        // Create fragment for the selected type, pass the selected values as arguments to the next fragment
+        // and give the fragment change transaction an animation.
 
         Fragment fragment;
         FragmentTransaction transaction;
 
         switch (dataType) {
-
             case SLEEP:
                 fragment = GoalRangeFragment.newInstance(dataType, 1, MonitoringPeriod.day);
                 break;
-
             default:
                 fragment = GoalIntensityFragment.newInstance(dataType);
                 break;
-
         }
         transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.enter, R.anim.exit);

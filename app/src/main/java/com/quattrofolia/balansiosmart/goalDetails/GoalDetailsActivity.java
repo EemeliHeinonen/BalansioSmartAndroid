@@ -1,6 +1,7 @@
 package com.quattrofolia.balansiosmart.goalDetails;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,17 +34,27 @@ import io.realm.RealmResults;
 
 import static android.widget.Toast.*;
 
-public class GoalDetailsActivity extends AppCompatActivity {
+public class GoalDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private TextView goalName;
+    private TextView disciplinesReadings;
+    private TextView targetRange;
+    private TextView notificationFrequency;
     private ImageButton editButton;
 
     private Realm realm;
-    private GoalTypeAdapter goalTypeAdapter;
     private User user;
-    GoalDetailsRecyclerViewAdapter adapter;
-    RealmResults<HealthDataEntry> healthDataEntries;
+    private Goal goal;
+    private RealmResults<HealthDataEntry> healthDataEntries;
 
-    private RealmChangeListener realmChangeListener;
+
+    private void findViewComponents() {
+        goalName = (TextView) findViewById(R.id.goalName);
+        disciplinesReadings = (TextView) findViewById(R.id.disciplinesReading);
+        targetRange = (TextView) findViewById(R.id.targetRange);
+        notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
+        editButton = (ImageButton) findViewById(R.id.deleteButton);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,121 +62,132 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
 
-        Intent intent = getIntent();
-
-        /*Verify Session and instantiate User. */
-        Session session = BalansioSmart.currentSession(realm);
-        Integer userId = session.getUserId();
-        if (userId == null) {
-            finish();
-        }
-        user = realm.where(User.class)
-                .equalTo("id", userId.intValue())
-                .findFirst();
-        Log.i("User", user.getFirstName() + " " + user.getLastName());
-
-
-        /*Get Goal object by the id given by adapter.
-        * If the id is invalid, close the activity. */
-        int goalId = intent.getIntExtra("GOAL_ID", -1);
-        if (goalId == -1) {
-            finish();
-        }
-        final Goal goal = realm.where(Goal.class)
-                .equalTo("id", goalId)
-                .findFirst();
-
-        Log.i("Goal",
-                goal.getType().getLongName());
-
-        // Get entries
+        // Get user, goal and entries
+        user = getUser();
+        goal = getGoal();
         healthDataEntries = user.getEntries()
                 .where()
                 .equalTo("type", goal.getType().name())
                 .findAll();
 
         setContentView(R.layout.activity_goal_details);
+        findViewComponents();
 
-        final Activity self = this;
+        showGoalDetails(goal);
 
+        goal.addChangeListener(new RealmChangeListener<Goal>() {
+            @Override
+            public void onChange(Goal goal) {
+                showGoalDetails(goal);
+            }
+        });
+
+        // Set up the recycler view
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_list_view);
+        GoalDetailsRecyclerViewAdapter adapter = new GoalDetailsRecyclerViewAdapter(healthDataEntries);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Add click listener for the edit button
+        editButton.setOnClickListener(this);
+    }
+
+    private User getUser() {
+        // Verify Session and instantiate User
+        Session session = BalansioSmart.currentSession(realm);
+        Integer userId = session.getUserId();
+        if (userId == null) {
+            finish();
+        }
+        return realm.where(User.class)
+                .equalTo("id", userId)
+                .findFirst();
+    }
+
+    private Goal getGoal() {
+        // Get Goal object by the id from intent
+        Intent intent = getIntent();
+        int goalId = intent.getIntExtra("GOAL_ID", -1);
+
+        if (goalId == -1) {
+            // No id found
+            finish();
+        }
+        return realm.where(Goal.class)
+                .equalTo("id", goalId)
+                .findFirst();
+    }
+
+    private void showGoalDetails(Goal goal) {
         // Show goal name
-        TextView goalName = (TextView) findViewById(R.id.goalName);
         goalName.setText(goal.getType().getLongName());
 
         // Show disciplines reading
-        TextView disciplinesReadings = (TextView) findViewById(R.id.disciplinesReading);
         Discipline discipline = goal.getDiscipline();
         if (discipline != null) {
             disciplinesReadings.setText(discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().name());
         }
 
         // Show target range
-        TextView targetRange = (TextView) findViewById(R.id.targetRange);
         Range range = goal.getTargetRange();
         if (range != null) {
             targetRange.setText(range.getLow() + " - " + range.getHigh());
         }
 
         // Show notification frequency
-        TextView notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
         notificationFrequency.setText(goal.getNotificationStyle());
+    }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_list_view);
-        adapter = new GoalDetailsRecyclerViewAdapter(healthDataEntries);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    @Override
+    public void onClick(View view) {
+        final Activity activity = this;
 
-        editButton = (ImageButton) findViewById(R.id.deleteButton);
-        editButton.setOnClickListener(new View.OnClickListener() {
+        // Create dialog with edit and delete goal buttons
+        LayoutInflater inflater = GoalDetailsActivity.this.getLayoutInflater();
+        View content = inflater.inflate(R.layout.activity_goal_details_edit, null);
+
+        final Button editGoal = (Button) content.findViewById(R.id.editGoal);
+        final Button deleteGoal = (Button) content.findViewById(R.id.deleteGoal);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
+        builder.setView(content)
+                .setTitle("Edit");
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Add click listener for edit goal button
+        editGoal.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
+                dialog.dismiss();
+                Intent goalComposerActivity = new Intent(activity, GoalComposerActivity.class)
+                        .putExtra("type", goal.getType().toString())
+                        .putExtra("goalId", goal.getId());
+                startActivity(goalComposerActivity);
+            }
+        });
 
-                LayoutInflater inflater = GoalDetailsActivity.this.getLayoutInflater();
-                View content = inflater.inflate(R.layout.activity_goal_details_edit, null);
-                final Button editGoal = (Button) content.findViewById(R.id.editGoal);
-                final Button deleteGoal = (Button) content.findViewById(R.id.deleteGoal);
-                AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
-                builder.setView(content)
-                        .setTitle("Edit");
-                final AlertDialog dialog = builder.create();
-                dialog.show();
-
-                editGoal.setOnClickListener(new View.OnClickListener() {
+        // Add click listener for the delete goal button
+        deleteGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                realm.executeTransaction(new Realm.Transaction() {
                     @Override
-                    public void onClick(View view) {
-                        Intent goalComposerActivity = new Intent(self, GoalComposerActivity.class)
-                                .putExtra("type", goal.getType().getLongName())
-                                .putExtra("goalId", goal.getId());
-                        startActivity(goalComposerActivity);
-                    }
-                });
+                    public void execute(Realm realm) {
+                        RealmList<HealthDataEntry> userEntries = user.getEntries();
+                        userEntries.removeAll(healthDataEntries);
+                        healthDataEntries.deleteAllFromRealm();
 
-                deleteGoal.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        realm.executeTransaction(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                RealmList<HealthDataEntry> userEntries = user.getEntries();
-                                userEntries.removeAll(healthDataEntries);
-                                healthDataEntries.deleteAllFromRealm();
-
-                                RealmList<Goal> userGoals = user.getGoals();
-                                userGoals.remove(goal);
-                                goal.deleteFromRealm();
-                                Toast.makeText(self, "Goal deleted", LENGTH_LONG).show();
-                                self.finish();
-                            }
-                        });
-
+                        RealmList<Goal> userGoals = user.getGoals();
+                        userGoals.remove(goal);
+                        goal.deleteFromRealm();
+                        Toast.makeText(activity, "Goal deleted", LENGTH_LONG).show();
+                        activity.finish();
                     }
                 });
 
             }
-
         });
-
     }
-
 }
