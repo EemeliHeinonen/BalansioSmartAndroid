@@ -95,7 +95,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Show disciplines reading
         TextView disciplinesReadings = (TextView) findViewById(R.id.disciplinesReading);
         Discipline discipline = goal.getDiscipline();
-        disciplinesReadings.setText(discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().name());
+        if (discipline != null) {
+            disciplinesReadings.setText(discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().name());
+        }
 
         // Show target range
         TextView targetRange = (TextView) findViewById(R.id.targetRange);

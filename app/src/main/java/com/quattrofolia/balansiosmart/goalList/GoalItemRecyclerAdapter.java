@@ -3,7 +3,6 @@ package com.quattrofolia.balansiosmart.goalList;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,9 +56,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
         @Override
         public void onGoalItemClicked(Goal goal) {
-            Log.d(TAG, "onGoalItemClicked: " + goal.getId() + ", type: " + goal.getType().name());
-            /* TODO: launch detail activity here */
-
             Intent intent = new Intent(itemView.getContext(), GoalDetailsActivity.class);
             intent.putExtra("GOAL_ID", goal.getId());
             context.startActivity(intent);
@@ -91,6 +87,12 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         Discipline discipline = goal.getDiscipline();
         holder.textViewType.setText(goal.getType().getLongName());
         holder.textViewPeriod.setText("measurements");
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.onGoalItemClicked(goal);
+            }
+        });
 
         if (discipline != null) {
             int frequency = discipline.getFrequency();
@@ -114,17 +116,11 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
 
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    holder.onGoalItemClicked(goal);
-                }
-            });
         } else {
             holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);
             holder.completionRing.disable();
         }
+
     }
 
     @Override
