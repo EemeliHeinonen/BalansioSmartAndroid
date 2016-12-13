@@ -61,7 +61,6 @@ public class GoalTypeAdapter extends RecyclerView.Adapter<GoalTypeAdapter.ListDa
                 public void onClick(View v) {
 
                     //Call the recyclerViewClickListener interfaces method to know which list item was clicked.
-                    Log.d(TAG, "onClick: "+header.getText());
                     itemListener.recyclerViewListClicked(itemView, getLayoutPosition(), header.getText().toString());
                 }
             });
