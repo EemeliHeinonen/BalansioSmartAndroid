@@ -12,22 +12,14 @@ import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
-import com.quattrofolia.balansiosmart.dialogs.SelectUserDialogFragment;
-import com.quattrofolia.balansiosmart.dialogs.UserCreatedDialogFragment;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.goalList.GoalItemRecyclerAdapter;
 import com.quattrofolia.balansiosmart.models.Goal;
-import com.quattrofolia.balansiosmart.models.HealthDataEntry;
-import com.quattrofolia.balansiosmart.models.HealthDataType;
-import com.quattrofolia.balansiosmart.models.Incrementable;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
-import org.joda.time.Instant;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +36,6 @@ public class ProgressViewActivity extends Activity {
     private CardStack cardStack;
     private CardsDataAdapter cardAdapter;
     private Button createGoalButton;
-    private Button defaultGoalsButton;
     private List<Goal> goalItems;
     private RecyclerView goalRecyclerView;
     private GoalItemRecyclerAdapter goalAdapter;
@@ -81,34 +72,11 @@ public class ProgressViewActivity extends Activity {
 
         /* Button bar */
         createGoalButton = (Button) findViewById(R.id.button_createGoal);
-        defaultGoalsButton = (Button) findViewById(R.id.default_goals_button);
 
         createGoalButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
                 startActivity(i);
-            }
-        });
-
-
-        defaultGoalsButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-
-                final HealthDataEntry firstEntry = new HealthDataEntry();
-                final int userId = user.getId();
-                firstEntry.setType(HealthDataType.WEIGHT);
-                firstEntry.setValue(new BigDecimal("4.5"));
-                firstEntry.setInstant(new Instant());
-
-                realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm bgRealm) {
-                        Incrementable incrementable = firstEntry;
-                        incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
-                        User managedUser = bgRealm.where(User.class).equalTo("id", userId).findFirst();
-                        managedUser.getEntries().add((HealthDataEntry) incrementable);
-                    }
-                });
             }
         });
 
@@ -255,15 +223,12 @@ public class ProgressViewActivity extends Activity {
 
     private void setInterfaceAccessibility(boolean authorized) {
         createGoalButton.setEnabled(authorized);
-        defaultGoalsButton.setEnabled(authorized);
         if (authorized) {
             userNameTextView.setVisibility(View.VISIBLE);
             cardStack.setVisibility(View.VISIBLE);
-            defaultGoalsButton.setVisibility(View.VISIBLE);
         } else {
             userNameTextView.setVisibility(View.INVISIBLE);
             cardStack.setVisibility(View.INVISIBLE);
-            defaultGoalsButton.setVisibility(View.INVISIBLE);
         }
     }
 
