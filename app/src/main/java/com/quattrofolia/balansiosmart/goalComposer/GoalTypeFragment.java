@@ -59,9 +59,11 @@ public class GoalTypeFragment extends Fragment implements RecyclerViewClickListe
 
             case SLEEP:
                 fragment = GoalRangeFragment.newInstance(dataType, 1, MonitoringPeriod.day);
+                break;
 
             default:
                 fragment = GoalIntensityFragment.newInstance(dataType);
+                break;
 
         }
         transaction = getActivity().getSupportFragmentManager().beginTransaction();

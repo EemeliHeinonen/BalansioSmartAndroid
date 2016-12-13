@@ -120,7 +120,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);
             holder.completionRing.disable();
         }
-
     }
 
     @Override

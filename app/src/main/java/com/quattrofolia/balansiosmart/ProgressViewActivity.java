@@ -89,6 +89,10 @@ public class ProgressViewActivity extends Activity {
         cardStack.setAdapter(cardAdapter);
 
 
+        /* Instantiate RealmChangeListener for observing User objects.
+        * Whenever a change is detected in the View's current User
+        * object, a method is called to refresh the interface. */
+
         userListener = new RealmChangeListener<User>() {
             @Override
             public void onChange(User element) {

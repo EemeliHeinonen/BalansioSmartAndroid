@@ -38,13 +38,17 @@ public class GoalIntensityFragment extends Fragment {
     private MonitoringPeriod monitoringPeriod;
     private NumberPicker npMonitoringPeriod;
     private NumberPicker npFrequency;
-    private final String[] values = {"day", "week", "month"};
+    private final MonitoringPeriod[] periods = {
+            MonitoringPeriod.day,
+            MonitoringPeriod.week,
+            MonitoringPeriod.month
+    };
     private HealthDataType dataType;
 
     public static GoalIntensityFragment newInstance(HealthDataType dataType) {
         GoalIntensityFragment fragment = new GoalIntensityFragment();
         Bundle args = new Bundle();
-        args.putString("goalType", dataType.toString());
+        args.putString("dataType", dataType.toString());
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,19 +56,19 @@ public class GoalIntensityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Init default values
+        //Init default periods
         frequencyMin = 1;
         frequencyMax = 10;
         frequencyDefault = 5;
         periodMin = 0;
-        periodMax = values.length - 1;
+        periodMax = periods.length - 1;
         periodDefault = 0;
         selectedFrequency = frequencyDefault;
-        monitoringPeriod = MonitoringPeriod.valueOf(values[0]);
+        monitoringPeriod = periods[0];
 
         //get data from the previous fragment
         if (getArguments() != null) {
-            dataType = HealthDataType.valueOf(getArguments().getString("goalType"));
+            dataType = HealthDataType.valueOf(getArguments().getString("dataType"));
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
@@ -85,7 +89,12 @@ public class GoalIntensityFragment extends Fragment {
         npFrequency.setMaxValue(frequencyMax);
         npFrequency.setValue(frequencyDefault);
         npFrequency.setWrapSelectorWheel(false);
-        npMonitoringPeriod.setDisplayedValues(values);
+
+        String[] periodStrings = new String[periods.length];
+        for (int i = 0; i < periodStrings.length; i++) {
+            periodStrings[i] = periods[i].toString();
+        }
+        npMonitoringPeriod.setDisplayedValues(periodStrings);
         npMonitoringPeriod.setMinValue(periodMin);
         npMonitoringPeriod.setMaxValue(periodMax);
         npMonitoringPeriod.setValue(periodDefault);
@@ -104,7 +113,7 @@ public class GoalIntensityFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Set the selected value to a variable
-                monitoringPeriod = MonitoringPeriod.valueOf(values[newVal]);
+                monitoringPeriod = periods[newVal];
             }
         });
 
@@ -113,10 +122,15 @@ public class GoalIntensityFragment extends Fragment {
         switch (dataType) {
             case WEIGHT:
                 weightMode();
+                break;
             case BLOOD_GLUCOSE:
                 bgMode();
+                break;
             case EXERCISE:
                 exerciseMode();
+                break;
+            default:
+                break;
         }
 
         //handle the swiping to the next fragment by clicking on the button
@@ -137,7 +151,7 @@ public class GoalIntensityFragment extends Fragment {
             public void onClick(View v) {
 
                 //handle the navigation and data passing to the next fragment by clicking on the button,
-                // depending on which goalType has been selected
+                // depending on which dataType has been selected
 
                 Fragment fragment;
                 FragmentTransaction transaction;
@@ -145,8 +159,10 @@ public class GoalIntensityFragment extends Fragment {
                 switch (dataType) {
                     case EXERCISE:
                         fragment = GoalNotificationFragment.newInstance(dataType, selectedFrequency, monitoringPeriod, "0", "0");
+                        break;
                     default:
                         fragment = GoalRangeFragment.newInstance(dataType, selectedFrequency, monitoringPeriod);
+                        break;
                 }
 
                 transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -166,19 +182,18 @@ public class GoalIntensityFragment extends Fragment {
         npFrequency.setMaxValue(10);
         npFrequency.setValue(weightDefaultFrequency);
         selectedFrequency = weightDefaultFrequency;
-        monitoringPeriod = MonitoringPeriod.valueOf(values[0]);
+        monitoringPeriod = periods[0];
     }
 
     public void bgMode() {
-        monitoringPeriod = MonitoringPeriod.valueOf(values[0]);
+        monitoringPeriod = periods[0];
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
         tvFrequency.setText("Select the number of " + monitoringPeriod.getDescriptiveName() + " measurements");
     }
 
-
     public void exerciseMode() {
-        monitoringPeriod = MonitoringPeriod.valueOf(values[1]);
+        monitoringPeriod = periods[1];
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
         tvFrequency.setText("Times of exercise a week");
