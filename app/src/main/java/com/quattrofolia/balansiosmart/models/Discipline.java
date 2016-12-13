@@ -11,6 +11,11 @@ import io.realm.RealmObject;
 
 public class Discipline extends RealmObject {
 
+    /* Discipline is a property of a Goal object.
+    * It describes how often the user needs to take
+    * clinical measurements per monitoring period
+    * in order to reach the goal. */
+
     private int frequency;
     private String monitoringPeriod;
 
@@ -30,6 +35,7 @@ public class Discipline extends RealmObject {
         this.monitoringPeriod = monitoringPeriod.toString();
     }
 
+    /* Returns the schedule for */
     public List<Interval> getSchedule(Instant forInstant, int transposition) {
         List<Interval> intervals = new ArrayList<>();
         Interval quantizedPeriod = getMonitoringPeriod()

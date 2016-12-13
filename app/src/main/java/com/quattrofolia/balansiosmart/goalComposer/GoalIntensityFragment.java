@@ -13,6 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
 import static android.content.ContentValues.TAG;
 
@@ -33,16 +35,16 @@ public class GoalIntensityFragment extends Fragment {
     Button btnNext;
     Button btnSkip;
     private int selectedFrequency;
-    private String selectedMonitoringPeriod;
+    private MonitoringPeriod monitoringPeriod;
     private NumberPicker npMonitoringPeriod;
     private NumberPicker npFrequency;
-    private final String[] values = {"day","week", "month"};
-    private String goalType;
+    private final String[] values = {"day", "week", "month"};
+    private HealthDataType dataType;
 
-    public static GoalIntensityFragment newInstance(String goalType) {
+    public static GoalIntensityFragment newInstance(HealthDataType dataType) {
         GoalIntensityFragment fragment = new GoalIntensityFragment();
         Bundle args = new Bundle();
-        args.putString("goalType", goalType);
+        args.putString("goalType", dataType.toString());
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,21 +57,21 @@ public class GoalIntensityFragment extends Fragment {
         frequencyMax = 10;
         frequencyDefault = 5;
         periodMin = 0;
-        periodMax = values.length-1;
+        periodMax = values.length - 1;
         periodDefault = 0;
         selectedFrequency = frequencyDefault;
-        selectedMonitoringPeriod = values[0];
+        monitoringPeriod = MonitoringPeriod.valueOf(values[0]);
 
         //get data from the previous fragment
         if (getArguments() != null) {
-            goalType = getArguments().getString("goalType");
+            dataType = HealthDataType.valueOf(getArguments().getString("goalType"));
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView =(RelativeLayout) inflater.inflate(R.layout.goal_intensity_fragment, container, false);
+        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_intensity_fragment, container, false);
         tvFrequency = (TextView) myView.findViewById(R.id.textViewGoalIntensity);
         tvMonitoringPeriod = (TextView) myView.findViewById(R.id.textViewGoalIntensityDesc);
         btnNext = (Button) myView.findViewById(R.id.btnIntensityNext);
@@ -91,27 +93,30 @@ public class GoalIntensityFragment extends Fragment {
         //Set a value change listener for amount NumberPicker
         npFrequency.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal){
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Set the selected value to a variable
-                selectedFrequency = newVal;}
+                selectedFrequency = newVal;
+            }
         });
 
         //Set a value change listener for time frame NumberPicker
         npMonitoringPeriod.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal){
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Set the selected value to a variable
-                selectedMonitoringPeriod = values[newVal];
+                monitoringPeriod = MonitoringPeriod.valueOf(values[newVal]);
             }
         });
 
         //check if a certain progress_view_goal_item_row type has been selected & modify the fragment accordingly
-        if (goalType.equals("Weight")) {
-            weightMode();
-        } else if(goalType.equals("Blood Glucose")) {
-            bgMode();
-        } else if (goalType.equals("Exercise")) {
-            exerciseMode();
+
+        switch (dataType) {
+            case WEIGHT:
+                weightMode();
+            case BLOOD_GLUCOSE:
+                bgMode();
+            case EXERCISE:
+                exerciseMode();
         }
 
         //handle the swiping to the next fragment by clicking on the button
@@ -119,7 +124,7 @@ public class GoalIntensityFragment extends Fragment {
             public void onClick(View v) {
 
                 //Move to the next fragment without passing new data from this fragment
-                GoalRangeFragment newFragment = GoalRangeFragment.newInstance(goalType, 0, "none");
+                GoalRangeFragment newFragment = GoalRangeFragment.newInstance(dataType, 0, null);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
                 transaction.replace(R.id.fragment_container, newFragment);
@@ -133,56 +138,49 @@ public class GoalIntensityFragment extends Fragment {
 
                 //handle the navigation and data passing to the next fragment by clicking on the button,
                 // depending on which goalType has been selected
-                if (goalType.equals("Exercise")) {
-                    // Create fragment and pass the selected values as arguments to the next fragment
-                    GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(goalType, selectedFrequency, selectedMonitoringPeriod, "0", "0");
-                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
 
-                    // Replace whatever is in the fragment_container view with this fragment,
-                    // and add the transaction to the back stack so the user can navigate back
-                    transaction.replace(R.id.fragment_container, newFragment);
-                    transaction.addToBackStack(null);
+                Fragment fragment;
+                FragmentTransaction transaction;
 
-                    // Commit the transaction
-                    transaction.commit();
-                } else {
-                    GoalRangeFragment newFragment = GoalRangeFragment.newInstance(goalType, selectedFrequency, selectedMonitoringPeriod);
-                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
-                    transaction.replace(R.id.fragment_container, newFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                switch (dataType) {
+                    case EXERCISE:
+                        fragment = GoalNotificationFragment.newInstance(dataType, selectedFrequency, monitoringPeriod, "0", "0");
+                    default:
+                        fragment = GoalRangeFragment.newInstance(dataType, selectedFrequency, monitoringPeriod);
                 }
+
+                transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
         return myView;
     }
 
     //Methods for initializing the fragment for different progress_view_goal_item_row types.
-    public void weightMode(){
+    public void weightMode() {
         int weightDefaultFrequency = 2;
         npFrequency.setMinValue(1);
         npFrequency.setMaxValue(10);
         npFrequency.setValue(weightDefaultFrequency);
         selectedFrequency = weightDefaultFrequency;
-        selectedMonitoringPeriod = values[0];
+        monitoringPeriod = MonitoringPeriod.valueOf(values[0]);
     }
 
-    public void bgMode(){
-        selectedMonitoringPeriod = values[0];
+    public void bgMode() {
+        monitoringPeriod = MonitoringPeriod.valueOf(values[0]);
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
-        tvFrequency.setText("Number of measurements a day");
-        Log.d(TAG, "bgMode: ");
+        tvFrequency.setText("Select the number of " + monitoringPeriod.getDescriptiveName() + " measurements");
     }
 
 
-    public void exerciseMode(){
-        selectedMonitoringPeriod = values[1];
+    public void exerciseMode() {
+        monitoringPeriod = MonitoringPeriod.valueOf(values[1]);
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
         tvFrequency.setText("Times of exercise a week");
-        Log.d(TAG, "exerciseMode: ");
     }
 }

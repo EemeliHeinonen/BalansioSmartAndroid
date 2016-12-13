@@ -5,15 +5,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.quattrofolia.balansiosmart.R;
-
-import static android.content.ContentValues.TAG;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
 
 /**
@@ -36,7 +35,7 @@ public class GoalTypeFragment extends Fragment implements RecyclerViewClickListe
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        LinearLayout myView =(LinearLayout) inflater.inflate(R.layout.goal_type_fragment, container, false);
+        LinearLayout myView = (LinearLayout) inflater.inflate(R.layout.goal_type_fragment, container, false);
         recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         goalTypeAdapter = new GoalTypeAdapter(GoalTypeListData.getListData(), getActivity(), this);
@@ -45,41 +44,30 @@ public class GoalTypeFragment extends Fragment implements RecyclerViewClickListe
     }
 
     //Move to the next fragment and pass the selected data to it by clicking a button on the recyclerView
+
     @Override
-    public void recyclerViewListClicked(View v, int position, String itemName){
-        Log.d(TAG, "recyclerViewListClicked: "+ position+ " "+ itemName);
+    public void recyclerViewListClicked(View v, int position, HealthDataType dataType) {
 
-        if (itemName.equals("Sleep")) {
-            // Create fragment, pass the selected values as arguments to the next fragment
-            // and give the fragment change transaction an animation.
-            // Here the user selected Sleep HealthDataType, so the GoalComposer will skip the GoalIntensityFragment
-            // as we can presume that the user will try to sleep every night.
-            Log.d(TAG, "onClick: about to create a fragment, goalType: " + itemName + " selected amount: " + 1 + " selected timeframe: " + "day");
-            GoalRangeFragment newFragment = GoalRangeFragment.newInstance(itemName, 1, "day");
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+        /* Create fragment for the selected type, pass the selected values
+        * as arguments to the next fragment and give the fragment change
+        * transaction an animation. */
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack so the user can navigate back
-            transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
+        Fragment fragment;
+        FragmentTransaction transaction;
 
-            // Commit the transaction
-            transaction.commit();
-        } else {
+        switch (dataType) {
 
-            // Create fragment and give the fragment change transaction an animation
-            GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(itemName);
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+            case SLEEP:
+                fragment = GoalRangeFragment.newInstance(dataType, 1, MonitoringPeriod.day);
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack so the user can navigate back
-            transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
+            default:
+                fragment = GoalIntensityFragment.newInstance(dataType);
 
-            // Commit the transaction
-            transaction.commit();
         }
+        transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

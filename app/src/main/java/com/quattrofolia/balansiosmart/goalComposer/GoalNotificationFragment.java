@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,9 +27,9 @@ import static android.content.ContentValues.TAG;
 
 public class GoalNotificationFragment extends Fragment {
 
-    private String goalType;
+    private HealthDataType dataType;
     private int frequency;
-    private String monitoringPeriod;
+    private MonitoringPeriod monitoringPeriod;
     private String idealRangeMin;
     private String idealRangeMax;
     RadioGroup radioButtonGroup;
@@ -37,12 +39,12 @@ public class GoalNotificationFragment extends Fragment {
     private String notificationStyle = "Strict";
 
     public static GoalNotificationFragment newInstance
-            (String GoalType, int frequency, String monitoringPeriod, String idealRangeMin, String idealRangeMax) {
+            (HealthDataType dataType, int frequency, MonitoringPeriod monitoringPeriod, String idealRangeMin, String idealRangeMax) {
         GoalNotificationFragment fragment = new GoalNotificationFragment();
         Bundle args = new Bundle();
-        args.putString("goalType", GoalType);
+        args.putString("goalType", dataType.toString());
         args.putInt("frequency", frequency);
-        args.putString("monitoringPeriod", monitoringPeriod);
+        args.putString("monitoringPeriod", monitoringPeriod.toString());
         args.putString("rangeMin", idealRangeMin);
         args.putString("rangeMax", idealRangeMax);
         fragment.setArguments(args);
@@ -54,9 +56,9 @@ public class GoalNotificationFragment extends Fragment {
 
         //get data from the previous fragments
         if (getArguments() != null) {
-            goalType = getArguments().getString("goalType");
+            dataType = HealthDataType.valueOf(getArguments().getString("goalType"));
             frequency = getArguments().getInt("frequency");
-            monitoringPeriod = getArguments().getString("monitoringPeriod");
+            monitoringPeriod = MonitoringPeriod.valueOf(getArguments().getString("monitoringPeriod"));
             idealRangeMin = getArguments().getString("rangeMin");
             idealRangeMax = getArguments().getString("rangeMax");
         } else {
@@ -72,7 +74,7 @@ public class GoalNotificationFragment extends Fragment {
         rbStrict = (RadioButton)myView.findViewById(R.id.rbStrict);
         rbEasy = (RadioButton)myView.findViewById(R.id.rbEasy);
         rbNone = (RadioButton)myView.findViewById(R.id.rbNone);
-        tv.setText("Remind me to measure "+goalType);
+        tv.setText("Remind me to measure "+dataType.getLongName());
 
         radioButtonGroup.check(R.id.rbStrict);
         radioButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
@@ -103,7 +105,7 @@ public class GoalNotificationFragment extends Fragment {
             public void onClick(View v) {
 
                 // Create fragment and pass the selected values as arguments to the next fragment
-                GoalOverviewFragment newFragment = GoalOverviewFragment.newInstance(goalType, frequency, monitoringPeriod, idealRangeMin, idealRangeMax, notificationStyle);
+                GoalOverviewFragment newFragment = GoalOverviewFragment.newInstance(dataType, frequency, monitoringPeriod, idealRangeMin, idealRangeMax, notificationStyle);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
 

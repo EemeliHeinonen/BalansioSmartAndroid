@@ -2,71 +2,110 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/BSCenteredFragment">
 
-    <LinearLayout style="@style/BSCenteredContainer">
+    <LinearLayout
+        style="@style/BSCenteredContainer"
+        android:layout_width="match_parent">
 
         <TextView
             style="@style/BSCenteredContainer"
-            android:text="Select Target Range"/>
+            android:text="Select Target Range" />
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <NumberPicker
-                android:id="@+id/numberPicker_min"
-                android:layout_marginTop="40dp"
+            <RelativeLayout
+                android:id="@+id/rangePickerRow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true" />
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <NumberPicker
+                    android:id="@+id/numberPicker_min"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginTop="40dp" />
+
+
+                <LinearLayout
+                    style="@style/BSCenteredContainer"
+                    android:layout_alignLeft="@id/numberPicker_min"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignRight="@id/numberPicker_min">
+
+                    <TextView
+                        android:id="@+id/textViewGoalRangeMin"
+                        style="@style/BSCaption"
+                        android:text="Min" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rangeSpacer"
+                    style="@style/BSCenteredContainer"
+                    android:layout_alignBottom="@id/numberPicker_min"
+                    android:layout_alignTop="@id/numberPicker_min"
+                    android:layout_toRightOf="@id/numberPicker_min">
+
+                    <TextView
+                        style="@style/BSCaption"
+                        android:text="-" />
+
+                </LinearLayout>
+
+                <NumberPicker
+                    android:id="@+id/numberPicker_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_toRightOf="@id/rangeSpacer" />
+
+                <LinearLayout
+                    style="@style/BSCenteredContainer"
+                    android:layout_alignLeft="@id/numberPicker_max"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignRight="@id/numberPicker_max">
+
+                    <TextView
+                        android:id="@+id/textViewGoalRangeMax"
+                        style="@style/BSCaption"
+                        android:text="Max" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
 
             <LinearLayout
-                style="@style/BSCenteredContainer"
-                android:layout_alignLeft="@id/numberPicker_min"
-                android:layout_alignParentTop="true"
-                android:layout_alignRight="@id/numberPicker_min"
-                >
-
-                <TextView
-                    android:id="@+id/textViewGoalRangeMin"
-                    style="@style/BSCaption"
-                    android:text="Min" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/rangeSpacer"
-                style="@style/BSCenteredContainer"
-                android:layout_alignBottom="@id/numberPicker_min"
-                android:layout_alignTop="@id/numberPicker_min"
-                android:layout_toRightOf="@id/numberPicker_min">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignBottom="@id/rangePickerRow"
+                android:layout_alignTop="@id/rangePickerRow"
+                android:layout_toRightOf="@id/rangePickerRow"
+                android:orientation="vertical">
 
                 <TextView
                     style="@style/BSCaption"
-                    android:text="-" />
+                    android:text="" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textView_unit"
+                        style="@style/BSCaption"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentLeft="true"
+                        android:gravity="center_vertical"
+                        android:text="Unit" />
+                </RelativeLayout>
+
 
             </LinearLayout>
 
-
-            <NumberPicker
-                android:id="@+id/numberPicker_max"
-                android:layout_marginTop="40dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/rangeSpacer" />
-
-            <LinearLayout
-                style="@style/BSCenteredContainer"
-                android:layout_alignLeft="@id/numberPicker_max"
-                android:layout_alignParentTop="true"
-                android:layout_alignRight="@id/numberPicker_max">
-
-                <TextView
-                    android:id="@+id/textViewGoalRangeMax"
-                    style="@style/BSCaption"
-                    android:text="Max" />
-
-            </LinearLayout>
 
         </RelativeLayout>
 

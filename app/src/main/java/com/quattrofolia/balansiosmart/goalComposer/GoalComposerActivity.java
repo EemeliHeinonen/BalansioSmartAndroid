@@ -11,6 +11,7 @@ import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.dialogs.AuthorizationErrorDialogFragment;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.Incrementable;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
@@ -61,7 +62,7 @@ public class GoalComposerActivity extends FragmentActivity {
                 }
                 Log.d(TAG, "onCreate: isEditingGoal: "+isEditingGoal);
 
-                GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(getIntent().getStringExtra("type"));
+                GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(HealthDataType.valueOf(getIntent().getStringExtra("type")));
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 // Replace whatever is in the fragment_container view with this fragment,

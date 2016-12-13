@@ -1,5 +1,7 @@
 package com.quattrofolia.balansiosmart.goalComposer;
 
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +14,23 @@ import java.util.List;
 public class GoalTypeListData {
 
     private static final String[] headers = {"Blood Glucose", "Blood Pressure Systolic", "Blood Pressure Diastolic", "Weight", "Exercise", "Sleep", "Nutrition"};
+    private static final HealthDataType[] types = {
+            HealthDataType.BLOOD_GLUCOSE,
+            HealthDataType.BLOOD_PRESSURE_SYSTOLIC,
+            HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
+            HealthDataType.WEIGHT,
+            HealthDataType.EXERCISE,
+            HealthDataType.SLEEP,
+            HealthDataType.NUTRITION
+    };
 
     public static List<GoalTypeListItem> getListData() {
-        List<GoalTypeListItem> goal_composer_type = new ArrayList<>();
-
-
-        for (int i = 0; i < headers.length; i++) {
-            GoalTypeListItem listItem = new GoalTypeListItem();
-            listItem.setHeader(headers[i]);
-            goal_composer_type.add(listItem);
+        List<GoalTypeListItem> itemList = new ArrayList<>();
+        for (HealthDataType dt : types) {
+            GoalTypeListItem listItem = new GoalTypeListItem(dt);
+            itemList.add(listItem);
         }
-        return goal_composer_type;
+        return itemList;
     }
+
 }

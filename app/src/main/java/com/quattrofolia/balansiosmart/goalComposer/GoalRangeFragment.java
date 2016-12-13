@@ -9,11 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.String.format;
@@ -36,25 +39,27 @@ public class GoalRangeFragment extends Fragment {
     private String minSelectedValue;
     private String maxSelectedValue;
     private int userWeight;
-    private String goalType;
+    private HealthDataType dataType;
     private int frequency;
-    private String monitoringPeriod;
+    private MonitoringPeriod monitoringPeriod;
     Button btnNext;
     Button btnSkip;
     private TextView tvRangeMin;
+    private LinearLayout rangeSpacer;
     private TextView tvRangeMax;
+    private TextView tvUnit;
     private String[] minValues = new String[8];
     private String[] maxValues = new String[8];
 
 
 
 
-    public static GoalRangeFragment newInstance(String goalType, int frequency, String monitoringPeriod) {
+    public static GoalRangeFragment newInstance(HealthDataType dataType, int frequency, MonitoringPeriod period) {
         GoalRangeFragment fragment = new GoalRangeFragment();
         Bundle args = new Bundle();
-        args.putString("goalType", goalType);
+        args.putString("dataType", dataType.toString());
         args.putInt("frequency", frequency);
-        args.putString("monitoringPeriod", monitoringPeriod);
+        args.putString("monitoringPeriod", period.toString());
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,9 +78,9 @@ public class GoalRangeFragment extends Fragment {
 
         //get data from the previous fragments
         if (getArguments() != null) {
-            goalType = getArguments().getString("goalType");
+            dataType = HealthDataType.valueOf(getArguments().getString("dataType"));
             frequency = getArguments().getInt("frequency");
-            monitoringPeriod = getArguments().getString("monitoringPeriod");
+            monitoringPeriod = MonitoringPeriod.valueOf(getArguments().getString("monitoringPeriod"));
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
@@ -86,6 +91,8 @@ public class GoalRangeFragment extends Fragment {
         RelativeLayout myView =(RelativeLayout) inflater.inflate(R.layout.goal_range_fragment, container, false);
         tvRangeMin = (TextView) myView.findViewById(R.id.textViewGoalRangeMin);
         tvRangeMax = (TextView) myView.findViewById(R.id.textViewGoalRangeMax);
+        tvUnit = (TextView) myView.findViewById(R.id.textView_unit);
+        rangeSpacer = (LinearLayout) myView.findViewById(R.id.rangeSpacer);
         numberPickerMin = (NumberPicker) myView.findViewById(R.id.numberPicker_min);
         numberPickerMax = (NumberPicker) myView.findViewById(R.id.numberPicker_max);
         btnNext = (Button) myView.findViewById(R.id.btnRangeNext);
@@ -100,17 +107,18 @@ public class GoalRangeFragment extends Fragment {
         numberPickerMax.setMinValue(maxRangeMin);
         numberPickerMax.setValue(maxRangeDefault);
         numberPickerMax.setWrapSelectorWheel(false);
+        tvUnit.setText(dataType.getUnit().toString());
 
         //check if a certain progress_view_goal_item_row type has been selected & modify the fragment accordingly
-        if (goalType.equals("Weight")) {
+        if (dataType.equals("Weight")) {
             weightMode();
-        } else if(goalType.equals("Sleep")) {
+        } else if(dataType.equals("Sleep")) {
             sleepMode();
-        } else if(goalType.equals("Blood Pressure Systolic")) {
+        } else if(dataType.equals("Blood Pressure Systolic")) {
             bpSystolicMode();
-        } else if(goalType.equals("Blood Pressure Diastolic")) {
+        } else if(dataType.equals("Blood Pressure Diastolic")) {
             bpDiastolicMode();
-        } else if(goalType.equals("Blood Glucose")) {
+        } else if(dataType.equals("Blood Glucose")) {
             bgMode();
         }
 
@@ -118,10 +126,10 @@ public class GoalRangeFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Check data type and display the newly selected number from picker
-                if (goalType.equals("Sleep")){
+                if (dataType.equals("Sleep")){
                     minSelectedValue = Integer.toString(newVal);
                     maxSelectedValue = Integer.toString(newVal);
-                } else if (goalType.equals("Blood Glucose")){
+                } else if (dataType.equals("Blood Glucose")){
                     minSelectedValue = minValues[newVal];
                 } else {
                     minSelectedValue = Integer.toString(newVal);
@@ -133,7 +141,7 @@ public class GoalRangeFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal){
                 //Check data type and display the newly selected number from picker
-                if (goalType.equals("Blood Glucose")){
+                if (dataType.equals("Blood Glucose")){
                     maxSelectedValue = maxValues[newVal];
                 } else {
                     maxSelectedValue = Integer.toString(newVal);
@@ -146,7 +154,7 @@ public class GoalRangeFragment extends Fragment {
             public void onClick(View v) {
                 //Move to the next fragment without passing new data from this fragment
 
-                GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(goalType, frequency, monitoringPeriod, "0", "0");
+                GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(dataType, frequency, monitoringPeriod, "0", "0");
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
                 transaction.replace(R.id.fragment_container, newFragment);
@@ -160,7 +168,7 @@ public class GoalRangeFragment extends Fragment {
                 //Move to the next fragment
 
                 // Create fragment and pass the selected values as arguments to the next fragment
-                GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(goalType, frequency, monitoringPeriod, minSelectedValue, maxSelectedValue);
+                GoalNotificationFragment newFragment = GoalNotificationFragment.newInstance(dataType, frequency, monitoringPeriod, minSelectedValue, maxSelectedValue);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
 
@@ -188,7 +196,6 @@ public class GoalRangeFragment extends Fragment {
         numberPickerMax.setMinValue(userWeight);
         numberPickerMax.setMaxValue(userWeight+10);
         numberPickerMax.setValue(defaultMax);
-        Log.d(TAG, "weightMode: called");
     }
 
     public void sleepMode(){
@@ -198,10 +205,9 @@ public class GoalRangeFragment extends Fragment {
         minSelectedValue = "8";
         maxSelectedValue = "8";
         numberPickerMin.setWrapSelectorWheel(false);
+        rangeSpacer.setVisibility(View.GONE);
         numberPickerMax.setVisibility(View.GONE);
         tvRangeMax.setVisibility(View.GONE);
-        tvRangeMin.setText("How many hours should you try to sleep a night?");
-        //numberPickerMin.setPaddingRelative(0,300,0,0);
     }
 
     public void bpSystolicMode(){
