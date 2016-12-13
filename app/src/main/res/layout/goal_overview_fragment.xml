@@ -6,7 +6,8 @@
 
         <TextView
             android:id="@+id/tvOverviewType"
-            style="@style/BSContent" />
+            style="@style/BSContent"
+            android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/tvOverviewFrequency"
