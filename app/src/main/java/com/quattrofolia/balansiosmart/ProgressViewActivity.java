@@ -20,6 +20,7 @@ import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.Incrementable;
+import com.quattrofolia.balansiosmart.models.NotificationEntry;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
@@ -71,6 +72,11 @@ public class ProgressViewActivity extends Activity {
 
         userNameTextView = (TextView) findViewById(R.id.textView_userName);
 
+        cardStack = (CardStack) findViewById(R.id.cardStack);
+        cardStack.setContentResource(R.layout.card_content);
+        cardAdapter = new CardsDataAdapter(getApplicationContext());
+        cardAdapter.add("Welcome to Balansio Smart!");
+
         /* Goal RecyclerView */
         goalRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_goals);
         goalLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -112,57 +118,11 @@ public class ProgressViewActivity extends Activity {
             }
         });
 
-        /////// user creation and login/////////////
-        final RealmResults<User> users = realm.where(User.class).findAll();
-
-        if(users.size() == 0){
-            String fName = "Joe";
-            String lName = "Type 2 diabetic";
-            storage.save(new User(fName, lName));
-        }
-
-            realm.executeTransactionAsync(new Realm.Transaction() {
-                                              @Override
-                                              public void execute(Realm realm) {
-                                                  RealmResults<User> managedUsers;
-                                                  managedUsers = realm.where(User.class).findAll();
-                                                  final User selected = managedUsers.get(0);
-                                                  RealmResults<Session> managedSessions;
-                                                  managedSessions = realm.where(Session.class).findAll();
-                                                  if (managedSessions.size() == 1) {
-                                                      managedSessions.get(0).setUserId(selected.getId());
-                                                  } else {
-                                                      Log.e(TAG, "managed sessions size shouldn't be " + managedSessions.size());
-                                                  }
-                                              }
-                                          },
-                    new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            RealmResults<User> managedUsers;
-                            managedUsers = realm.where(User.class).findAll();
-                            final User selected = managedUsers.get(0);
-                            Log.d(TAG, "User " + selected.getId() + " logged in");
-                        }
-                    }, new Realm.Transaction.OnError() {
-                        @Override
-                        public void onError(Throwable error) {
-                            error.printStackTrace();
-                        }
-                    });
 
 
-        ////////////////////////////////////////////
 
 
-        cardStack = (CardStack) findViewById(R.id.cardStack);
-        cardStack.setContentResource(R.layout.card_content);
-        cardAdapter = new CardsDataAdapter(getApplicationContext());
-        cardAdapter.add("test1");
-        cardAdapter.add("test2");
-        cardAdapter.add("test3");
-        cardAdapter.add("test4");
-        cardAdapter.add("test5");
+
         cardStack.setAdapter(cardAdapter);
 
 
@@ -208,13 +168,12 @@ public class ProgressViewActivity extends Activity {
                         user = realm.where(User.class).equalTo("id", userId).findFirst();
                         user.addChangeListener(userListener);
                     } else {
-
                         /* This block automatically creates a user and logs in. */
-                        
+
                         realm.executeTransactionAsync(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                User u = new User("AutomaticallyCreated", "User");
+                                User u = new User("Joe", "with Type 2 diabetes");
                                 u.setPrimaryKey(u.getNextPrimaryKey(realm));
                                 realm.copyToRealm(u);
                             }
@@ -237,9 +196,10 @@ public class ProgressViewActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
-
+        createCards();
         goalItems.clear();
 
         Session currentSession = sessionResults.last(null);
@@ -279,7 +239,7 @@ public class ProgressViewActivity extends Activity {
 
         /* Refresh interface and adapters. */
 
-        setInterfaceAccessibility(userExists);
+        //setInterfaceAccessibility(userExists);
         goalAdapter.setItemList(goalItems);
     }
 
@@ -289,5 +249,11 @@ public class ProgressViewActivity extends Activity {
         sessionResults.removeChangeListeners();
         realm.removeAllChangeListeners();
         realm.close();
+    }
+    private void createCards(){
+        RealmResults<NotificationEntry> allNotificationEntries = realm.where(NotificationEntry.class).findAll();
+        for(NotificationEntry entry : allNotificationEntries){
+            cardAdapter.insert(entry.getNotificationText().toString(),0);
+        }
     }
 }

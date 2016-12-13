@@ -13,12 +13,14 @@ public class NotificationEntry extends RealmObject implements Incrementable {
     @PrimaryKey
     private int id;
     private String type;
+    private String notificationText;
 
     public NotificationEntry() {}
-    public NotificationEntry(String type, String value, Instant instant) {
+    public NotificationEntry(String type, String value, Instant instant, String notificationText) {
         this.type = type;
         this.value = value;
         this.instant = instant.getMillis();
+        this.notificationText = notificationText;
     }
 
     private String value;
@@ -40,6 +42,10 @@ public class NotificationEntry extends RealmObject implements Incrementable {
         this.value = value.toString();
     }
 
+    public void setNotificationText(String notificationText){
+        this.notificationText = notificationText.toString();
+    }
+
     public void setInstant(Instant instant) {
         this.instant = instant.getMillis();
     }
@@ -50,6 +56,10 @@ public class NotificationEntry extends RealmObject implements Incrementable {
 
     public String getValue() {
         return value;
+    }
+
+    public String getNotificationText(){
+        return notificationText;
     }
 
     public Instant getInstant() {
