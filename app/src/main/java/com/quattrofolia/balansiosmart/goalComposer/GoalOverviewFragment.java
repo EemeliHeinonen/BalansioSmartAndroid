@@ -1,6 +1,5 @@
 package com.quattrofolia.balansiosmart.goalComposer;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
@@ -80,6 +78,8 @@ public class GoalOverviewFragment extends Fragment {
             idealRangeMax = getArguments().getString("rangeMax");
             notificationStyle = getArguments().getString("notificationStyle");
 
+            // Create a goal object and give it a Discipline and a Range object,
+            // if the user selected not to skip their values in the GoalComposer
             goal = new Goal();
             goal.setNotificationStyle(notificationStyle);
             if(frequency!=0) {
@@ -88,19 +88,14 @@ public class GoalOverviewFragment extends Fragment {
             if (!idealRangeMax.equals("0")){
                 range = new Range();
             }
-
-            Log.d(TAG, "onCreate: goaltype: "+goalType);
-            Log.d(TAG, "onCreate: measurement frequency: "+frequency);
-            Log.d(TAG, "onCreate: monitoringPeriod: "+monitoringPeriod);
-            Log.d(TAG, "onCreate: ideal range minimum value: "+idealRangeMin);
-            Log.d(TAG, "onCreate: ideal range maximum value: "+idealRangeMax);
-            Log.d(TAG, "onCreate: notification Style: "+notificationStyle);
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
+
+
+        //Set the correct HealthDataType for the goal object
         if (goalType.equals("Weight")) {
             goal.setType(WEIGHT);
-            Log.d(TAG, "onCreate: Goal print" + goal.toString());
         } else if (goalType.equals("Blood Pressure Systolic")) {
             goal.setType(BLOOD_PRESSURE_SYSTOLIC);
         } else if (goalType.equals("Blood Pressure Diastolic")) {
@@ -115,30 +110,23 @@ public class GoalOverviewFragment extends Fragment {
             goal.setType(NUTRITION);
         }
 
+
+        //Set values for Discipline and Range objects, in case they're not null
         if (discipline!=null) {
             discipline.setFrequency(frequency);
             if (monitoringPeriod.equals("day")) {
                 discipline.setMonitoringPeriod(day);
-                Log.d(TAG, "onCreate: discipline getMonitoringPeriod: " + discipline.getMonitoringPeriod().toString());
-
             } else if (monitoringPeriod.equals("week")) {
                 discipline.setMonitoringPeriod(week);
-                Log.d(TAG, "onCreate: discipline getMonitoringPeriod: " + discipline.getMonitoringPeriod().toString());
-
             } else {
                 discipline.setMonitoringPeriod(month);
-                Log.d(TAG, "onCreate: discipline getMonitoringPeriod: " + discipline.getMonitoringPeriod().toString());
             }
             goal.setDiscipline(discipline);
         }
 
         if (range!=null) {
             range.setLow(new BigDecimal(idealRangeMin));
-            Log.d(TAG, "onCreate:range getLow:  " + range.getLow());
-
             range.setHigh(new BigDecimal(idealRangeMax));
-            Log.d(TAG, "onCreate: range getHigh: " + range.getHigh());
-
             goal.setTargetRange(range);
         }
     }
@@ -149,6 +137,7 @@ public class GoalOverviewFragment extends Fragment {
         TextView tvFrequency = (TextView) myView.findViewById(R.id.tvOverviewFrequency);
         TextView tvRangeMin = (TextView) myView.findViewById(R.id.tvOverviewRangeMin);
         TextView tvRangeMax = (TextView) myView.findViewById(R.id.tvOverviewRangeMax);
+        TextView tvNotificationStyle = (TextView) myView.findViewById(R.id.tvOverviewNotificationStyle);
         Button btnOverviewFinish = (Button) myView.findViewById(R.id.btnOverviewFinish);
         Button btnOverviewAnother = (Button) myView.findViewById(R.id.btnOverviewAnother);
 
@@ -158,7 +147,9 @@ public class GoalOverviewFragment extends Fragment {
             tvRangeMin.setText("Goal range minimum value: "+idealRangeMin);
             tvRangeMax.setText("Goal range maximum value: "+idealRangeMax);
         }
+        tvNotificationStyle.setText("Notification style: "+notificationStyle);
 
+        //Check if the user is editing an existing goal object or creating a new one
         if (((GoalComposerActivity) getActivity()).isEditingGoal()) {
             btnOverviewAnother.setVisibility(View.INVISIBLE);
             btnOverviewFinish.setText(R.string.button_text_edit_goal);
@@ -172,8 +163,9 @@ public class GoalOverviewFragment extends Fragment {
         } else {
             btnOverviewAnother.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    //Add the newly created progress_view_goal_item_row object to the users list of goals
-                    ((GoalComposerActivity) getActivity()).addGoal(goal);
+                    // Add the newly created progress_view_goal_item_row object to the users list of goals
+                    // and return to the GoalTypeFragment to create another goal
+                    ((GoalComposerActivity) getActivity()).addGoal(goal, false);
                     GoalTypeFragment newFragment = GoalTypeFragment.newInstance();
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
@@ -186,7 +178,7 @@ public class GoalOverviewFragment extends Fragment {
             btnOverviewFinish.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     //Add the newly created progress_view_goal_item_row object to the users list of goals
-                    ((GoalComposerActivity) getActivity()).addGoal(goal);
+                    ((GoalComposerActivity) getActivity()).addGoal(goal, true);
                 }
             });
         }

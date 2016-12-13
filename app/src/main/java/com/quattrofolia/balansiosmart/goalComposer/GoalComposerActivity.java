@@ -10,24 +10,19 @@ import android.util.Log;
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.dialogs.AuthorizationErrorDialogFragment;
-import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.Incrementable;
-import com.quattrofolia.balansiosmart.models.Range;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmObject;
-import io.realm.RealmResults;
 
+//Activity for creating and editing goals, handles the fragments of the GoalComposer
 public class GoalComposerActivity extends FragmentActivity {
 
     public static final String TAG = "GoalComposerActivity";
     private Realm realm;
-    private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
-    private RealmResults<Session> sessionResults;
     private boolean isEditingGoal;
     private Integer goalId;
 
@@ -40,6 +35,7 @@ public class GoalComposerActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+        // if the GoalComposer is opened by a notification action, dismiss the notification afterwards.
         if (getIntent().hasExtra("notificationId")){
             manager.cancel(getIntent().getIntExtra("notificationId", 0));
         }
@@ -55,28 +51,26 @@ public class GoalComposerActivity extends FragmentActivity {
             if (savedInstanceState != null) {
                 return;
             }
-            /*!getIntent().getExtras().getString("type").isEmpty()*/
+
+            //check if the Activity was opened by a notification's edit Goal intent, if it was, navigate to the second fragment.
             if (getIntent().hasExtra("type")){
-                Log.d(TAG, "onCreate: getExtras not empty, type:" + getIntent().getStringExtra("type"));
                 if (getIntent().hasExtra("goalId")) {
+                    Log.d(TAG, "onCreate: has goalId");
                     goalId = getIntent().getIntExtra("goalId", -1);
-                    Log.d(TAG, "onCreate: goalId:" + goalId);
                     isEditingGoal = true;
                 }
+                Log.d(TAG, "onCreate: isEditingGoal: "+isEditingGoal);
 
                 GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(getIntent().getStringExtra("type"));
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
                 // Replace whatever is in the fragment_container view with this fragment,
                 // and add the transaction to the back stack so the user can navigate back
                 transaction.replace(R.id.fragment_container, newFragment);
+
                 // Commit the transaction
                 transaction.commit();
 
-                // Create a new Fragment to be placed in the activity layout
-                //GoalIntensityFragment intensityFragment = GoalIntensityFragment.newInstance(getIntent().getExtras().getString("type"));
-
-                //getSupportFragmentManager().beginTransaction()
-                  //      .add(R.id.fragment_container, intensityFragment).commit();
             } else {
                 // Create a new Fragment to be placed in the activity layout
                 GoalTypeFragment typeFragment = new GoalTypeFragment();
@@ -97,6 +91,7 @@ public class GoalComposerActivity extends FragmentActivity {
         return isEditingGoal;
     }
 
+    // Edit an already existing Goal object and save the changes to the Realm database
     public void editGoal(final Goal editedGoal) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
@@ -108,12 +103,11 @@ public class GoalComposerActivity extends FragmentActivity {
             @Override
             public void onSuccess() {
                 finish();
-
             }
         });
     }
 
-    public void addGoal(final Goal goal) {
+    public void addGoal(final Goal goal, final Boolean doFinish) {
         Session session = BalansioSmart.currentSession(realm);
         if (session.getUserId() == null) {
             displayAuthErrorDialog();
@@ -133,8 +127,10 @@ public class GoalComposerActivity extends FragmentActivity {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                finish();
-
+                if (doFinish){
+                    // Close the activity if the user didn't choose to add another goal.
+                    finish();
+                }
             }
         });
 

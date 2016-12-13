@@ -1,6 +1,5 @@
 package com.quattrofolia.balansiosmart.goalComposer;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,7 +21,7 @@ import static android.content.ContentValues.TAG;
  * Created by eemeliheinonen on 27/10/2016.
  */
 
-// Fragment class for selcting progress_view_goal_item_row's notification preferneces
+// Fragment class for selecting progress_view_goal_item_row's notification preferences
 
 public class GoalNotificationFragment extends Fragment {
 
@@ -31,10 +30,10 @@ public class GoalNotificationFragment extends Fragment {
     private String monitoringPeriod;
     private String idealRangeMin;
     private String idealRangeMax;
-    private RadioGroup radioButtonGroup;
-    private RadioButton rbStrict;
-    private RadioButton rbEasy;
-    private RadioButton rbNone;
+    RadioGroup radioButtonGroup;
+    RadioButton rbStrict;
+    RadioButton rbEasy;
+    RadioButton rbNone;
     private String notificationStyle = "Strict";
 
     public static GoalNotificationFragment newInstance
@@ -60,11 +59,6 @@ public class GoalNotificationFragment extends Fragment {
             monitoringPeriod = getArguments().getString("monitoringPeriod");
             idealRangeMin = getArguments().getString("rangeMin");
             idealRangeMax = getArguments().getString("rangeMax");
-            Log.d(TAG, "onCreate: goaltype: "+goalType);
-            Log.d(TAG, "onCreate: measurement frequency: "+frequency);
-            Log.d(TAG, "onCreate: monitoringPeriod: "+monitoringPeriod);
-            Log.d(TAG, "onCreate: ideal range minimum value: "+idealRangeMin);
-            Log.d(TAG, "onCreate: ideal range maximum value: "+idealRangeMax);
         } else {
             Log.d(TAG, "onCreate: arguments null");
         }
@@ -90,31 +84,23 @@ public class GoalNotificationFragment extends Fragment {
                     case R.id.rbStrict:
                         Log.d(TAG, "onCheckedChanged: Strict");
                         notificationStyle = "Strict";
-                        rbStrict.setTextColor(Color.parseColor("#be3e82"));
-                        rbEasy.setTextColor(Color.parseColor("#8e665899"));
-                        rbNone.setTextColor(Color.parseColor("#8e665899"));
                         break;
+
                     case R.id.rbEasy:
                         Log.d(TAG, "onCheckedChanged: Easy");
                         notificationStyle = "Easy";
-                        rbEasy.setTextColor(Color.parseColor("#be3e82"));
-                        rbStrict.setTextColor(Color.parseColor("#8e665899"));
-                        rbNone.setTextColor(Color.parseColor("#8e665899"));
                         break;
+
                     case R.id.rbNone:
                         notificationStyle = "None";
-                        rbNone.setTextColor(Color.parseColor("#be3e82"));
-                        rbStrict.setTextColor(Color.parseColor("#8e665899"));
-                        rbEasy.setTextColor(Color.parseColor("#8e665899"));
                         break;
                 }
             }
         });
 
-        //handle the swiping to the next fragment by clicking on the button
+        //handle the navigation and data passing to the next fragment by clicking on the button
         btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Move to the next fragment
 
                 // Create fragment and pass the selected values as arguments to the next fragment
                 GoalOverviewFragment newFragment = GoalOverviewFragment.newInstance(goalType, frequency, monitoringPeriod, idealRangeMin, idealRangeMax, notificationStyle);
