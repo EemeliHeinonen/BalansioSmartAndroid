@@ -7,6 +7,10 @@ import io.realm.annotations.Required;
 
 public class Goal extends RealmObject implements Incrementable {
 
+    /* Each Goal object is stored in a User object's goals
+     * RealmList. A goal defines a set of rules for a single
+     * type of health-related data. The assistive interface
+     * of the application is driven by these rules. */
 
     @PrimaryKey
     private int id;

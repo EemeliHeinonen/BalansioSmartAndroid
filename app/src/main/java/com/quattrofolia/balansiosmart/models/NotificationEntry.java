@@ -2,13 +2,14 @@ package com.quattrofolia.balansiosmart.models;
 
 import org.joda.time.Instant;
 
-import java.math.BigDecimal;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class NotificationEntry extends RealmObject implements Incrementable {
+
+    /* NotificationEntry represents a single Android-native notification
+    * delivered to the user. */
 
     @PrimaryKey
     private int id;
