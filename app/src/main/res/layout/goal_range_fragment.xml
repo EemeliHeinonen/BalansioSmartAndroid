@@ -8,7 +8,8 @@
 
         <TextView
             style="@style/BSCenteredContainer"
-            android:text="Select Target Range" />
+            android:text="Select Target Range"
+            android:textSize="15sp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

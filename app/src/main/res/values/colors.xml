@@ -57,4 +57,9 @@
         <item>@color/dot_dark_screen3</item>
         <item>@color/dot_dark_screen4</item>
     </array>
+
+    <!-- detailed view -->
+    <color name="header">#F35C52</color>
+    <color name="text">#ffffff</color>
+
 </resources>

@@ -9,17 +9,16 @@
     <string name="set">Set</string>
     <string name="skip">Skip</string>
     <string name="next">Next</string>
-    <string name="start">Let\'s Start!</string>
+    <string name="start">Close</string>
 
     <!-- Alerts -->
     <string name="dialog_authorization_error">Could not authorize user credentials. Please log in again.</string>
     <string name="dialog_select_user_title">Select a User</string>
     <string name="user_created">User created!</string>
-
     <string name="title_activity_welcome">Home Screen</string>
 
     <!-- Introduction -->
-    <string name="slide_1_title">Welcome to Balansio Smart</string>
+    <string name="slide_1_title">Welcome</string>
     <string name="slide_1_description">
 
         Balansio Smart is your personal self-care assistant.
@@ -28,7 +27,13 @@
 
     </string>
 
-    <string name="slide_2_title">Set Your Goals</string>
+    <string name="slide_2_title">
+
+        Your personal healthcare assistant in your pocket.
+
+    </string>
+
+
     <string name="slide_2_description">
 
         Balansio Smart is highly automated to minimize interaction and maximize results.
@@ -38,23 +43,34 @@
 
     </string>
 
-    <string name="slide_3_title">User Friendly Interface</string>
-    <string name="slide_3_description">
+    <string name="slide_3_title">
 
+        Let\'s get started.
+
+    </string>
+    <string name="slide_3_instructions_1">
+
+        Select one of the following medical conditions to activate a suitable assistance.
 
     </string>
 
-    <string name="slide_4_title"> Let\'s get started!</string>
+    <string name="slide_3_instructions_2">
+
+        You can manually set up your own goals with the Goal Composer by tapping the Create Goal button.
+
+    </string>
+
+    <string name="slide_4_title">Let\'s get started!</string>
     <string name="slide_4_description"> </string>
 
-    <string name="title_of_selected_goal">Title of Selected Goal</string>
+    <string name="title_of_selected_goal">Goal</string>
     <string name="discipline">Discipline</string>
     <string name="notification">Notification</string>
     <string name="target">Target</string>
     <string name="disciplines_reading">disciplines reading</string>
     <string name="target_range">target range</string>
     <string name="header">Header</string>
-    <string name="notification_frequency">notification frequency</string>
+    <string name="notification_frequency">frequency</string>
     <string name="measures">measures</string>
     <string name="time">time</string>
 

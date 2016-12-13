@@ -152,3 +152,4 @@ public class GoalComposerActivity extends FragmentActivity {
         }
     }
 }
+

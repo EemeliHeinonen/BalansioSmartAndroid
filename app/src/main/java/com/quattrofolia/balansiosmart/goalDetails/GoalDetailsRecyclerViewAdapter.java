@@ -11,32 +11,24 @@ import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 
 import io.realm.RealmResults;
 
-/**
- * Created by mrbeva on 11/30/16.
- */
-
-public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDetailsRecyclerViewAdapter.View_Holder>{
+public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDetailsRecyclerViewAdapter.HealthDataViewHolder>{
 
     private RealmResults<HealthDataEntry> list;
-
-
 
     public GoalDetailsRecyclerViewAdapter(RealmResults<HealthDataEntry> list) {
         this.list=list;
     }
 
     @Override
-    public View_Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //Inflate the layout, initialize the View Holder
+    public HealthDataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Inflate the layout, initialize the View Holder
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_goal_details_list_item, parent, false);
-        View_Holder holder = new View_Holder(v);
-        return holder;
+        return new HealthDataViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(View_Holder holder, int position) {
-
-        //Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
+    public void onBindViewHolder(HealthDataViewHolder holder, int position) {
+        // Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
         HealthDataEntry entry = list.get(position);
         holder.time.setText(entry.getInstant().toString());
         holder.measures.setText(entry.getValue());
@@ -44,7 +36,7 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
 
     @Override
     public int getItemCount() {
-        //returns the number of elements the RecyclerView will display
+        // Returns the number of elements the RecyclerView will display
         return list.size();
     }
 
@@ -53,12 +45,11 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    static class View_Holder extends RecyclerView.ViewHolder{
-
+    static class HealthDataViewHolder extends RecyclerView.ViewHolder{
         TextView time;
         TextView measures;
 
-        private View_Holder(View itemView) {
+        private HealthDataViewHolder(View itemView) {
             super(itemView);
 
             time = (TextView) itemView.findViewById(R.id.time_of_measurement);
