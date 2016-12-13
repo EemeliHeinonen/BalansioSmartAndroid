@@ -2,11 +2,14 @@
     <string name="app_name">Balansio Smart</string>
     <string name="button_text_create_goal">Create Goal</string>
     <string name="button_text_edit_goal">Edit Goal</string>
-    <string name="button_text_create_user">Create Mock User</string>
 
     <!-- Common buttons -->
     <string name="dialog_confirmation">OK</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="set">Set</string>
+    <string name="skip">Skip</string>
+    <string name="next">Next</string>
+    <string name="start">Let\'s Start!</string>
 
     <!-- Alerts -->
     <string name="dialog_authorization_error">Could not authorize user credentials. Please log in again.</string>
@@ -14,18 +17,32 @@
     <string name="user_created">User created!</string>
 
     <string name="title_activity_welcome">Home Screen</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">GOT IT</string>
 
-    <string name="slide_1_title">Hello There!</string>
-    <string name="slide_1_description">Welcome to Balansio Smart, your new way of health management application.</string>
+    <!-- Introduction -->
+    <string name="slide_1_title">Welcome to Balansio Smart</string>
+    <string name="slide_1_description">
+
+        Balansio Smart is your personal self-care assistant.
+        It allows you to set up healthy goals and tracks your progress along the way.
+        It helps you to make healthy decisions, develop more consistent routines and achieve a healthier lifestyle.
+
+    </string>
 
     <string name="slide_2_title">Set Your Goals</string>
-    <string name="slide_2_description"> You can set your health goals and change it later as you like.</string>
+    <string name="slide_2_description">
+
+        Balansio Smart is highly automated to minimize interaction and maximize results.
+        You only need to set a goal once and keep tracking your health data with supported meters.
+        The application follows your progress, adapts to your behavior and automatically suggests improvements to your goal configurations if necessary.
+        Most importantly, it reminds you whenever you need to, or may have forgotten to keep track of your health.
+
+    </string>
 
     <string name="slide_3_title">User Friendly Interface</string>
-    <string name="slide_3_description">You can check your status in a glance, and learn more in the list.</string>
+    <string name="slide_3_description">
+
+
+    </string>
 
     <string name="slide_4_title"> Let\'s get started!</string>
     <string name="slide_4_description"> </string>

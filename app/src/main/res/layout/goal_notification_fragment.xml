@@ -40,7 +40,7 @@
 
         <Button
             android:id="@+id/btnNotificationNext"
-            style="@style/BSButton.SpanWidth"
+            style="@style/BSButton"
             android:text="Set" />
     </LinearLayout>
 
