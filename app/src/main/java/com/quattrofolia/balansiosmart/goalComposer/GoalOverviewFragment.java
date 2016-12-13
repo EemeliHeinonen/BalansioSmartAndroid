@@ -45,7 +45,6 @@ public class GoalOverviewFragment extends Fragment {
     private String monitoringPeriod;
     private String idealRangeMin;
     private String idealRangeMax;
-    private String notificationStyle;
     private Goal goal;
     private Discipline discipline;
     private Range range;
@@ -137,7 +136,6 @@ public class GoalOverviewFragment extends Fragment {
         TextView tvFrequency = (TextView) myView.findViewById(R.id.tvOverviewFrequency);
         TextView tvRangeMin = (TextView) myView.findViewById(R.id.tvOverviewRangeMin);
         TextView tvRangeMax = (TextView) myView.findViewById(R.id.tvOverviewRangeMax);
-        TextView tvNotificationStyle = (TextView) myView.findViewById(R.id.tvOverviewNotificationStyle);
         Button btnOverviewFinish = (Button) myView.findViewById(R.id.btnOverviewFinish);
         Button btnOverviewAnother = (Button) myView.findViewById(R.id.btnOverviewAnother);
 
@@ -147,7 +145,6 @@ public class GoalOverviewFragment extends Fragment {
             tvRangeMin.setText("Goal range minimum value: "+idealRangeMin);
             tvRangeMax.setText("Goal range maximum value: "+idealRangeMax);
         }
-        tvNotificationStyle.setText("Notification style: "+notificationStyle);
 
         //Check if the user is editing an existing goal object or creating a new one
         if (((GoalComposerActivity) getActivity()).isEditingGoal()) {
