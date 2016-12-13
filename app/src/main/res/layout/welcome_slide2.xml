@@ -7,11 +7,7 @@
 
         <ImageView
             style="@style/BSSplashImage"
-            android:src="@drawable/blood_glucose" />
-
-        <TextView
-            style="@style/BSCaption.Intro"
-            android:text="@string/slide_2_title"/>
+            android:src="@drawable/splash_2" />
 
         <TextView
             style="@style/BSContent.Intro"

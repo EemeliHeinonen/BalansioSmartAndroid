@@ -14,6 +14,7 @@ import com.quattrofolia.balansiosmart.goalDetails.GoalDetailsActivity;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
+import com.quattrofolia.balansiosmart.models.Range;
 
 import org.joda.time.Instant;
 import org.joda.time.Interval;
@@ -83,8 +84,14 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
     @Override
     public void onBindViewHolder(final GoalViewHolder holder, final int position) {
 
+        /* Set the layout properties for each Goal item
+        * ViewHolder. If the goal has a discipline setting,
+        * update the completion section. If it has a target
+        * range setting, update the target range section. */
+
         final Goal goal = goals.get(position);
         Discipline discipline = goal.getDiscipline();
+        Range targetRange = goal.getTargetRange();
         holder.textViewType.setText(goal.getType().getLongName());
         holder.textViewPeriod.setText("measurements");
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +126,10 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         } else {
             holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);
             holder.completionRing.disable();
+        }
+
+        if (targetRange != null) {
+
         }
     }
 
