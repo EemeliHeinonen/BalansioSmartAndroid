@@ -7,6 +7,10 @@ import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject implements Incrementable {
 
+    /* User object represents a single person using the application.
+    * All goals, health data entries and notifications are property
+    * of a single User object. */
+
     @PrimaryKey
     private int id;
     private String firstName;

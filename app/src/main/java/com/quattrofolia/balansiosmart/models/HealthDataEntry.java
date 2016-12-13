@@ -11,6 +11,9 @@ import io.realm.annotations.Required;
 
 public class HealthDataEntry extends RealmObject implements Incrementable {
 
+    /* HealthDataEntry object represents a single measurement
+    * of a single type of health-related data. */
+
     @PrimaryKey
     private int id;
     @Required

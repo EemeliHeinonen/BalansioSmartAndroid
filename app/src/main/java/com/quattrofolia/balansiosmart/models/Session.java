@@ -7,6 +7,9 @@ import io.realm.annotations.PrimaryKey;
 
 public class Session extends RealmObject implements Incrementable {
 
+    /* Session object persists the user id between sessions when
+    * the application is actually running. */
+
     @PrimaryKey
     int id;
 

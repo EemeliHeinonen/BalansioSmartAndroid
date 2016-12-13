@@ -7,6 +7,8 @@ import io.realm.annotations.Required;
 
 public class Range extends RealmObject {
 
+    /* Range object defines the target value range for a single Goal object. */
+
     @Required
     private String low;
     @Required
