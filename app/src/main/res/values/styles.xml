@@ -48,6 +48,11 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="BSContent.Intro">
+        <item name="android:textColor">@color/bs_contentLight</item>
+    </style>
+
     <style name="BSCaption">
         <item name="android:textColor">@color/bs_content</item>
         <item name="android:padding">@dimen/bs_generalContentPadding</item>
@@ -57,9 +62,21 @@
         <item name="android:layout_centerHorizontal">true</item>
         <item name="android:textSize">16sp</item>
     </style>
+    
+    <style name="BSCaption.Intro">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/bs_contentLight</item>
+    </style>
 
     <style name="BSCaption.Small">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="BSSplashImage">
+        <item name="android:layout_width">@dimen/splash_img_diameter</item>
+        <item name="android:layout_height">@dimen/splash_img_diameter</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_centerHorizontal">true</item>
     </style>
 
     <!-- BS positioning styles -->
@@ -78,6 +95,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="BSCenteredFragment.Intro">
+        <item name="android:background">@color/bs_emphasis</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
