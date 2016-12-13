@@ -159,7 +159,6 @@ public class NotificationIntentService extends IntentService {
         now = new Instant();
         realm = Realm.getDefaultInstance();
         final Session session = BalansioSmart.currentSession(realm);
-        final int id = session.getUserId().intValue();
         storage = new Storage();
         twoHours = Duration.standardHours(2);
 
@@ -168,6 +167,8 @@ public class NotificationIntentService extends IntentService {
         initNotificationEntries();
         easyDisciplineCheck();
         easyClinicalCheck();
+
+
 
 
     }
@@ -245,6 +246,8 @@ public class NotificationIntentService extends IntentService {
     }
 
 
+
+
     private void easyDisciplineCheck() {
         // TODO: check that goals monitoringperiod is day
         RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("discipline").findAll();
@@ -281,13 +284,13 @@ public class NotificationIntentService extends IntentService {
                         if (currentNotificationEntries.isEmpty()) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
-                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
+                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
                             sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType());
                         } else if (currentNotificationEntries
                                 .last().getInstant().isBefore(now.minus(twoHours))) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
-                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline");
+                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
                             sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType());
                         }
                     } else {
@@ -316,8 +319,8 @@ public class NotificationIntentService extends IntentService {
                     int numberOfFailedEntries = 0;
                     RealmResults<HealthDataEntry> currentEasyClinicalEntries = allEntries.where().equalTo("type", goal
                             .getType().toString()).findAll();
+                    RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where().equalTo("type", goal.getType().toString()).equalTo("value", "easyClinical").findAll();
                     if (currentEasyClinicalEntries.size() > 4) {
-                        RealmResults<NotificationEntry> currentNotificationEntries = allNotificationEntries.where().equalTo("type", goal.getType().toString()).equalTo("value", "easyClinical").findAll();
                         if (currentNotificationEntries.isEmpty()) {
                             Log.d(TAG, "easyClinicalCheck: currentNotificationEntries" + currentNotificationEntries.size());
                             BigDecimal currentGoalMinRange = goal.getTargetRange().getLow();
@@ -328,7 +331,6 @@ public class NotificationIntentService extends IntentService {
 
                                 if (currentValue.compareTo(currentGoalMinRange) < 0 || currentValue.compareTo(currentGoalMaxRange) > 0) {
                                     numberOfFailedEntries++;
-
                                 }
                             }
                         } else if (currentNotificationEntries.last().getInstant().isBefore(currentEasyClinicalEntries.get(currentEasyClinicalEntries.size() - 5).getInstant())) {
@@ -340,16 +342,17 @@ public class NotificationIntentService extends IntentService {
 
                                 if (currentValue.compareTo(currentGoalMinRange) < 0 || currentValue.compareTo(currentGoalMaxRange) > 0) {
                                     numberOfFailedEntries++;
-
                                 }
                             }
                         }
                     }
+
                     Log.d(TAG, "easyClinicalCheck: number of failed Entries: " + numberOfFailedEntries);
                     if (numberOfFailedEntries >= 5) {
-                        writeNotificationEntry(goal.getType(), "easyClinical");
+                        writeNotificationEntry(goal.getType(), "easyClinical",goal.getType().getLongName() + " clinical goal did fail");
                         sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType());
-                    } else {
+                    }
+                    else{
                         Log.d(TAG, "easyClinicalCheck: " + goal.getType().getLongName() + " clinical goal accomplished.");
                     }
                 }
@@ -395,7 +398,7 @@ public class NotificationIntentService extends IntentService {
 
 
     private boolean isLastHourOfMonitoringPeriod(DateTime dt) {
-        Interval window = new Interval(dt.minusHours(12), dt.minusHours(2));
+        Interval window = new Interval(dt.minusHours(15), dt.minusHours(2));
         if (window.contains(now)) {
             Log.d(TAG, "isLastHourOfMonitoringPeriod: YES");
             return true;
@@ -417,11 +420,12 @@ public class NotificationIntentService extends IntentService {
         }
     }
 
-    private void writeNotificationEntry(HealthDataType type, String value) {
+    private void writeNotificationEntry(HealthDataType type, String value, String notificationText) {
         NotificationEntry entry = new NotificationEntry();
         entry.setType(type);
         entry.setValue(value);
         entry.setInstant(now);
+        entry.setNotificationText(notificationText);
         storage.save(entry);
     }
 
