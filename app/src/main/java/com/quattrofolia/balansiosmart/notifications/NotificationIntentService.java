@@ -43,7 +43,7 @@ public class NotificationIntentService extends IntentService {
     private static final String ACTION_START = "ACTION_START";
     private static final String ACTION_DELETE = "ACTION_DELETE";
     private static final String ACTION_REMOVE_GOAL_NOTIFICATIONS = "ACTION_REMOVE_GOAL_NOTIFICATIONS";
-    private static String TAG = "jeee";
+    private static String TAG = "theTAG";
 
     // Storage
     private Realm realm;
@@ -53,42 +53,25 @@ public class NotificationIntentService extends IntentService {
     private Instant now;
 
     private RealmResults<Goal> allGoals;
-    private Goal weightGoal;
-    private Goal bgGoal;
-    private Goal bpsGoal;
-    private Goal bpdGoal;
-    private Goal sleepGoal;
-    private Goal exerciseGoal;
-    private Goal nutritionGoal;
     private Duration twoHours;
 
     private RealmResults<NotificationEntry> allNotificationEntries;
     private RealmResults<NotificationEntry> easyDisciplineNotificationEntries;
     private RealmResults<HealthDataEntry> allEntries;
-    private RealmResults<HealthDataEntry> weightEntries;
-    private RealmResults<HealthDataEntry> bgEntries;
-    private RealmResults<HealthDataEntry> bpsEntries;
-    private RealmResults<HealthDataEntry> bpdEntries;
-    private RealmResults<HealthDataEntry> sleepEntries;
-    private RealmResults<HealthDataEntry> exerciseEntries;
-    private RealmResults<HealthDataEntry> nutritionEntries;
+
 
 
     public NotificationIntentService() {
         super(NotificationIntentService.class.getSimpleName());
-        Log.d(TAG, "NotificationIntentService: ");
-
     }
 
     public static Intent createIntentStartNotificationService(Context context) {
-        Log.d(TAG, "createIntentStartNotificationService: ");
         Intent intent = new Intent(context, NotificationIntentService.class);
         intent.setAction(ACTION_START);
         return intent;
     }
 
     public static Intent createIntentDeleteNotification(Context context) {
-        Log.d(TAG, "createIntentDeleteNotification: ");
         Intent intent = new Intent(context, NotificationIntentService.class);
         intent.setAction(ACTION_DELETE);
         return intent;
@@ -96,32 +79,24 @@ public class NotificationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(getClass().getSimpleName(), "onHandleIntent, started handling a notification event");
         try {
             String action = intent.getAction();
-            Log.d(TAG, "onHandleIntent: Action: " + action);
             if (ACTION_START.equals(action)) {
-                Log.d(TAG, "onHandleIntent: actionstart equals action");
                 processStartNotification();
             }
             if (ACTION_DELETE.equals(action)) {
-                Log.d(TAG, "onHandleIntent: action delete equals action");
                 processDeleteNotification(intent);
             }
             if (ACTION_REMOVE_GOAL_NOTIFICATIONS.equals(action)) {
-                Log.d(TAG, "onHandleIntent: ACTION_REMOVE_GOAL_NOTIFICATIONS");
                 removeGoalNotifications(intent.getIntExtra("notificationId", 0), intent.getStringExtra("type"));
 
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent);
-            Log.d(TAG, "onHandleIntent: finally");
         }
     }
 
     private void processDeleteNotification(Intent intent) {
-        // Log something?
-        Log.d(TAG, "processDeleteNotification: ");
     }
 
     //sets goals notifcation mode to no notifications.
@@ -203,9 +178,9 @@ public class NotificationIntentService extends IntentService {
                 .setColor(getResources().getColor(R.color.bs_primary))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.bg)
-                .addAction(R.drawable.bg, "Remind later", progressViewIntent)
-                .addAction(R.drawable.bg, "Edit", goalComposerIntent).setAutoCancel(true)
-                .addAction(R.drawable.bg, "Do not notify about this", removeNotificationsIntent).setAutoCancel(true);
+                .addAction(R.drawable.ic_watch_later_black_18dp, "later", progressViewIntent)
+                .addAction(R.drawable.ic_create_black_18dp, "edit", goalComposerIntent).setAutoCancel(true)
+                .addAction(R.drawable.ic_do_not_disturb_black_18dp, "disable notifications", removeNotificationsIntent).setAutoCancel(true);
 
 
         builder.setContentIntent(progressViewIntent);
@@ -218,25 +193,11 @@ public class NotificationIntentService extends IntentService {
     //initializing goals from Realm
     private void initGoals() {
         allGoals = realm.where(Goal.class).findAll();
-        weightGoal = realm.where(Goal.class).equalTo("type", "WEIGHT").findFirst();
-        bgGoal = realm.where(Goal.class).equalTo("type", "BLOOD_GLUCOSE").findFirst();
-        bpsGoal = realm.where(Goal.class).equalTo("type", "BLOOD_PRESSURE_SYSTOLIC").findFirst();
-        bpdGoal = realm.where(Goal.class).equalTo("type", "BLOOD_PRESSURE_DIASTOLIC").findFirst();
-        sleepGoal = realm.where(Goal.class).equalTo("type", "SLEEP").findFirst();
-        exerciseGoal = realm.where(Goal.class).equalTo("type", "EXERCISE").findFirst();
-        nutritionGoal = realm.where(Goal.class).equalTo("type", "NUTRITION").findFirst();
     }
 
     //initializing entries from Realm
     private void initEntries() {
         allEntries = realm.where(HealthDataEntry.class).findAll();
-        bgEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_GLUCOSE").findAll();
-        weightEntries = realm.where(HealthDataEntry.class).equalTo("type", "WEIGHT").findAll();
-        bpsEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_PRESSURE_SYSTOLIC").findAll();
-        bpdEntries = realm.where(HealthDataEntry.class).equalTo("type", "BLOOD_PRESSURE_DIASTOLIC").findAll();
-        sleepEntries = realm.where(HealthDataEntry.class).equalTo("type", "SLEEP").findAll();
-        exerciseEntries = realm.where(HealthDataEntry.class).equalTo("type", "EXERCISE").findAll();
-        nutritionEntries = realm.where(HealthDataEntry.class).equalTo("type", "NUTRITION").findAll();
     }
 
     //initializing notification entries (=previously sent notifications) from Realm
@@ -298,11 +259,6 @@ public class NotificationIntentService extends IntentService {
                     }
                 }
             }
-
-            //Log.d(TAG, "easyDisciplineCheck: number of entrys of the first item in the easyDisciplineGoals list: "+ i);
-            Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals Size: " + easyDisciplineGoals.size());
-            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin type: " + easyDisciplineGoals.get(easyDisciplineGoals.size() - 1).getType().getLongName());
-            Log.d(TAG, "easyDisciplineCheck: vikan easy itemin discipline: " + easyDisciplineGoals.get(easyDisciplineGoals.size() - 1).getDiscipline().toString());
         } else {
             Log.d(TAG, "easyDisciplineCheck: easyDisciplineGoals is empty");
         }
@@ -347,8 +303,6 @@ public class NotificationIntentService extends IntentService {
                             }
                         }
                     }
-
-                    Log.d(TAG, "easyClinicalCheck: number of failed Entries: " + numberOfFailedEntries);
                     if (numberOfFailedEntries >= 5) {
                         writeNotificationEntry(goal.getType(), "easyClinical",goal.getType().getLongName() + " clinical goal did fail");
                         sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType());
@@ -377,10 +331,8 @@ public class NotificationIntentService extends IntentService {
         DateTime.Property thisWeek = now.toDateTime().weekOfWeekyear();
         DateTime.Property thisYear = now.toDateTime().year();
         if (dt.weekOfWeekyear().getAsText().equals(thisWeek.getAsText()) && dt.year().getAsText().equals(thisYear.getAsText())) {
-            Log.d(TAG, "isThisWeek: YES");
             return true;
         } else {
-            Log.d(TAG, "isThisWeek: NO");
             return false;
         }
     }
@@ -389,22 +341,18 @@ public class NotificationIntentService extends IntentService {
         DateTime.Property thisMonth = now.toDateTime().monthOfYear();
         DateTime.Property thisYear = now.toDateTime().year();
         if (dt.monthOfYear().getAsText().equals(thisMonth.getAsText()) && dt.year().getAsText().equals(thisYear.getAsText())) {
-            Log.d(TAG, "isThisMonth: YES");
             return true;
         } else {
-            Log.d(TAG, "isThisMonth: NO");
             return false;
         }
     }
 
     //returns true if currently is the last hour a monitoring period
     private boolean isLastHourOfMonitoringPeriod(DateTime dt) {
-        Interval window = new Interval(dt.minusHours(15), dt.minusHours(2));
+        Interval window = new Interval(dt.minusHours(15), dt.minusHours(1));
         if (window.contains(now)) {
-            Log.d(TAG, "isLastHourOfMonitoringPeriod: YES");
             return true;
         } else {
-            Log.d(TAG, "isLastHourOfMonitoringPeriod: NO");
             return false;
         }
 
@@ -414,10 +362,8 @@ public class NotificationIntentService extends IntentService {
     private boolean isWakingHours() {
         Interval wakingHours = new Interval(now.toDateTime().withHourOfDay(8).withMinuteOfHour(0), now.toDateTime().withHourOfDay(22).withMinuteOfHour(0));
         if (wakingHours.contains(now)) {
-            Log.d(TAG, "isWakingHours: YES");
             return true;
         } else {
-            Log.d(TAG, "isWakingHours: NO");
             return false;
         }
     }

@@ -18,8 +18,7 @@ public class NotificationEventReceiver extends WakefulBroadcastReceiver {
 
     private static final String ACTION_START_NOTIFICATION_SERVICE = "ACTION_START_NOTIFICATION_SERVICE";
     private static final String ACTION_DELETE_NOTIFICATION = "ACTION_DELETE_NOTIFICATION";
-    private static final int NOTIFICATIONS_INTERVAL_IN_HOURS = 1;
-    private static String TAG = "jeee";
+    private static String TAG = "theTAG";
 
     public static void setupAlarm(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -52,7 +51,6 @@ public class NotificationEventReceiver extends WakefulBroadcastReceiver {
     private static long getTriggerAt(Date now) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(now);
-        //calendar.add(Calendar.HOUR, NOTIFICATIONS_INTERVAL_IN_HOURS);
         return calendar.getTimeInMillis();
     }
 
