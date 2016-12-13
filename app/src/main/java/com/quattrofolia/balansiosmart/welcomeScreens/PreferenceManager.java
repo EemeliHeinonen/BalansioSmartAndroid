@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.welcomeScreens;
 
 import android.content.Context;
 import android.content.SharedPreferences;

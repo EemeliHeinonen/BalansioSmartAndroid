@@ -40,18 +40,7 @@ public class Storage implements StorageHandler {
                     bgRealm.copyToRealmOrUpdate(object);
                 }
             }
-        }/*, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                storageDataSaved(object);
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                //error.printStackTrace();
-                //storageDataError(error);
-            }
-        }*/);
+        });
     }
 
     public void storageDataSaved(RealmObject savedObject) {
