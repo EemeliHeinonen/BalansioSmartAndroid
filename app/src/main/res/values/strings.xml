@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Balansio Smart</string>
     <string name="button_text_create_goal">Create Goal</string>
+    <string name="button_text_edit_goal">Edit Goal</string>
     <string name="button_text_create_user">Create Mock User</string>
 
     <!-- Common buttons -->

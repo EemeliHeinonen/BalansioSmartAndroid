@@ -159,27 +159,37 @@ public class GoalOverviewFragment extends Fragment {
             tvRangeMax.setText("Goal range maximum value: "+idealRangeMax);
         }
 
-        btnOverviewAnother.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //Add the newly created progress_view_goal_item_row object to the users list of goals
-                ((GoalComposerActivity) getActivity()).addGoal(goal);
-                GoalTypeFragment newFragment = GoalTypeFragment.newInstance();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
-                transaction.replace(R.id.fragment_container, newFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
+        if (((GoalComposerActivity) getActivity()).isEditingGoal()) {
+            btnOverviewAnother.setVisibility(View.INVISIBLE);
+            btnOverviewFinish.setText(R.string.button_text_edit_goal);
 
-        btnOverviewFinish.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //Add the newly created progress_view_goal_item_row object to the users list of goals
-                ((GoalComposerActivity) getActivity()).addGoal(goal);
-                Intent intent = new Intent(getActivity(), ProgressViewActivity.class);
-                startActivity(intent);
-            }
-        });
+            btnOverviewFinish.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((GoalComposerActivity) getActivity()).editGoal(goal);
+                }
+            });
+        } else {
+            btnOverviewAnother.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //Add the newly created progress_view_goal_item_row object to the users list of goals
+                    ((GoalComposerActivity) getActivity()).addGoal(goal);
+                    GoalTypeFragment newFragment = GoalTypeFragment.newInstance();
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
+                    transaction.replace(R.id.fragment_container, newFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            });
+
+            btnOverviewFinish.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    //Add the newly created progress_view_goal_item_row object to the users list of goals
+                    ((GoalComposerActivity) getActivity()).addGoal(goal);
+                }
+            });
+        }
 
         return myView;
     }
