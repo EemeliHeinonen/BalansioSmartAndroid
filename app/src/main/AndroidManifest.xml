@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WelcomeSlider">
+        <activity android:name=".welcomeScreens.WelcomeSliderActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart.animation;
+package com.quattrofolia.balansiosmart.cardstack.animation;
 
 import android.animation.TypeEvaluator;
 import android.widget.RelativeLayout.LayoutParams;

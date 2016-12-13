@@ -1,4 +1,4 @@
-package com.quattrofolia.balansiosmart;
+package com.quattrofolia.balansiosmart.welcomeScreens;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,7 +17,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class WelcomeSlider extends AppCompatActivity {
+import com.quattrofolia.balansiosmart.ProgressViewActivity;
+import com.quattrofolia.balansiosmart.R;
+
+public class WelcomeSliderActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
@@ -120,7 +123,7 @@ public class WelcomeSlider extends AppCompatActivity {
     private void launchHomeScreen() {
         prefManager.setFirstTimeLaunch(false);
         // TODO: later to be changed to login or other view
-        startActivity(new Intent(WelcomeSlider.this, ProgressViewActivity.class));
+        startActivity(new Intent(WelcomeSliderActivity.this, ProgressViewActivity.class));
         finish();
     }
 
