@@ -10,11 +10,9 @@ import android.util.Log;
  */
 
 public final class NotificationServiceStarterReceiver extends BroadcastReceiver {
-    private String TAG = "jeee";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         NotificationEventReceiver.setupAlarm(context);
-        Log.d(TAG, "onReceive: ");
     }
 }
