@@ -3,10 +3,6 @@ package com.quattrofolia.balansiosmart.welcomeScreens;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * Created by mrbeva on 9/10/16.
- */
-
 public class PreferenceManager {
 
     SharedPreferences pref;
