@@ -1,4 +1,5 @@
 package com.quattrofolia.balansiosmart.welcomeScreens;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,9 +20,13 @@ import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
+import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
+import com.quattrofolia.balansiosmart.goalComposer.MedicalCondition;
 
 public class WelcomeSliderActivity extends AppCompatActivity {
 
+    private final static String TAG = "WelcomeSliderActivity";
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
@@ -59,9 +64,10 @@ public class WelcomeSliderActivity extends AppCompatActivity {
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
-                R.layout.welcome_slide1,
-                R.layout.welcome_slide2,
-                R.layout.welcome_slide3};
+                R.layout.welcome_slide1_introduction,
+                R.layout.welcome_slide2_instructions,
+                R.layout.welcome_slide3_conditions
+        };
 
         // adding bottom dots
         addBottomDots(0);
@@ -176,6 +182,39 @@ public class WelcomeSliderActivity extends AppCompatActivity {
 
             View view = layoutInflater.inflate(layouts[position], container, false);
             container.addView(view);
+
+
+            /* When instantiating the page for selecting assistant presets,
+            * create a selection button_spanwidth for each condition in the enumeration
+            * and add it to the view. */
+
+            LinearLayout conditionsLayout = (LinearLayout) view.findViewById(R.id.layout_conditions);
+            if (conditionsLayout != null) {
+                for (final MedicalCondition condition : MedicalCondition.values()) {
+                    Button b = (Button) layoutInflater.inflate(R.layout.button_spanwidth, conditionsLayout, false);
+                    //Button b = new Button(view.getContext());
+                    b.setText(condition.getDescriptiveName());
+                    b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(WelcomeSliderActivity.this,
+                                    GoalComposerActivity.class);
+                            i.putExtra(ComposerMode.GENERATE.toString(), condition);
+                            startActivity(i);
+                        }
+                    });
+                    conditionsLayout.addView(b);
+                }
+                Button create = (Button) findViewById(R.id.button_createGoal);
+                create.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(WelcomeSliderActivity.this, GoalComposerActivity.class);
+                        i.putExtra(ComposerMode.CREATE.toString(), "");
+                        startActivity(i);
+                    }
+                });
+            }
 
             return view;
         }

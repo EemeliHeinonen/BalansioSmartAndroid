@@ -158,7 +158,7 @@ public class NotificationIntentService extends IntentService {
         PendingIntent goalComposerIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID,
                 new Intent(this, GoalComposerActivity.class)
-                        .putExtra("type", goalType.getLongName())
+                        .putExtra("type", goalType)
                         .putExtra("notificationId", NOTIFICATION_ID)
                         .putExtra("goalId", GOAL_ID),
                         PendingIntent.FLAG_UPDATE_CURRENT);

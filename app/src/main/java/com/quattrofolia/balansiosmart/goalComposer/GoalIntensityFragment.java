@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
@@ -44,6 +45,14 @@ public class GoalIntensityFragment extends Fragment {
             MonitoringPeriod.month
     };
     private HealthDataType dataType;
+
+    public static GoalIntensityFragment newInstance(Goal goal) {
+        GoalIntensityFragment fragment = new GoalIntensityFragment();
+        Bundle args = new Bundle();
+        args.putString("dataType", goal.getType().toString());
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static GoalIntensityFragment newInstance(HealthDataType dataType) {
         GoalIntensityFragment fragment = new GoalIntensityFragment();
@@ -133,7 +142,7 @@ public class GoalIntensityFragment extends Fragment {
                 break;
         }
 
-        //handle the swiping to the next fragment by clicking on the button
+        //handle the swiping to the next fragment by clicking on the button_spanwidth
         btnSkip.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -150,7 +159,7 @@ public class GoalIntensityFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                //handle the navigation and data passing to the next fragment by clicking on the button,
+                //handle the navigation and data passing to the next fragment by clicking on the button_spanwidth,
                 // depending on which dataType has been selected
 
                 Fragment fragment;

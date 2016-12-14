@@ -50,13 +50,13 @@
     </string>
     <string name="slide_3_instructions_1">
 
-        Select one of the following medical conditions to activate a suitable assistance.
+        Select one of the following medical conditions to automatically generate a suitable goal setup.
 
     </string>
 
     <string name="slide_3_instructions_2">
 
-        You can manually set up your own goals with the Goal Composer by tapping the Create Goal button.
+        If none of the options match your condition, you can manually set up your own goals.
 
     </string>
 

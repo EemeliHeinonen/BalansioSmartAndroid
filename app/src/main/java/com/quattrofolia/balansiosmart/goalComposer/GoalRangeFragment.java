@@ -166,7 +166,7 @@ public class GoalRangeFragment extends Fragment {
             }
         });
 
-        //handle the swiping to the next fragment by clicking on the button
+        //handle the swiping to the next fragment by clicking on the button_spanwidth
         btnSkip.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Move to the next fragment without passing new data from this fragment

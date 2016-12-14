@@ -10,7 +10,21 @@
 
         <TextView
             style="@style/BSContent.Intro"
+            android:text="@string/slide_3_instructions_1"/>
+
+        <LinearLayout
+            android:id="@+id/layout_conditions"
+            style="@style/BSCenteredContainer">
+        </LinearLayout>
+
+        <TextView
+            style="@style/BSContent.Intro"
             android:text="@string/slide_3_instructions_2" />
+
+        <Button
+            android:id="@id/button_createGoal"
+            android:text="Create Goal"
+            style="@style/BSButton" />
 
     </LinearLayout>
 

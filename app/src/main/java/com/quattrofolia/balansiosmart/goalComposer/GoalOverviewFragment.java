@@ -41,6 +41,12 @@ public class GoalOverviewFragment extends Fragment {
     private Discipline discipline;
     private Range range;
 
+    public static GoalOverviewFragment newInstance(Bundle args) {
+        GoalOverviewFragment fragment = new GoalOverviewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public static GoalOverviewFragment newInstance(
             HealthDataType dataType, int frequency, MonitoringPeriod monitoringPeriod,
             String idealRangeMin, String idealRangeMax, String notificationStyle) {
@@ -61,6 +67,9 @@ public class GoalOverviewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (goal != null) {
+            Log.d(TAG, goal.getType().getLongName());
+        }
 
         //get data from the previous fragments
         if (getArguments() != null) {

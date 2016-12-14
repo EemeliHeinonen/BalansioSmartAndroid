@@ -37,7 +37,7 @@ public class GoalTypeFragment extends Fragment implements RecyclerViewClickListe
         return myView;
     }
 
-    //Move to the next fragment and pass the selected data to it by clicking a button on the recyclerView
+    //Move to the next fragment and pass the selected data to it by clicking a button_spanwidth on the recyclerView
     @Override
     public void recyclerViewListClicked(View v, int position, HealthDataType dataType) {
         // Create fragment for the selected type, pass the selected values as arguments to the next fragment
