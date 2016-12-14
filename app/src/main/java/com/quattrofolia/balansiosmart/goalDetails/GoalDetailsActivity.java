@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.dialogs.DeleteGoalDialogFragment;
 import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Discipline;
@@ -40,9 +41,13 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
     private TextView notificationFrequency;
     private ImageButton editButton;
 
+    private Button buttonEditGoal;
+    private Button buttonDeleteGoal;
+
     private Realm realm;
     private User user;
     private Goal goal;
+    private RealmResults<Goal> goalResults;
     private RealmResults<HealthDataEntry> healthDataEntries;
 
 
@@ -52,6 +57,8 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
         targetRange = (TextView) findViewById(R.id.targetRange);
         notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
         editButton = (ImageButton) findViewById(R.id.deleteButton);
+        buttonEditGoal = (Button) findViewById(R.id.button_editGoal);
+        buttonDeleteGoal = (Button) findViewById(R.id.button_deleteGoal);
     }
 
     @Override
@@ -67,16 +74,21 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
                 .where()
                 .equalTo("type", goal.getType().name())
                 .findAll();
-
         setContentView(R.layout.activity_goal_details);
         findViewComponents();
 
-        showGoalDetails(goal);
-
-        goal.addChangeListener(new RealmChangeListener<Goal>() {
+        goalResults = realm.where(Goal.class).findAllAsync();
+        goalResults.addChangeListener(new RealmChangeListener<RealmResults<Goal>>() {
             @Override
-            public void onChange(Goal goal) {
-                showGoalDetails(goal);
+            public void onChange(RealmResults<Goal> element) {
+                goal = getGoal();
+                boolean deleted = (goal == null);
+                if (deleted) {
+                    finish();
+                } else {
+
+                    showGoalDetails(goal);
+                }
             }
         });
 
@@ -88,6 +100,21 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
 
         // Add click listener for the edit button_spanwidth
         editButton.setOnClickListener(this);
+        buttonEditGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent goalComposerActivity = new Intent(view.getContext(), GoalComposerActivity.class)
+                        .putExtra(ComposerMode.EDIT.toString(), goal.getId());
+                startActivity(goalComposerActivity);
+            }
+        });
+        buttonDeleteGoal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DeleteGoalDialogFragment f = DeleteGoalDialogFragment.newInstance(goal.getId());
+                f.show(getFragmentManager(), "Delete Goal?");
+            }
+        });
     }
 
     private User getUser() {
@@ -183,7 +210,6 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
                         activity.finish();
                     }
                 });
-
             }
         });
     }

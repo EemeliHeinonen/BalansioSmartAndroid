@@ -5,6 +5,7 @@
 
     <!-- Common buttons -->
     <string name="dialog_confirmation">OK</string>
+    <string name="dialog_delete">Delete</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="set">Set</string>
     <string name="skip">Skip</string>
@@ -13,6 +14,7 @@
 
     <!-- Alerts -->
     <string name="dialog_authorization_error">Could not authorize user credentials. Please log in again.</string>
+    <string name="dialog_confirm_delete_goal">Do you really want to delete this goal?</string>
     <string name="dialog_select_user_title">Select a User</string>
     <string name="user_created">User created!</string>
     <string name="title_activity_welcome">Home Screen</string>
