@@ -8,6 +8,11 @@
             style="@style/BSCaption.Intro"
             android:text="@string/slide_3_title" />
 
+        <LinearLayout
+            android:id="@+id/layout_conditions"
+            style="@style/BSCenteredContainer">
+        </LinearLayout>
+
         <TextView
             style="@style/BSContent.Intro"
             android:text="@string/slide_3_instructions_2" />

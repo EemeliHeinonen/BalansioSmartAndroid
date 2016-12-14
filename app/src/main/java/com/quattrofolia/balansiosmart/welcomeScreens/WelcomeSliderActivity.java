@@ -8,6 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,11 @@ import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalComposer.Condition;
 
 public class WelcomeSliderActivity extends AppCompatActivity {
 
+    private final static String TAG = "WelcomeSliderActivity";
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private LinearLayout dotsLayout;
@@ -59,9 +62,10 @@ public class WelcomeSliderActivity extends AppCompatActivity {
         // layouts of all welcome sliders
         // add few more layouts if you want
         layouts = new int[]{
-                R.layout.welcome_slide1,
-                R.layout.welcome_slide2,
-                R.layout.welcome_slide3};
+                R.layout.welcome_slide1_introduction,
+                R.layout.welcome_slide2_instructions,
+                R.layout.welcome_slide3_conditions
+        };
 
         // adding bottom dots
         addBottomDots(0);
@@ -176,6 +180,27 @@ public class WelcomeSliderActivity extends AppCompatActivity {
 
             View view = layoutInflater.inflate(layouts[position], container, false);
             container.addView(view);
+
+
+            /* When instantiating the page for selecting assistant presets,
+            * create a selection button for each condition in the enumeration
+            * and add it to the view. */
+
+            LinearLayout conditionsLayout = (LinearLayout) view.findViewById(R.id.layout_conditions);
+            if (conditionsLayout != null) {
+                for (final Condition c : Condition.values()) {
+                    Button b = (Button) layoutInflater.inflate(R.layout.button_select_condition, conditionsLayout, false);
+                    //Button b = new Button(view.getContext());
+                    b.setText(c.getDescriptiveName());
+                    b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, c.getDescriptiveName());
+                        }
+                    });
+                    conditionsLayout.addView(b);
+                }
+            }
 
             return view;
         }
