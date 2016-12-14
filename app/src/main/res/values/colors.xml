@@ -59,7 +59,7 @@
     </array>
 
     <!-- detailed view -->
-    <color name="header">#F35C52</color>
+    <color name="header">#347FC4</color>
     <color name="text">#ffffff</color>
 
 </resources>

@@ -46,7 +46,7 @@
         <item name="android:padding">@dimen/bs_generalContentPadding</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="BSContent.Intro">
@@ -104,5 +104,17 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- BS goal detail view styles -->
+
+    <style name="text">
+        <item name="android:textSize">20sp</item>
+        <item name="android:color">@color/text</item>
+    </style>
+
+    <style name="HeaderBackground">
+        <item name="android:color">@color/header</item>
+        <item name="android:padding">10pt</item>
+    </style>
 
 </resources>

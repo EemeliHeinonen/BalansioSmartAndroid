@@ -47,16 +47,17 @@
     <string name="slide_4_title"> Let\'s get started!</string>
     <string name="slide_4_description"> </string>
 
-    <string name="title_of_selected_goal">Goal</string>
+    <!-- Goal detail view -->
+    <string name="title_of_goal">Goal</string>
     <string name="discipline">Discipline</string>
     <string name="notification">Notification</string>
     <string name="target">Target</string>
-    <string name="disciplines_reading">disciplines reading</string>
-    <string name="target_range">target range</string>
+    <string name="disciplines_reading">Disciplines Reading</string>
+    <string name="target_range">Target Range</string>
     <string name="header">Header</string>
-    <string name="notification_frequency">frequency</string>
-    <string name="measures">measures</string>
-    <string name="time">time</string>
+    <string name="notification_frequency">Frequency</string>
+    <string name="measures">Measures</string>
+    <string name="time">Time</string>
 
     <!--<string name="play_again_description">To see the welcome slider again, go to Settings -> apps -> welcome slider -> clear data</string>-->
     <!--<string name="play_again">Play Again</string>-->

@@ -11,57 +11,44 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="258dp"
+        android:layout_height="250dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        android:id="@+id/goals"
+        android:paddingBottom="10dp"
+        android:id="@+id/goal"
         android:background="@color/header">
 
-        <TextView
-            android:text="@string/title_of_selected_goal"
-            android:layout_width="151dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/goalName"
+        <ImageButton
+            style="@style/BSButton"
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            android:id="@+id/deleteButton"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignEnd="@+id/notificationFrequency"
-            android:textColor="@color/text"
-            android:textSize="40sp"/>
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/goalName" />
 
         <ImageButton
             style="@style/BSButton"
             app:srcCompat="@android:drawable/ic_menu_edit"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/deleteButton" />
+            android:id="@+id/editButton"
+            android:layout_toStartOf="@+id/deleteButton"
+            android:layout_above="@+id/disciplinesReading" />
 
         <TextView
-            android:text="@string/target"
-            android:layout_width="wrap_content"
+            android:text="@string/title_of_goal"
+            android:id="@+id/goalName"
+            android:layout_width="151dp"
             android:layout_height="wrap_content"
-            android:id="@+id/textView7"
+            android:textSize="40sp"
             android:textColor="@color/text"
-            android:textSize="20sp"
-            android:layout_below="@+id/disciplinesReading"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="14dp" />
-
-        <TextView
-            android:text="@string/disciplines_reading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/disciplinesReading"
-            android:textColor="@color/text"
-            android:textSize="20sp"
-            android:layout_below="@+id/deleteButton"
-            android:layout_alignEnd="@+id/deleteButton"
-            android:layout_marginTop="21dp" />
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:text="@string/discipline"
+            android:id="@+id/discipline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView6"
             android:textColor="@color/text"
             android:textSize="20sp"
             android:layout_alignBaseline="@+id/disciplinesReading"
@@ -69,40 +56,60 @@
             android:layout_alignParentStart="true" />
 
         <TextView
-            android:text="@string/target_range"
+            android:text="@string/disciplines_reading"
+            android:id="@+id/disciplinesReading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/targetRange"
             android:textColor="@color/text"
             android:textSize="20sp"
-            android:layout_alignBaseline="@+id/textView7"
-            android:layout_alignBottom="@+id/textView7"
-            android:layout_alignStart="@+id/disciplinesReading" />
+            android:layout_marginTop="11dp"
+            android:layout_below="@+id/deleteButton"
+            android:layout_toEndOf="@+id/goalName" />
 
         <TextView
-            android:text="@string/notification_frequency"
+            android:text="@string/target"
+            android:id="@+id/target"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/notificationFrequency"
             android:textColor="@color/text"
             android:textSize="20sp"
-            android:layout_alignBaseline="@+id/textView8"
-            android:layout_alignBottom="@+id/textView8"
-            android:layout_alignStart="@+id/targetRange" />
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/targetRange" />
 
         <TextView
             android:text="@string/notification"
+            android:id="@+id/notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView8"
             android:textColor="@color/text"
             android:textSize="20sp"
-            android:layout_marginTop="18dp"
-            android:layout_below="@+id/textView7"
+            android:layout_alignBaseline="@+id/notificationFrequency"
+            android:layout_alignBottom="@+id/notificationFrequency"
             android:layout_alignParentStart="true" />
 
-    </RelativeLayout>
+        <TextView
+            android:text="@string/notification_frequency"
+            android:id="@+id/notificationFrequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_marginBottom="18dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/targetRange" />
 
+        <TextView
+            android:text="@string/target_range"
+            android:id="@+id/targetRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_marginTop="31dp"
+            android:layout_below="@+id/disciplinesReading"
+            android:layout_alignStart="@+id/disciplinesReading" />
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_list_view"
