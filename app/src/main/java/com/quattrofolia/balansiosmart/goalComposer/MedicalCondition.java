@@ -9,9 +9,12 @@ import com.quattrofolia.balansiosmart.models.Range;
 
 import java.math.BigDecimal;
 
+/* For defining default assistant settings for
+* specific medical conditions */
+
 public enum MedicalCondition {
 
-    diabetes_type_i("Diabetes, type I") {
+    DIABETES_TYPE_I("Diabetes, type I") {
         @Override
         public Goal goalPreset() {
             HealthDataType type = HealthDataType.BLOOD_GLUCOSE;
@@ -30,7 +33,7 @@ public enum MedicalCondition {
         }
     },
 
-    diabetes_type_ii("Diabetes, type II") {
+    DIABETES_TYPE_II("Diabetes, type II") {
         @Override
         public Goal goalPreset() {
             HealthDataType type = HealthDataType.BLOOD_GLUCOSE;

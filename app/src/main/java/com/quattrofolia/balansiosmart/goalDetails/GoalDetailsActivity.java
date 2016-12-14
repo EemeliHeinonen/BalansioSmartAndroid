@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
@@ -32,7 +31,7 @@ import io.realm.RealmResults;
 
 public class GoalDetailsActivity extends AppCompatActivity {
 
-    private TextView tvGoalType;
+    private TextView goalTypeHeader;
     private LinearLayout goalDetailContainer;
 
     private Button buttonEditGoal;
@@ -51,10 +50,11 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
 
     private void findViewComponents() {
-        tvGoalType = (TextView) findViewById(R.id.textView_goalTypeHeader);
+        goalTypeHeader = (TextView) findViewById(R.id.textView_goalTypeHeader);
         goalDetailContainer = (LinearLayout) findViewById(R.id.layout_goalDetailContainer);
         buttonEditGoal = (Button) findViewById(R.id.button_editGoal);
         buttonDeleteGoal = (Button) findViewById(R.id.button_deleteGoal);
+        goalSettingsView = (RecyclerView) findViewById(R.id.recyclerView_goalSettings);
     }
 
     @Override
@@ -92,7 +92,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
         goalSettings = new ArrayList<>();
         goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
-        goalSettingsView = (RecyclerView) findViewById(R.id.recyclerView_goalSettings);
         goalSettingsView.setAdapter(goalSettingsAdapter);
         goalSettingsView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -150,12 +149,13 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
     private void showGoalDetails(Goal goal) {
         // Show goal name
-        tvGoalType.setText(goal.getType().getLongName());
+        goalTypeHeader.setText(goal.getType().getLongName());
 
         // Show disciplines reading
         Discipline discipline = goal.getDiscipline();
 
         List<Pair<String, String>> settings = new ArrayList<>();
+
         if (discipline != null) {
             settings.add(new Pair("Measure " +
                     goal.getType().getLongName().toLowerCase()
@@ -175,15 +175,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
         goalSettingsAdapter.setValuePairs(settings);
 
-    }
-
-    public void addDetailRow(String key, String value) {
-        RelativeLayout row = (RelativeLayout) getLayoutInflater().inflate(R.layout.layout_goal_detail_row, goalDetailContainer, false);
-        TextView textViewKey = (TextView) row.findViewById(R.id.textView_goalDetailKey);
-        TextView textViewValue = (TextView) row.findViewById(R.id.textView_goalDetailValue);
-        textViewKey.setText(key);
-        textViewValue.setText(value);
-        goalDetailContainer.addView(row);
     }
 
     @Override

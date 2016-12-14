@@ -3,19 +3,26 @@ package com.quattrofolia.balansiosmart.goalComposer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalDetails.Pair;
+import com.quattrofolia.balansiosmart.goalDetails.ValuePairViewAdapter;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,6 +32,15 @@ import static android.content.ContentValues.TAG;
 
 // Fragment class for selecting progress_view_goal_item_row's intensity
 public class GoalIntensityFragment extends Fragment {
+
+
+    /* Current setup view */
+    private List<Pair<String, String>> goalSettings;
+    private TextView goalTypeHeader;
+    ValuePairViewAdapter goalSettingsAdapter;
+    RecyclerView goalSettingsView;
+
+
     private int frequencyMin;
     private int frequencyMax;
     private int periodMin;
@@ -84,7 +100,8 @@ public class GoalIntensityFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_intensity_fragment, container, false);
+        LinearLayout myView = (LinearLayout) inflater.inflate(R.layout.goal_intensity_fragment, container, false);
+
         tvFrequency = (TextView) myView.findViewById(R.id.textViewGoalIntensity);
         tvMonitoringPeriod = (TextView) myView.findViewById(R.id.textViewGoalIntensityDesc);
         btnNext = (Button) myView.findViewById(R.id.btnIntensityNext);
@@ -92,6 +109,18 @@ public class GoalIntensityFragment extends Fragment {
         npFrequency = (NumberPicker) myView.findViewById(R.id.npGoalIntensityAmount);
         npMonitoringPeriod = (NumberPicker) myView.findViewById(R.id.npGoalIntensityTime);
         tvFrequency.setText("Select ");
+
+
+
+        goalSettingsView = (RecyclerView) myView.findViewById(R.id.recyclerView_goalSettings);
+        goalSettings = new ArrayList<>();
+        goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
+        goalSettingsView.setAdapter(goalSettingsAdapter);
+        goalSettingsView.setLayoutManager(
+                new LinearLayoutManager(myView.getContext(), LinearLayoutManager.VERTICAL, false)
+        );
+        goalTypeHeader = (TextView) myView.findViewById(R.id.textView_goalTypeHeader);
+        goalTypeHeader.setText(dataType.getLongName());
 
         //Initialize the NumberPickers
         npFrequency.setMinValue(frequencyMin);
@@ -142,7 +171,7 @@ public class GoalIntensityFragment extends Fragment {
                 break;
         }
 
-        //handle the swiping to the next fragment by clicking on the button_spanwidth
+        //handle the swiping to the next fragment by clicking on the button
         btnSkip.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 

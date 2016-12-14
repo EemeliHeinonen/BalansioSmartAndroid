@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_goal_details"
     style="@style/BSCenteredFragment"
@@ -10,6 +9,7 @@
     <LinearLayout
         android:id="@+id/layout_goalDetailContainer"
         style="@style/BSDetailContainer" >
+
         <TextView
             android:id="@+id/textView_goalTypeHeader"
             style="@style/BSCaption.Table"/>

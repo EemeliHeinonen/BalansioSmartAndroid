@@ -104,50 +104,6 @@ public class GoalComposerActivity extends FragmentActivity {
                 // Commit the transaction
                 transaction.commit();
             }
-
-            return;
-
-            /* End checking for enumerated extras */
-
-
-            //check if the Activity was opened by a notification's edit Goal intent, if it was, navigate to the second fragment.
-
-            /*
-            if (getIntent().hasExtra("type")){
-
-                HealthDataType type = (HealthDataType) getIntent().getSerializableExtra("type");
-
-                if (getIntent().hasExtra("goalId")) {
-                    Log.d(TAG, "onCreate: has goalId");
-                    goalId = getIntent().getIntExtra("goalId", -1);
-                    isEditingGoal = true;
-                }
-                Log.d(TAG, "onCreate: isEditingGoal: "+isEditingGoal);
-                GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(type);
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack so the user can navigate back
-                transaction.replace(R.id.fragment_container, newFragment);
-
-                // Commit the transaction
-                transaction.commit();
-
-            } else {
-                // Create a new Fragment to be placed in the activity layout
-                GoalTypeFragment typeFragment = new GoalTypeFragment();
-
-                // In case this activity was started with special instructions from an
-                // Intent, pass the Intent's extras to the fragment as arguments
-                typeFragment.setArguments(getIntent().getExtras());
-
-                // Add the fragment to the 'fragment_container' FrameLayout
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.fragment_container, typeFragment).commit();
-            }
-            */
-
-
         }
     }
 
