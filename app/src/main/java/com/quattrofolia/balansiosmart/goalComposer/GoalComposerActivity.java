@@ -55,14 +55,16 @@ public class GoalComposerActivity extends FragmentActivity {
 
             //check if the Activity was opened by a notification's edit Goal intent, if it was, navigate to the second fragment.
             if (getIntent().hasExtra("type")){
+
+                HealthDataType type = (HealthDataType) getIntent().getSerializableExtra("type");
+
                 if (getIntent().hasExtra("goalId")) {
                     Log.d(TAG, "onCreate: has goalId");
                     goalId = getIntent().getIntExtra("goalId", -1);
                     isEditingGoal = true;
                 }
                 Log.d(TAG, "onCreate: isEditingGoal: "+isEditingGoal);
-
-                GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(HealthDataType.valueOf(getIntent().getStringExtra("type")));
+                GoalIntensityFragment newFragment = GoalIntensityFragment.newInstance(type);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 // Replace whatever is in the fragment_container view with this fragment,

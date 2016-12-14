@@ -15,17 +15,24 @@ import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.goalList.GoalItemRecyclerAdapter;
 import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.HealthDataEntry;
+import com.quattrofolia.balansiosmart.models.HealthDataType;
+import com.quattrofolia.balansiosmart.models.Incrementable;
 import com.quattrofolia.balansiosmart.models.NotificationEntry;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
+import org.joda.time.Instant;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 
@@ -83,7 +90,56 @@ public class ProgressViewActivity extends Activity {
             public void onClick(View v) {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
                 startActivity(i);
+
+                //Create default goals and entries here
+                final Session session = BalansioSmart.currentSession(realm);
+                final HealthDataEntry firstEntry = new HealthDataEntry();
+                firstEntry.setType(HealthDataType.WEIGHT);
+                firstEntry.setValue(new BigDecimal("4.5"));
+                firstEntry.setInstant(new Instant());
+
+                if (session != null) {
+
+                    final int id = session.getUserId().intValue();
+                    final RealmResults<User> users;
+                    users = realm.where(User.class).equalTo("id", id).findAll();
+
+                    if (users.size() != 1) {
+                        Log.e(TAG, "Incorrect results");
+                        return;
+                    }
+
+            /* Session/User database match.
+            * Set incrementable primary key for goal.
+            * Save goal and add it to user's list of goals. */
+
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm bgRealm) {
+                            Incrementable incrementable = firstEntry;
+                            incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
+                            bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
+                            User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
+                            managedUser.addEntry((HealthDataEntry) incrementable);
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm bgRealm) {
+                                    User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
+                                }
+                            });
+                        }
+                    });
+
+                } else {
+                    //displayAuthErrorDialog();
+                    Log.d(TAG, "create entries onClick: Session is null");
+                }
             }
+
         });
 
         cardStack.setAdapter(cardAdapter);
