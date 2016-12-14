@@ -2,13 +2,17 @@ package com.quattrofolia.balansiosmart;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.support.design.widget.FloatingActionButton;
+
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
@@ -24,6 +28,7 @@ import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
+import org.joda.time.DateTime;
 import org.joda.time.Instant;
 
 import java.math.BigDecimal;
@@ -43,12 +48,13 @@ public class ProgressViewActivity extends Activity {
     // View
     private CardStack cardStack;
     private CardsDataAdapter cardAdapter;
-    private Button createGoalButton;
+    private Button hiddenButton;
     private List<Goal> goalItems;
     private RecyclerView goalRecyclerView;
     private GoalItemRecyclerAdapter goalAdapter;
     private LinearLayoutManager goalLayoutManager;
     private TextView userNameTextView;
+    private int stepCounter = 0;
 
     // Storage
     private Realm realm;
@@ -84,63 +90,49 @@ public class ProgressViewActivity extends Activity {
         goalRecyclerView.setAdapter(goalAdapter);
 
         /* Button bar */
-        createGoalButton = (Button) findViewById(R.id.button_createGoal);
+        hiddenButton = (Button) findViewById(R.id.button_hidden);
+        //hiddenButton.setBackgroundColor(Color.TRANSPARENT);
+        final Session session = BalansioSmart.currentSession(realm);
 
-        createGoalButton.setOnClickListener(new Button.OnClickListener() {
+
+        hiddenButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
+                stepCounter++;
+
+                switch (stepCounter) {
+                    case 1:
+                        //Create default goals and entries here
+                        final HealthDataEntry firstEntry = new HealthDataEntry();
+                        firstEntry.setType(HealthDataType.WEIGHT);
+                        firstEntry.setValue(new BigDecimal("70"));
+                        firstEntry.setInstant(new DateTime().minusHours(2).toInstant());
+                        enterEntry(firstEntry,session);
+                        final HealthDataEntry secondEntry = new HealthDataEntry();
+                        firstEntry.setType(HealthDataType.WEIGHT);
+                        firstEntry.setValue(new BigDecimal("69"));
+                        firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
+                        enterEntry(firstEntry,session);
+                        break;
+                    case 2:  //monthString = "February";
+                        break;
+                    default: //monthString = "Invalid month";
+                        break;
+
+                }
+
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
                 startActivity(i);
 
-                //Create default goals and entries here
-                final Session session = BalansioSmart.currentSession(realm);
-                final HealthDataEntry firstEntry = new HealthDataEntry();
-                firstEntry.setType(HealthDataType.WEIGHT);
-                firstEntry.setValue(new BigDecimal("4.5"));
-                firstEntry.setInstant(new Instant());
-
-                if (session != null) {
-
-                    final int id = session.getUserId().intValue();
-                    final RealmResults<User> users;
-                    users = realm.where(User.class).equalTo("id", id).findAll();
-
-                    if (users.size() != 1) {
-                        Log.e(TAG, "Incorrect results");
-                        return;
-                    }
-
-            /* Session/User database match.
-            * Set incrementable primary key for goal.
-            * Save goal and add it to user's list of goals. */
-
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm bgRealm) {
-                            Incrementable incrementable = firstEntry;
-                            incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
-                            bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
-                            User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
-                            managedUser.addEntry((HealthDataEntry) incrementable);
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            realm.executeTransaction(new Realm.Transaction() {
-                                @Override
-                                public void execute(Realm bgRealm) {
-                                    User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
-                                }
-                            });
-                        }
-                    });
-
-                } else {
-                    //displayAuthErrorDialog();
-                    Log.d(TAG, "create entries onClick: Session is null");
-                }
             }
-
         });
+        ;
 
         cardStack.setAdapter(cardAdapter);
 
@@ -218,6 +210,49 @@ public class ProgressViewActivity extends Activity {
 
     }
 
+    private void enterEntry(final HealthDataEntry firstEntry, final Session session){
+        if (session != null) {
+
+            final int id = session.getUserId().intValue();
+            final RealmResults<User> users;
+            users = realm.where(User.class).equalTo("id", id).findAll();
+
+            if (users.size() != 1) {
+                Log.e(TAG, "Incorrect results");
+                return;
+            }
+
+            /* Session/User database match.
+            * Set incrementable primary key for goal.
+            * Save goal and add it to user's list of goals. */
+
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm bgRealm) {
+                    Incrementable incrementable = firstEntry;
+                    incrementable.setPrimaryKey(incrementable.getNextPrimaryKey(bgRealm));
+                    bgRealm.copyToRealmOrUpdate((RealmObject) incrementable);
+                    User managedUser = bgRealm.where(User.class).equalTo("id", id).findFirst();
+                    managedUser.addEntry((HealthDataEntry) incrementable);
+                }
+            }, new Realm.Transaction.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm bgRealm) {
+                            User updatedUser = bgRealm.where(User.class).equalTo("id", session.getUserId().intValue()).findFirst();
+                        }
+                    });
+                }
+            });
+
+        } else {
+            //displayAuthErrorDialog();
+            Log.d(TAG, "create entries onClick: Session is null");
+        }
+    }
+
     @Override
     protected void onResume()
     {
@@ -237,7 +272,6 @@ public class ProgressViewActivity extends Activity {
 
 
     private void setInterfaceAccessibility(boolean authorized) {
-        createGoalButton.setEnabled(authorized);
         if (authorized) {
             userNameTextView.setVisibility(View.VISIBLE);
             cardStack.setVisibility(View.VISIBLE);

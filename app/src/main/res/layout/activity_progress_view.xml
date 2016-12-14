@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context=".ProgressViewActivity">
 
+
     <LinearLayout
         android:id="@+id/layout_userName"
         android:layout_width="match_parent"
@@ -32,12 +33,22 @@
 
         <LinearLayout
             android:id="@+id/layout_buttonBar"
-            style="@style/BSCenteredContainer">
+            style="@style/BSCenteredContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            >
 
             <Button
-                android:id="@+id/button_createGoal"
+                android:id="@+id/button_hidden"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=" "
                 style="@style/BSButton"
-                android:text="@string/button_text_create_goal" />
+                android:layout_marginRight="0dp"
+                android:paddingRight="0dp"/>
+
 
         </LinearLayout>
 
@@ -47,6 +58,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/layout_buttonBar" />
+
+
+
 
     </RelativeLayout>
 
@@ -60,6 +74,22 @@
         android:clipToPadding="false"
         android:padding="5dp"
         app:stackMargin="20" />
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_add_white_24dp"
+        app:backgroundTint="@color/bs_primary" />
+    </android.support.design.widget.CoordinatorLayout>
+
+
 
 </RelativeLayout>
 
