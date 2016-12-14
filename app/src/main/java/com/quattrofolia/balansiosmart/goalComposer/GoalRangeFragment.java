@@ -137,13 +137,16 @@ public class GoalRangeFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Check data type and display the newly selected number from picker
-                if (dataType.equals("Sleep")) {
-                    minSelectedValue = Integer.toString(newVal);
-                    maxSelectedValue = Integer.toString(newVal);
-                } else if (dataType.equals("Blood Glucose")) {
-                    minSelectedValue = minValues[newVal];
-                } else {
-                    minSelectedValue = Integer.toString(newVal);
+                switch (dataType) {
+                    case SLEEP:
+                        minSelectedValue = Integer.toString(newVal);
+                        maxSelectedValue = Integer.toString(newVal);
+                        break;
+                    case BLOOD_GLUCOSE:
+                        minSelectedValue = minValues[newVal];
+                        break;
+                    default:
+                        minSelectedValue = Integer.toString(newVal);
                 }
             }
         });
@@ -152,10 +155,13 @@ public class GoalRangeFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Check data type and display the newly selected number from picker
-                if (dataType.equals("Blood Glucose")) {
-                    maxSelectedValue = maxValues[newVal];
-                } else {
-                    maxSelectedValue = Integer.toString(newVal);
+                switch (dataType) {
+                    case BLOOD_GLUCOSE:
+                        maxSelectedValue = maxValues[newVal];
+                        break;
+                    default:
+                        maxSelectedValue = Integer.toString(newVal);
+                        break;
                 }
             }
         });
