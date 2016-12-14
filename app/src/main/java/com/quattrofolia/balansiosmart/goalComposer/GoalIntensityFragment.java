@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
@@ -44,6 +45,14 @@ public class GoalIntensityFragment extends Fragment {
             MonitoringPeriod.month
     };
     private HealthDataType dataType;
+
+    public static GoalIntensityFragment newInstance(Goal goal) {
+        GoalIntensityFragment fragment = new GoalIntensityFragment();
+        Bundle args = new Bundle();
+        args.putString("dataType", goal.getType().toString());
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static GoalIntensityFragment newInstance(HealthDataType dataType) {
         GoalIntensityFragment fragment = new GoalIntensityFragment();

@@ -56,7 +56,9 @@ public class ProgressViewActivity extends Activity {
     private RealmResults<Session> sessionResults;
     private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
     private User user;
-    private RealmChangeListener<User> userListener;
+
+    private RealmResults<User> userResults;
+    private RealmChangeListener<RealmResults<User>> userResultsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,83 +151,30 @@ public class ProgressViewActivity extends Activity {
         * Whenever a change is detected in the View's current User
         * object, a method is called to refresh the interface. */
 
-        userListener = new RealmChangeListener<User>() {
+        userResultsListener = new RealmChangeListener<RealmResults<User>>() {
             @Override
-            public void onChange(User element) {
-                setInterfaceForUser(element);
-            }
-        };
-
-        /* Instantiate RealmChangeListener for observing Session objects.
-        *  In the listener manage authorization between session userId
-        *  and view's User object. If authorized, create a query for
-        *  the User object and register a listener. Otherwise remove
-        *  listeners and uninstantiate. Finally call the function that
-        *  refreshes the view for the user. */
-
-        sessionResultsListener = new RealmChangeListener<RealmResults<Session>>() {
-            @Override
-            public void onChange(RealmResults<Session> sessionResults) {
-                if (sessionResults.isEmpty()) {
-                    storage.save(new Session());
-                } else {
-                    if (sessionResults.size() > 1) {
-                        Log.e(TAG, "sessionResults size shouldn't be " + sessionResults.size());
-                    }
-                    Session currentSession = sessionResults.last();
-                    boolean loggedIn = (currentSession.getUserId() != null);
-                    boolean previousUserFound = (user != null);
-
-                    if (loggedIn) {
-
-                        int userId = currentSession.getUserId().intValue();
-
-                        if (previousUserFound) {
-
-                            boolean authorized = (user.getId() == userId);
-
-                            if (!authorized) {
-                                user.removeChangeListeners();
-                            }
-                        }
-                        user = realm.where(User.class).equalTo("id", userId).findFirst();
-                        user.addChangeListener(userListener);
-                    } else {
-                        /* This block automatically creates a user and logs in. */
-
-                        realm.executeTransactionAsync(new Realm.Transaction() {
-                            @Override
-                            public void execute(Realm realm) {
-                                User u = new User("Joe", "with Type 2 diabetes");
-                                u.setPrimaryKey(u.getNextPrimaryKey(realm));
-                                realm.copyToRealm(u);
-                            }
-                        }, new Realm.Transaction.OnSuccess() {
-                            @Override
-                            public void onSuccess() {
-                                storage.save(new Session(realm.where(User.class).findAll().last().getId()));
-                            }
-                        });
-                    }
-                    setInterfaceForUser(user);
+            public void onChange(RealmResults<User> element) {
+                Integer userId = BalansioSmart.currentSession(realm).getUserId();
+                if (userId != null) {
+                    user = realm.where(User.class).equalTo("id", userId.intValue()).findFirst();
                 }
+                setInterfaceForUser(user);
             }
         };
+        userResults = realm.where(User.class).findAllAsync();
+        userResults.addChangeListener(userResultsListener);
 
-        sessionResults = realm.where(Session.class).findAllAsync();
-        sessionResults.addChangeListener(sessionResultsListener);
         NotificationEventReceiver.setupAlarm(getApplicationContext());
 
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         createCards();
         goalItems.clear();
 
-        Session currentSession = sessionResults.last(null);
+        Session currentSession = BalansioSmart.currentSession(realm);
         if (currentSession == null || currentSession.getUserId() == null) {
             return;
         }
@@ -270,10 +219,11 @@ public class ProgressViewActivity extends Activity {
         realm.removeAllChangeListeners();
         realm.close();
     }
-    private void createCards(){
+
+    private void createCards() {
         RealmResults<NotificationEntry> allNotificationEntries = realm.where(NotificationEntry.class).findAll();
-        for(NotificationEntry entry : allNotificationEntries){
-            cardAdapter.insert(entry.getNotificationText().toString(),0);
+        for (NotificationEntry entry : allNotificationEntries) {
+            cardAdapter.insert(entry.getNotificationText().toString(), 0);
         }
     }
 }

@@ -1,4 +1,5 @@
 package com.quattrofolia.balansiosmart.welcomeScreens;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +9,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,9 @@ import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
-import com.quattrofolia.balansiosmart.goalComposer.Condition;
+import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
+import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
+import com.quattrofolia.balansiosmart.goalComposer.MedicalCondition;
 
 public class WelcomeSliderActivity extends AppCompatActivity {
 
@@ -188,14 +190,17 @@ public class WelcomeSliderActivity extends AppCompatActivity {
 
             LinearLayout conditionsLayout = (LinearLayout) view.findViewById(R.id.layout_conditions);
             if (conditionsLayout != null) {
-                for (final Condition c : Condition.values()) {
+                for (final MedicalCondition condition : MedicalCondition.values()) {
                     Button b = (Button) layoutInflater.inflate(R.layout.button_spanwidth, conditionsLayout, false);
                     //Button b = new Button(view.getContext());
-                    b.setText(c.getDescriptiveName());
+                    b.setText(condition.getDescriptiveName());
                     b.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Log.d(TAG, c.getDescriptiveName());
+                            Intent i = new Intent(WelcomeSliderActivity.this,
+                                    GoalComposerActivity.class);
+                            i.putExtra(ComposerMode.GENERATE.toString(), condition);
+                            startActivity(i);
                         }
                     });
                     conditionsLayout.addView(b);
@@ -204,7 +209,9 @@ public class WelcomeSliderActivity extends AppCompatActivity {
                 create.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Log.d(TAG, "Create");
+                        Intent i = new Intent(WelcomeSliderActivity.this, GoalComposerActivity.class);
+                        i.putExtra(ComposerMode.CREATE.toString(), "");
+                        startActivity(i);
                     }
                 });
             }

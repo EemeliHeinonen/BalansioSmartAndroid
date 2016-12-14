@@ -1,14 +1,12 @@
 package com.quattrofolia.balansiosmart.goalDetails;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -18,8 +16,8 @@ import android.widget.Toast;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
-import com.quattrofolia.balansiosmart.goalComposer.GoalTypeAdapter;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
@@ -32,7 +30,7 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
-import static android.widget.Toast.*;
+import static android.widget.Toast.LENGTH_LONG;
 
 public class GoalDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -161,8 +159,7 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
             public void onClick(View view) {
                 dialog.dismiss();
                 Intent goalComposerActivity = new Intent(activity, GoalComposerActivity.class)
-                        .putExtra("type", goal.getType().toString())
-                        .putExtra("goalId", goal.getId());
+                        .putExtra(ComposerMode.EDIT.toString(), goal.getId());
                 startActivity(goalComposerActivity);
             }
         });
