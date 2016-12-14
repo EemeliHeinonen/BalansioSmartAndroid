@@ -115,16 +115,22 @@ public class GoalRangeFragment extends Fragment {
         tvUnit.setText(dataType.getUnit().toString());
 
         //check if a certain progress_view_goal_item_row type has been selected & modify the fragment accordingly
-        if (dataType.equals("Weight")) {
-            weightMode();
-        } else if (dataType.equals("Sleep")) {
-            sleepMode();
-        } else if (dataType.equals("Blood Pressure Systolic")) {
-            bpSystolicMode();
-        } else if (dataType.equals("Blood Pressure Diastolic")) {
-            bpDiastolicMode();
-        } else if (dataType.equals("Blood Glucose")) {
-            bgMode();
+        switch (dataType) {
+            case WEIGHT:
+                weightMode();
+                break;
+            case SLEEP:
+                sleepMode();
+                break;
+            case BLOOD_PRESSURE_SYSTOLIC:
+                bpSystolicMode();
+                break;
+            case BLOOD_PRESSURE_DIASTOLIC:
+                bpDiastolicMode();
+                break;
+            case BLOOD_GLUCOSE:
+                bgMode();
+                break;
         }
 
         numberPickerMin.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
