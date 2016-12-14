@@ -1,18 +1,14 @@
 package com.quattrofolia.balansiosmart.goalDetails;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
@@ -28,12 +24,9 @@ import com.quattrofolia.balansiosmart.models.User;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmList;
 import io.realm.RealmResults;
 
-import static android.widget.Toast.LENGTH_LONG;
-
-public class GoalDetailsActivity extends AppCompatActivity implements View.OnClickListener {
+public class GoalDetailsActivity extends AppCompatActivity {
 
     private TextView goalName;
     private TextView disciplinesReadings;
@@ -86,7 +79,6 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
                 if (deleted) {
                     finish();
                 } else {
-
                     showGoalDetails(goal);
                 }
             }
@@ -98,8 +90,6 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Add click listener for the edit button_spanwidth
-        editButton.setOnClickListener(this);
         buttonEditGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,6 +98,7 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
                 startActivity(goalComposerActivity);
             }
         });
+
         buttonDeleteGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -164,53 +155,8 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public void onClick(View view) {
-        final Activity activity = this;
-
-        // Create dialog with edit and delete goal buttons
-        LayoutInflater inflater = GoalDetailsActivity.this.getLayoutInflater();
-        View content = inflater.inflate(R.layout.activity_goal_details_edit, null);
-
-        final Button editGoal = (Button) content.findViewById(R.id.editGoal);
-        final Button deleteGoal = (Button) content.findViewById(R.id.deleteGoal);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(GoalDetailsActivity.this);
-        builder.setView(content)
-                .setTitle("Edit");
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
-        // Add click listener for edit goal button_spanwidth
-        editGoal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                Intent goalComposerActivity = new Intent(activity, GoalComposerActivity.class)
-                        .putExtra(ComposerMode.EDIT.toString(), goal.getId());
-                startActivity(goalComposerActivity);
-            }
-        });
-
-        // Add click listener for the delete goal button_spanwidth
-        deleteGoal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        RealmList<HealthDataEntry> userEntries = user.getEntries();
-                        userEntries.removeAll(healthDataEntries);
-                        healthDataEntries.deleteAllFromRealm();
-
-                        RealmList<Goal> userGoals = user.getGoals();
-                        userGoals.remove(goal);
-                        goal.deleteFromRealm();
-                        Toast.makeText(activity, "Goal deleted", LENGTH_LONG).show();
-                        activity.finish();
-                    }
-                });
-            }
-        });
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }
