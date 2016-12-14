@@ -88,7 +88,7 @@ public class NotificationIntentService extends IntentService {
                 processDeleteNotification(intent);
             }
             if (ACTION_REMOVE_GOAL_NOTIFICATIONS.equals(action)) {
-                removeGoalNotifications(intent.getIntExtra("notificationId", 0), intent.getStringExtra("type"));
+                removeGoalNotifications(intent.getIntExtra("notificationId", 0), (HealthDataType) intent.getSerializableExtra("type"));
 
             }
         } finally {
@@ -99,8 +99,8 @@ public class NotificationIntentService extends IntentService {
     private void processDeleteNotification(Intent intent) {
     }
 
-    //sets goals notifcation mode to no notifications.
-    private void removeGoalNotifications(int notificationId, String goalType) {
+    //sets goals notification mode to no notifications.
+    private void removeGoalNotifications(int notificationId, HealthDataType goalType) {
         // TODO: get goal and change notificationstyle, and store with storage
         Log.d(TAG, "removeGoalNotifications: for " + goalType);
         realm = Realm.getDefaultInstance();
@@ -108,7 +108,7 @@ public class NotificationIntentService extends IntentService {
 
         if (realm != null) {
             realm.beginTransaction();
-            Goal targetGoal = realm.where(Goal.class).equalTo("type", goalType).findFirst();
+            Goal targetGoal = realm.where(Goal.class).equalTo("type", goalType.name()).findFirst();
             if (targetGoal != null) {
                 Log.d(TAG, "removeGoalNotifications: targetGoal: " + targetGoal.getNotificationStyle());
                 targetGoal.setNotificationStyle("none");
@@ -158,7 +158,7 @@ public class NotificationIntentService extends IntentService {
         PendingIntent goalComposerIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID,
                 new Intent(this, GoalComposerActivity.class)
-                        .putExtra("type", goalType.getLongName())
+                        .putExtra("type", goalType)
                         .putExtra("notificationId", NOTIFICATION_ID)
                         .putExtra("goalId", GOAL_ID),
                         PendingIntent.FLAG_UPDATE_CURRENT);
@@ -166,7 +166,7 @@ public class NotificationIntentService extends IntentService {
         PendingIntent removeNotificationsIntent = PendingIntent.getService(this,
                 NOTIFICATION_ID,
                 new Intent(this, NotificationIntentService.class)
-                        .putExtra("type", goalType.name())
+                        .putExtra("type", goalType)
                         .putExtra("notificationId", NOTIFICATION_ID)
                         .setAction(ACTION_REMOVE_GOAL_NOTIFICATIONS),
                         PendingIntent.FLAG_UPDATE_CURRENT);
