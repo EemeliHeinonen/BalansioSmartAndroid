@@ -7,99 +7,19 @@
     android:orientation="vertical"
     tools:context="com.quattrofolia.balansiosmart.goalDetails.GoalDetailsActivity">
 
-    <RelativeLayout
-        android:id="@+id/goals"
-        android:layout_width="match_parent"
-        android:layout_height="258dp"
-        android:background="@color/bs_primary"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin">
-
+    <LinearLayout
+        android:id="@+id/layout_goalDetailContainer"
+        style="@style/BSDetailContainer" >
         <TextView
-            android:id="@+id/goalName"
-            android:layout_width="151dp"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/notificationFrequency"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/title_of_selected_goal"
-            android:textColor="@color/text"
-            android:textSize="40sp" />
+            android:id="@+id/textView_goalTypeHeader"
+            style="@style/BSCaption.Table"/>
 
-        <ImageButton
-            android:id="@+id/deleteButton"
-            style="@style/BSButton"
-            android:layout_alignParentEnd="true"
-            app:srcCompat="@android:drawable/ic_menu_edit" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_goalSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/disciplinesReading"
-            android:layout_marginTop="14dp"
-            android:text="@string/target"
-            android:textColor="@color/text"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/disciplinesReading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/deleteButton"
-            android:layout_below="@+id/deleteButton"
-            android:layout_marginTop="21dp"
-            android:text="@string/disciplines_reading"
-            android:textColor="@color/text"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/disciplinesReading"
-            android:layout_alignBottom="@+id/disciplinesReading"
-            android:layout_alignParentStart="true"
-            android:text="@string/discipline"
-            android:textColor="@color/text"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/targetRange"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView7"
-            android:layout_alignBottom="@+id/textView7"
-            android:layout_alignStart="@+id/disciplinesReading"
-            android:text="@string/target_range"
-            android:textColor="@color/text"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/notificationFrequency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/textView8"
-            android:layout_alignBottom="@+id/textView8"
-            android:layout_alignStart="@+id/targetRange"
-            android:text="@string/notification_frequency"
-            android:textColor="@color/text"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/textView7"
-            android:layout_marginTop="18dp"
-            android:text="@string/notification"
-            android:textColor="@color/text"
-            android:textSize="20sp" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

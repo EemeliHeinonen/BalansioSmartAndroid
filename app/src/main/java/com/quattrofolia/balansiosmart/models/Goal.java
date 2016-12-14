@@ -37,7 +37,7 @@ public class Goal extends RealmObject implements Incrementable {
     }
 
     public NotificationIntensity getNotificationIntensity() {
-        return NotificationIntensity.valueOf(notificationIntensity);
+        return NotificationIntensity.valueOf(this.notificationIntensity);
     }
 
     public void setDiscipline(Discipline discipline) {

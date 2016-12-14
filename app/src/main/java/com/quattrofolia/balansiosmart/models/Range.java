@@ -34,4 +34,8 @@ public class Range extends RealmObject {
     public boolean contains(BigDecimal number) {
         return (number.compareTo(new BigDecimal(low)) >= 0 && number.compareTo(new BigDecimal(high)) <= 0);
     }
+
+    public String getDescriptiveName() {
+        return "" + getLow() + "-" + getHigh();
+    }
 }

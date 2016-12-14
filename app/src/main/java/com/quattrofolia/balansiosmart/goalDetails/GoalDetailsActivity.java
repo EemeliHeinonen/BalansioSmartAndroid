@@ -7,7 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
@@ -22,17 +23,17 @@ import com.quattrofolia.balansiosmart.models.Range;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 public class GoalDetailsActivity extends AppCompatActivity {
 
-    private TextView goalName;
-    private TextView disciplinesReadings;
-    private TextView targetRange;
-    private TextView notificationFrequency;
-    private ImageButton editButton;
+    private TextView tvGoalType;
+    private LinearLayout goalDetailContainer;
 
     private Button buttonEditGoal;
     private Button buttonDeleteGoal;
@@ -44,12 +45,14 @@ public class GoalDetailsActivity extends AppCompatActivity {
     private RealmResults<HealthDataEntry> healthDataEntries;
 
 
+    private List<Pair<String, String>> goalSettings;
+    ValuePairViewAdapter goalSettingsAdapter;
+    RecyclerView goalSettingsView;
+
+
     private void findViewComponents() {
-        goalName = (TextView) findViewById(R.id.goalName);
-        disciplinesReadings = (TextView) findViewById(R.id.disciplinesReading);
-        targetRange = (TextView) findViewById(R.id.targetRange);
-        notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
-        editButton = (ImageButton) findViewById(R.id.deleteButton);
+        tvGoalType = (TextView) findViewById(R.id.textView_goalTypeHeader);
+        goalDetailContainer = (LinearLayout) findViewById(R.id.layout_goalDetailContainer);
         buttonEditGoal = (Button) findViewById(R.id.button_editGoal);
         buttonDeleteGoal = (Button) findViewById(R.id.button_deleteGoal);
     }
@@ -63,6 +66,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Get user, goal and entries
         user = getUser();
         goal = getGoal();
+
         healthDataEntries = user.getEntries()
                 .where()
                 .equalTo("type", goal.getType().name())
@@ -84,7 +88,17 @@ public class GoalDetailsActivity extends AppCompatActivity {
             }
         });
 
-        // Set up the recycler view
+        // Set up the recycler views
+
+        goalSettings = new ArrayList<>();
+        goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
+        goalSettingsView = (RecyclerView) findViewById(R.id.recyclerView_goalSettings);
+        goalSettingsView.setAdapter(goalSettingsAdapter);
+        goalSettingsView.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        );
+
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_list_view);
         GoalDetailsRecyclerViewAdapter adapter = new GoalDetailsRecyclerViewAdapter(healthDataEntries);
         recyclerView.setAdapter(adapter);
@@ -136,22 +150,40 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
     private void showGoalDetails(Goal goal) {
         // Show goal name
-        goalName.setText(goal.getType().getLongName());
+        tvGoalType.setText(goal.getType().getLongName());
 
         // Show disciplines reading
         Discipline discipline = goal.getDiscipline();
+
+        List<Pair<String, String>> settings = new ArrayList<>();
         if (discipline != null) {
-            disciplinesReadings.setText(discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().name());
+            settings.add(new Pair("Measure " +
+                    goal.getType().getLongName().toLowerCase()
+                    , discipline.getDescriptiveName()));
         }
 
         // Show target range
         Range range = goal.getTargetRange();
         if (range != null) {
-            targetRange.setText(range.getLow() + " - " + range.getHigh());
+            settings.add(new Pair("Target Range",
+                    range.getDescriptiveName()
+                            + " "
+                            + goal.getType().getUnit().toString()));
         }
 
-        // Show notification frequency
-        notificationFrequency.setText(goal.getNotificationStyle());
+        settings.add(new Pair("Notification Setting", goal.getNotificationStyle()));
+
+        goalSettingsAdapter.setValuePairs(settings);
+
+    }
+
+    public void addDetailRow(String key, String value) {
+        RelativeLayout row = (RelativeLayout) getLayoutInflater().inflate(R.layout.layout_goal_detail_row, goalDetailContainer, false);
+        TextView textViewKey = (TextView) row.findViewById(R.id.textView_goalDetailKey);
+        TextView textViewValue = (TextView) row.findViewById(R.id.textView_goalDetailValue);
+        textViewKey.setText(key);
+        textViewValue.setText(value);
+        goalDetailContainer.addView(row);
     }
 
     @Override

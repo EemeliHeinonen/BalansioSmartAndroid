@@ -58,4 +58,31 @@ public class Discipline extends RealmObject {
         }
         return intervals;
     }
+
+    public String getDescriptiveName() {
+        int freq = this.getFrequency();
+        String description;
+        switch (freq) {
+            case 0:
+                return "never";
+            case 1:
+                description = "once";
+                break;
+            case 2:
+                description = "twice";
+                break;
+            case 3:
+                description = "three times";
+                break;
+            case 4:
+                description = "four times";
+                break;
+            default:
+                description = "" + freq + " times";
+
+        }
+        return description
+                + " per "
+                + this.getMonitoringPeriod().getName();
+    }
 }

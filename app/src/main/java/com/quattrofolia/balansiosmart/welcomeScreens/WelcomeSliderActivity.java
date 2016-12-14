@@ -192,7 +192,6 @@ public class WelcomeSliderActivity extends AppCompatActivity {
             if (conditionsLayout != null) {
                 for (final MedicalCondition condition : MedicalCondition.values()) {
                     Button b = (Button) layoutInflater.inflate(R.layout.button_spanwidth, conditionsLayout, false);
-                    //Button b = new Button(view.getContext());
                     b.setText(condition.getDescriptiveName());
                     b.setOnClickListener(new View.OnClickListener() {
                         @Override
