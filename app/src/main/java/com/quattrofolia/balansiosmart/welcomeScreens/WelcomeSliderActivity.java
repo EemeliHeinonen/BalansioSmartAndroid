@@ -183,13 +183,13 @@ public class WelcomeSliderActivity extends AppCompatActivity {
 
 
             /* When instantiating the page for selecting assistant presets,
-            * create a selection button for each condition in the enumeration
+            * create a selection button_spanwidth for each condition in the enumeration
             * and add it to the view. */
 
             LinearLayout conditionsLayout = (LinearLayout) view.findViewById(R.id.layout_conditions);
             if (conditionsLayout != null) {
                 for (final Condition c : Condition.values()) {
-                    Button b = (Button) layoutInflater.inflate(R.layout.button_select_condition, conditionsLayout, false);
+                    Button b = (Button) layoutInflater.inflate(R.layout.button_spanwidth, conditionsLayout, false);
                     //Button b = new Button(view.getContext());
                     b.setText(c.getDescriptiveName());
                     b.setOnClickListener(new View.OnClickListener() {
@@ -200,6 +200,13 @@ public class WelcomeSliderActivity extends AppCompatActivity {
                     });
                     conditionsLayout.addView(b);
                 }
+                Button create = (Button) findViewById(R.id.button_createGoal);
+                create.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "Create");
+                    }
+                });
             }
 
             return view;

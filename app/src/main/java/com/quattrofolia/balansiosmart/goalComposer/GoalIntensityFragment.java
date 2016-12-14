@@ -133,7 +133,7 @@ public class GoalIntensityFragment extends Fragment {
                 break;
         }
 
-        //handle the swiping to the next fragment by clicking on the button
+        //handle the swiping to the next fragment by clicking on the button_spanwidth
         btnSkip.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -150,7 +150,7 @@ public class GoalIntensityFragment extends Fragment {
         btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                //handle the navigation and data passing to the next fragment by clicking on the button,
+                //handle the navigation and data passing to the next fragment by clicking on the button_spanwidth,
                 // depending on which dataType has been selected
 
                 Fragment fragment;

@@ -88,7 +88,7 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Add click listener for the edit button
+        // Add click listener for the edit button_spanwidth
         editButton.setOnClickListener(this);
     }
 
@@ -155,7 +155,7 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
         final AlertDialog dialog = builder.create();
         dialog.show();
 
-        // Add click listener for edit goal button
+        // Add click listener for edit goal button_spanwidth
         editGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,7 +167,7 @@ public class GoalDetailsActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        // Add click listener for the delete goal button
+        // Add click listener for the delete goal button_spanwidth
         deleteGoal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

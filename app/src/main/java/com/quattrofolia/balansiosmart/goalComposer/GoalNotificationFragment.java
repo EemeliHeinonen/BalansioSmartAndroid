@@ -102,7 +102,7 @@ public class GoalNotificationFragment extends Fragment {
             }
         });
 
-        //handle the navigation and data passing to the next fragment by clicking on the button
+        //handle the navigation and data passing to the next fragment by clicking on the button_spanwidth
         btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 

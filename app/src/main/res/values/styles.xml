@@ -11,7 +11,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- BS button styles -->
+    <!-- BS button_spanwidth styles -->
 
     <style name="BSButton">
         <item name="android:background">@drawable/button_background</item>
