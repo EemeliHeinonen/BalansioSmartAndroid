@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
+import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.goalList.GoalItemRecyclerAdapter;
 import com.quattrofolia.balansiosmart.models.Goal;
@@ -91,6 +92,7 @@ public class ProgressViewActivity extends Activity {
         createGoalButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(ProgressViewActivity.this, GoalComposerActivity.class);
+                i.putExtra(ComposerMode.CREATE.toString(), "");
                 startActivity(i);
 
                 //Create default goals and entries here
