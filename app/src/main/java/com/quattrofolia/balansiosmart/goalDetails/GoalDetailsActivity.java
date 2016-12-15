@@ -1,19 +1,18 @@
 package com.quattrofolia.balansiosmart.goalDetails;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.R;
-import com.quattrofolia.balansiosmart.dialogs.DeleteGoalDialogFragment;
-import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
@@ -22,39 +21,36 @@ import com.quattrofolia.balansiosmart.models.Range;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import io.realm.RealmList;
 import io.realm.RealmResults;
+
+import static android.widget.Toast.*;
+
 
 public class GoalDetailsActivity extends AppCompatActivity {
 
-    private TextView goalTypeHeader;
-    private LinearLayout goalDetailContainer;
-
-    private Button buttonEditGoal;
-    private Button buttonDeleteGoal;
+    private TextView goalName;
+    private TextView disciplinesReadings;
+    private TextView targetRange;
+    private TextView notificationFrequency;
+    private ImageButton editButton;
+    private ImageButton deleteButton;
 
     private Realm realm;
     private User user;
     private Goal goal;
-    private RealmResults<Goal> goalResults;
     private RealmResults<HealthDataEntry> healthDataEntries;
 
 
-    private List<Pair<String, String>> goalSettings;
-    ValuePairViewAdapter goalSettingsAdapter;
-    RecyclerView goalSettingsView;
-
-
     private void findViewComponents() {
-        goalTypeHeader = (TextView) findViewById(R.id.textView_goalTypeHeader);
-        goalDetailContainer = (LinearLayout) findViewById(R.id.layout_goalDetailContainer);
-        buttonEditGoal = (Button) findViewById(R.id.button_editGoal);
-        buttonDeleteGoal = (Button) findViewById(R.id.button_deleteGoal);
-        goalSettingsView = (RecyclerView) findViewById(R.id.recyclerView_goalSettings);
+        goalName = (TextView) findViewById(R.id.goalName);
+        disciplinesReadings = (TextView) findViewById(R.id.disciplinesReading);
+        targetRange = (TextView) findViewById(R.id.targetRange);
+        notificationFrequency = (TextView) findViewById(R.id.notificationFrequency);
+        editButton = (ImageButton) findViewById(R.id.editButton);
+        deleteButton = (ImageButton) findViewById(R.id.deleteButton);
     }
 
     @Override
@@ -66,57 +62,60 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Get user, goal and entries
         user = getUser();
         goal = getGoal();
-
         healthDataEntries = user.getEntries()
                 .where()
                 .equalTo("type", goal.getType().name())
                 .findAll();
+
         setContentView(R.layout.activity_goal_details);
         findViewComponents();
 
-        goalResults = realm.where(Goal.class).findAllAsync();
-        goalResults.addChangeListener(new RealmChangeListener<RealmResults<Goal>>() {
+        showGoalDetails(goal);
+
+        goal.addChangeListener(new RealmChangeListener<Goal>() {
             @Override
-            public void onChange(RealmResults<Goal> element) {
-                goal = getGoal();
-                boolean deleted = (goal == null);
-                if (deleted) {
-                    finish();
-                } else {
-                    showGoalDetails(goal);
-                }
+            public void onChange(Goal goal) {
+                showGoalDetails(goal);
             }
         });
 
-        // Set up the recycler views
-
-        goalSettings = new ArrayList<>();
-        goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
-        goalSettingsView.setAdapter(goalSettingsAdapter);
-        goalSettingsView.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        );
-
-
+        // Set up the recycler view
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_list_view);
         GoalDetailsRecyclerViewAdapter adapter = new GoalDetailsRecyclerViewAdapter(healthDataEntries);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        buttonEditGoal.setOnClickListener(new View.OnClickListener() {
+        // Add click listener for edit goal button
+        final Activity activity = this;
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent goalComposerActivity = new Intent(view.getContext(), GoalComposerActivity.class)
-                        .putExtra(ComposerMode.EDIT.toString(), goal.getId());
+                Intent goalComposerActivity = new Intent(activity, GoalComposerActivity.class)
+                        .putExtra("type", goal.getType().toString())
+                        .putExtra("goalId", goal.getId());
                 startActivity(goalComposerActivity);
             }
         });
 
-        buttonDeleteGoal.setOnClickListener(new View.OnClickListener() {
+        // Add click listener for the delete goal button
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DeleteGoalDialogFragment f = DeleteGoalDialogFragment.newInstance(goal.getId());
-                f.show(getFragmentManager(), "Delete Goal?");
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmList<HealthDataEntry> userEntries = user.getEntries();
+                        userEntries.removeAll(healthDataEntries);
+                        healthDataEntries.deleteAllFromRealm();
+
+                        RealmList<Goal> userGoals = user.getGoals();
+                        userGoals.remove(goal);
+                        goal.deleteFromRealm();
+                        Toast.makeText(activity, "Goal deleted", LENGTH_LONG).show();
+                        activity.finish();
+                    }
+                });
+
             }
         });
     }
@@ -149,32 +148,22 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
     private void showGoalDetails(Goal goal) {
         // Show goal name
-        goalTypeHeader.setText(goal.getType().getLongName());
+        goalName.setText(goal.getType().getLongName());
 
         // Show disciplines reading
         Discipline discipline = goal.getDiscipline();
-
-        List<Pair<String, String>> settings = new ArrayList<>();
-
         if (discipline != null) {
-            settings.add(new Pair("Measure " +
-                    goal.getType().getLongName().toLowerCase()
-                    , discipline.getDescriptiveName()));
+            disciplinesReadings.setText(discipline.getFrequency() + " times a " + discipline.getMonitoringPeriod().name());
         }
 
         // Show target range
         Range range = goal.getTargetRange();
         if (range != null) {
-            settings.add(new Pair("Target Range",
-                    range.getDescriptiveName()
-                            + " "
-                            + goal.getType().getUnit().toString()));
+            targetRange.setText(range.getLow() + " - " + range.getHigh());
         }
 
-        settings.add(new Pair("Notification Setting", goal.getNotificationStyle()));
-
-        goalSettingsAdapter.setValuePairs(settings);
-
+        // Show notification frequency
+        notificationFrequency.setText(goal.getNotificationStyle());
     }
 
     @Override

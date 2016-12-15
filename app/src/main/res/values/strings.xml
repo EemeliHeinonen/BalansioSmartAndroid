@@ -8,6 +8,7 @@
     <string name="dialog_delete">Delete</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="set">Set</string>
+
     <string name="skip">Skip</string>
     <string name="next">Next</string>
     <string name="start">Close</string>
@@ -20,25 +21,26 @@
     <string name="title_activity_welcome">Home Screen</string>
 
     <!-- Introduction -->
-    <string name="slide_1_title">Welcome</string>
+    <string name="slide_1_title">Welcome!</string>
+
     <string name="slide_1_description">
 
         Balansio Smart is your personal self-care assistant.
-        It allows you to set up healthy goals and tracks your progress along the way.
+        It allows you to set up health goals and tracks your progress along the way.
         It helps you to make healthy decisions, develop more consistent routines and achieve a healthier lifestyle.
 
     </string>
 
     <string name="slide_2_title">
 
-        Your personal healthcare assistant in your pocket.
+        Your personal health care assistant in your pocket.
 
     </string>
 
 
     <string name="slide_2_description">
 
-        Balansio Smart is highly automated to minimize interaction and maximize results.
+        Balansio Smart is highly automated to minimize interaction and to maximize results.
         You only need to set a goal once and keep tracking your health data with supported meters.
         The application follows your progress, adapts to your behavior and automatically suggests improvements to your goal configurations if necessary.
         Most importantly, it reminds you whenever you need to, or may have forgotten to keep track of your health.
@@ -50,6 +52,7 @@
         Let\'s get started.
 
     </string>
+
     <string name="slide_3_instructions_1">
 
         Select one of the following medical conditions to automatically generate a suitable goal setup.
@@ -58,23 +61,21 @@
 
     <string name="slide_3_instructions_2">
 
-        If none of the options match your condition, you can manually set up your own goals.
+        If neither of the options match your condition, you can manually set up your own goals.
 
     </string>
 
-    <string name="slide_4_title">Let\'s get started!</string>
-    <string name="slide_4_description"> </string>
-
-    <string name="title_of_selected_goal">Goal</string>
+    <!-- Goal detail view -->
+    <string name="title_of_goal">Goal</string>
     <string name="discipline">Discipline</string>
     <string name="notification">Notification</string>
     <string name="target">Target</string>
-    <string name="disciplines_reading">disciplines reading</string>
-    <string name="target_range">target range</string>
+    <string name="disciplines_reading">Disciplines Reading</string>
+    <string name="target_range">Target Range</string>
     <string name="header">Header</string>
-    <string name="notification_frequency">frequency</string>
-    <string name="measures">measures</string>
-    <string name="time">time</string>
+    <string name="notification_frequency">Frequency</string>
+    <string name="measures">Measures</string>
+    <string name="time">Time</string>
 
     <!--<string name="play_again_description">To see the welcome slider again, go to Settings -> apps -> welcome slider -> clear data</string>-->
     <!--<string name="play_again">Play Again</string>-->

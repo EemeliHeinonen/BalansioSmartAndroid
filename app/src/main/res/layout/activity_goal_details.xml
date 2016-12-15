@@ -1,42 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_goal_details"
-    style="@style/BSCenteredFragment"
     android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.quattrofolia.balansiosmart.goalDetails.GoalDetailsActivity">
 
-    <LinearLayout
-        android:id="@+id/layout_goalDetailContainer"
-        style="@style/BSDetailContainer" >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="10dp"
+        android:id="@+id/goal"
+        android:background="@color/header">
+
+        <ImageButton
+            style="@style/BSButton"
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            android:id="@+id/deleteButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@+id/goalName" />
+
+        <ImageButton
+            style="@style/BSButton"
+            app:srcCompat="@android:drawable/ic_menu_edit"
+            android:id="@+id/editButton"
+            android:layout_toStartOf="@+id/deleteButton"
+            android:layout_above="@+id/disciplinesReading" />
 
         <TextView
-            android:id="@+id/textView_goalTypeHeader"
-            style="@style/BSCaption.Table"/>
+            android:text="@string/title_of_goal"
+            android:id="@+id/goalName"
+            android:layout_width="151dp"
+            android:layout_height="wrap_content"
+            android:textSize="40sp"
+            android:textColor="@color/text"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView_goalSettings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/discipline"
+            android:id="@+id/discipline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_alignBaseline="@+id/disciplinesReading"
+            android:layout_alignBottom="@+id/disciplinesReading"
+            android:layout_alignParentStart="true" />
 
-    </LinearLayout>
+        <TextView
+            android:text="@string/disciplines_reading"
+            android:id="@+id/disciplinesReading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_marginTop="11dp"
+            android:layout_below="@+id/deleteButton"
+            android:layout_toEndOf="@+id/goalName" />
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        <TextView
+            android:text="@string/target"
+            android:id="@+id/target"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_alignParentStart="true"
+            android:layout_alignBottom="@+id/targetRange" />
 
-        <Button
-            android:id="@+id/button_editGoal"
-            style="@style/BSButton.SpanWidth"
-            android:text="Edit" />
+        <TextView
+            android:text="@string/notification"
+            android:id="@+id/notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_alignBaseline="@+id/notificationFrequency"
+            android:layout_alignBottom="@+id/notificationFrequency"
+            android:layout_alignParentStart="true" />
 
-        <Button
-            android:id="@+id/button_deleteGoal"
-            style="@style/BSButton.Alert.Spanwidth"
-            android:text="Delete" />
+        <TextView
+            android:text="@string/notification_frequency"
+            android:id="@+id/notificationFrequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_marginBottom="18dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/targetRange" />
 
-    </LinearLayout>
+        <TextView
+            android:text="@string/target_range"
+            android:id="@+id/targetRange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_marginTop="31dp"
+            android:layout_below="@+id/disciplinesReading"
+            android:layout_alignStart="@+id/disciplinesReading" />
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_list_view"
@@ -44,6 +117,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin" />
+        android:paddingRight="@dimen/activity_horizontal_margin"/>
 
 </LinearLayout>
