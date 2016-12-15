@@ -40,7 +40,8 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
         String date = dateFormat.format(dateObject);
         String time = timeFormat.format(dateObject);
 
-        holder.time.setText(date + " " + time);
+        holder.date.setText(date);
+        holder.time.setText(time);
         holder.measures.setText(entry.getValue());
     }
 
@@ -56,12 +57,14 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
     }
 
     static class HealthDataViewHolder extends RecyclerView.ViewHolder{
+        TextView date;
         TextView time;
         TextView measures;
 
         private HealthDataViewHolder(View itemView) {
             super(itemView);
 
+            date = (TextView) itemView.findViewById(R.id.date_of_measurement);
             time = (TextView) itemView.findViewById(R.id.time_of_measurement);
             measures = (TextView) itemView.findViewById(R.id.measurement);
         }

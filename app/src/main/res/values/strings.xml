@@ -75,6 +75,7 @@
     <string name="notification_frequency">frequency</string>
     <string name="measures">measures</string>
     <string name="time">time</string>
+    <string name="date">date</string>
 
     <!--<string name="play_again_description">To see the welcome slider again, go to Settings -> apps -> welcome slider -> clear data</string>-->
     <!--<string name="play_again">Play Again</string>-->
