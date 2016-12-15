@@ -43,6 +43,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         private TextView textViewType;
         private Context context;
         private Timeline timeline;
+        private NotificationActivityTimeline activityTimeline;
 
         public GoalViewHolder(View v) {
             super(v);
@@ -54,7 +55,8 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
             textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
             textViewType = (TextView) v.findViewById(R.id.textView_goalItemType);
-            //timeline = (Timeline) v.findViewById(R.id.timeline_ProgressViewGoalItem);
+            timeline = (Timeline) v.findViewById(R.id.timeline_progressViewGoalItem);
+            activityTimeline = (NotificationActivityTimeline) v.findViewById(R.id.activityTimeline_progressViewGoalItem);
         }
 
         @Override
@@ -128,7 +130,8 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
 
             /* Updating timeline view should happen here*/
 
-            //holder.timeline.setPeriod(discipline.getMonitoringPeriod());
+            holder.timeline.setPeriod(discipline.getMonitoringPeriod());
+            holder.activityTimeline.setPeriod(discipline.getMonitoringPeriod());
 
         } else {
             holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);

@@ -13,6 +13,7 @@ import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.joda.time.Interval;
 
 
@@ -21,9 +22,16 @@ public class Timeline extends View {
     private Paint paint;
     private MonitoringPeriod period;
 
+    public DateTime getNow() {
+        return now;
+    }
+
+    private DateTime now;
+
     public Timeline(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.period = MonitoringPeriod.day;
+        this.now = new DateTime();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -44,26 +52,25 @@ public class Timeline extends View {
         invalidate();
     }
 
+    public MonitoringPeriod getPeriod() {
+        return this.period;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         /* Calculate current completion of period */
 
-
-        DateTime now = new DateTime();
+        now.toDate();
         Interval quantizedInterval = period.quantizedInterval(now.toInstant(), 0);
-        Duration duration = quantizedInterval.toDuration();
-        DateTime start = quantizedInterval.getStart();
-        DateTime end = quantizedInterval.getEnd();
-        float past = new Duration(start, now).getMillis();
-        float completion = past / duration.getMillis();
+        float completion = instantToPeriodRatio(now.toInstant());
 
         /* Paint the canvas */
 
         paint = new Paint();
         int width = getWidth();
-        int height = 10;
+        int height = 50;
         paint.setStrokeWidth(height);
         ViewGroup.LayoutParams params = getLayoutParams();
         params.height = height;
@@ -77,5 +84,14 @@ public class Timeline extends View {
         paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_primary));
         canvas.drawLine(0, height/2, completion * width, height/2, paint);
 
+    }
+
+    public float instantToPeriodRatio(Instant instant) {
+        DateTime dt = instant.toDateTime();
+        Interval i = period.quantizedInterval(now.toInstant(), 0);
+        Duration duration = i.toDuration();
+        DateTime start = i.getStart();
+        float past = new Duration(start, dt).getMillis();
+        return past / duration.getMillis();
     }
 }

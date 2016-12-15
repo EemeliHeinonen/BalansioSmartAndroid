@@ -92,6 +92,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <com.quattrofolia.balansiosmart.goalList.NotificationActivityTimeline
+                        android:background="@color/testYellow"
+                        android:id="@+id/activityTimeline_progressViewGoalItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <com.quattrofolia.balansiosmart.goalList.Timeline
                         android:background="@color/testBlue"
                         android:id="@+id/timeline_progressViewGoalItem"
