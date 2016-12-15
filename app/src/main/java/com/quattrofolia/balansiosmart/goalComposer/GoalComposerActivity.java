@@ -56,26 +56,6 @@ public class GoalComposerActivity extends FragmentActivity {
             /* Begin checking for enumerated extras */
 
             Intent i = getIntent();
-            if (i.hasExtra(ComposerMode.GENERATE.toString())) {
-                MedicalCondition condition = (MedicalCondition) i.getSerializableExtra(ComposerMode.GENERATE.toString());
-                Goal generatedGoal = condition.goalPreset();
-                Bundle args = new Bundle();
-                args.putString("goalType", generatedGoal.getType().toString());
-                args.putInt("frequency", generatedGoal.getDiscipline().getFrequency());
-                if (generatedGoal.getDiscipline() != null) {
-                    args.putString("monitoringPeriod", generatedGoal.getDiscipline().getMonitoringPeriod().toString());
-                }
-                if (generatedGoal.getTargetRange() != null) {
-                    args.putString("rangeMin", generatedGoal.getTargetRange().getLow().toString());
-                    args.putString("rangeMax", generatedGoal.getTargetRange().getHigh().toString());
-                }
-                args.putString("notificationStyle", generatedGoal.getNotificationIntensity().toString());
-                GoalOverviewFragment overviewFragment = GoalOverviewFragment.newInstance(args);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.fragment_container, overviewFragment)
-                        .commit();
-            }
 
             if (i.hasExtra(ComposerMode.CREATE.toString())) {
                 // Create a new Fragment to be placed in the activity layout
