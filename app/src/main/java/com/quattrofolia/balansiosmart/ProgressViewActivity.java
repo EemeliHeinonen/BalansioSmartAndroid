@@ -107,21 +107,21 @@ public class ProgressViewActivity extends Activity {
                         firstEntry.setValue(new BigDecimal("70"));
                         firstEntry.setInstant(new DateTime().minusHours(2).toInstant());
                         enterEntry(firstEntry,session);
-                        final HealthDataEntry secondEntry = new HealthDataEntry();
+                        /*final HealthDataEntry secondEntry = new HealthDataEntry();
                         firstEntry.setType(HealthDataType.WEIGHT);
                         firstEntry.setValue(new BigDecimal("69"));
                         firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
-                        enterEntry(secondEntry,session);
-                        final HealthDataEntry thirdEntry = new HealthDataEntry();
+                        enterEntry(secondEntry,session);*/
+                       /* final HealthDataEntry thirdEntry = new HealthDataEntry();
                         firstEntry.setType(HealthDataType.BLOOD_GLUCOSE);
                         firstEntry.setValue(new BigDecimal("69"));
                         firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
                         enterEntry(thirdEntry,session);
                         final HealthDataEntry fourthEntry = new HealthDataEntry();
                         firstEntry.setType(HealthDataType.EXERCISE);
-                        firstEntry.setValue(new BigDecimal("69"));
+                        //firstEntry.setValue(new BigDecimal("69"));
                         firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
-                        enterEntry(fourthEntry,session);
+                        enterEntry(fourthEntry,session);*/
                         break;
                     case 2:  //monthString = "February";
                         break;
