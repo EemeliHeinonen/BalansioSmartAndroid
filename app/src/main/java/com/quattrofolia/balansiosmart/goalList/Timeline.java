@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
+import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
@@ -19,9 +21,9 @@ public class Timeline extends View {
     private Paint paint;
     private MonitoringPeriod period;
 
-    public Timeline(Context context) {
-        super(context);
-        paint = new Paint();
+    public Timeline(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        this.period = MonitoringPeriod.day;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -34,7 +36,7 @@ public class Timeline extends View {
                     }
                 }
             }
-        });
+        }).start(); // start the thread to update view gradually
     }
 
     public void setPeriod(MonitoringPeriod period) {
@@ -44,8 +46,10 @@ public class Timeline extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
 
         /* Calculate current completion of period */
+
 
         DateTime now = new DateTime();
         Interval quantizedInterval = period.quantizedInterval(now.toInstant(), 0);
@@ -57,14 +61,21 @@ public class Timeline extends View {
 
         /* Paint the canvas */
 
+        paint = new Paint();
+        int width = getWidth();
+        int height = 10;
+        paint.setStrokeWidth(height);
+        ViewGroup.LayoutParams params = getLayoutParams();
+        params.height = height;
+        setLayoutParams(params);
+
         super.onDraw(canvas);
-        float width = getWidth();
-        paint.setStrokeWidth(6);
         paint.setStyle(Paint.Style.STROKE);
 
         paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_blank));
-        canvas.drawLine(0, 0, width, 0, paint);
+        canvas.drawLine(0, height/2, width, height/2, paint);
         paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_primary));
-        canvas.drawLine(0, 0, completion * width, 0, paint);
+        canvas.drawLine(0, height/2, completion * width, height/2, paint);
+
     }
 }

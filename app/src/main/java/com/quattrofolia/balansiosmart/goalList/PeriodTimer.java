@@ -24,6 +24,7 @@ public class PeriodTimer extends View {
 
     public PeriodTimer(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.goal = new Goal();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -57,6 +58,12 @@ public class PeriodTimer extends View {
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(strokeWidth);
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_blank));
+        canvas.drawCircle(center, center, radius, paint);
+
+
+
+
         Discipline discipline = this.goal.getDiscipline();
         if (discipline == null) {
             return;
@@ -77,8 +84,6 @@ public class PeriodTimer extends View {
         // Log.d(TAG, "now: " + now.getMillis() + "past: " + past + ", future: " + future + ", completion: " + completion);
 
 
-        paint.setColor(ContextCompat.getColor(getContext(), R.color.bs_blank));
-        canvas.drawCircle(center, center, radius, paint);
 
         float arcRectStarting = center - radius;
         float arcRectEnding = center + radius;

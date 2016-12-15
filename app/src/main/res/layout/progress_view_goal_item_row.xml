@@ -83,9 +83,25 @@
                 android:id="@+id/layout_goalItemSchedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/testYellow"
                 android:orientation="vertical">
 
+                <LinearLayout
+                    android:background="@color/testRed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.quattrofolia.balansiosmart.goalList.Timeline
+                        android:background="@color/testBlue"
+                        android:id="@+id/timeline_progressViewGoalItem"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true" />
+                </LinearLayout>
             </RelativeLayout>
+
+
         </LinearLayout>
     </LinearLayout>
 
