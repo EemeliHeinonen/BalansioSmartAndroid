@@ -22,7 +22,7 @@
             android:text="@string/slide_3_instructions_2" />
 
         <Button
-            android:id="@id/button_createGoal"
+            android:id="@+id/button_createGoal"
             android:text="Create Goal"
             style="@style/BSButton" />
 
