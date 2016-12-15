@@ -94,6 +94,19 @@ public class ProgressViewActivity extends Activity {
         hiddenButton = (Button) findViewById(R.id.button_hidden);
         final Session session = BalansioSmart.currentSession(realm);
 
+        createEntry("71",HealthDataType.WEIGHT,session, 0);
+        createEntry("71",HealthDataType.WEIGHT,session, 8);
+        createEntry("71.3",HealthDataType.WEIGHT,session, 16);
+        createEntry("71.4",HealthDataType.WEIGHT,session, 30);
+        createEntry("71.8",HealthDataType.WEIGHT,session, 42);
+        createEntry("72",HealthDataType.WEIGHT,session, 54);
+        createEntry("8",HealthDataType.SLEEP,session,0);
+        createEntry("9",HealthDataType.SLEEP,session,24);
+        createEntry("7",HealthDataType.SLEEP,session,48);
+        createEntry("8",HealthDataType.SLEEP,session,72);
+        createEntry("8",HealthDataType.SLEEP,session,96);
+        createEntry("9",HealthDataType.SLEEP,session,120);
+
 
         hiddenButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -102,28 +115,15 @@ public class ProgressViewActivity extends Activity {
                 switch (stepCounter) {
                     case 1:
                         //Create default goals and entries here
-                        final HealthDataEntry firstEntry = new HealthDataEntry();
-                        firstEntry.setType(HealthDataType.WEIGHT);
-                        firstEntry.setValue(new BigDecimal("70"));
-                        firstEntry.setInstant(new DateTime().minusHours(2).toInstant());
-                        enterEntry(firstEntry,session);
-                        /*final HealthDataEntry secondEntry = new HealthDataEntry();
-                        firstEntry.setType(HealthDataType.WEIGHT);
-                        firstEntry.setValue(new BigDecimal("69"));
-                        firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
-                        enterEntry(secondEntry,session);*/
-                       /* final HealthDataEntry thirdEntry = new HealthDataEntry();
-                        firstEntry.setType(HealthDataType.BLOOD_GLUCOSE);
-                        firstEntry.setValue(new BigDecimal("69"));
-                        firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
-                        enterEntry(thirdEntry,session);
-                        final HealthDataEntry fourthEntry = new HealthDataEntry();
-                        firstEntry.setType(HealthDataType.EXERCISE);
-                        //firstEntry.setValue(new BigDecimal("69"));
-                        firstEntry.setInstant(new DateTime().minusHours(5).toInstant());
-                        enterEntry(fourthEntry,session);*/
+
                         break;
-                    case 2:  //monthString = "February";
+                    case 2:
+                        createEntry("69",HealthDataType.BLOOD_GLUCOSE,session,2);
+                        createEntry("69",HealthDataType.BLOOD_GLUCOSE,session,2);
+                        createEntry("69",HealthDataType.BLOOD_GLUCOSE,session,2);
+                        createEntry("69",HealthDataType.BLOOD_GLUCOSE,session,2);
+                        createEntry("69",HealthDataType.BLOOD_GLUCOSE,session,2);
+                        NotificationEventReceiver.setupAlarm(getApplicationContext());
                         break;
                     default: //monthString = "Invalid month";
                         break;
@@ -164,7 +164,15 @@ public class ProgressViewActivity extends Activity {
         userResults = realm.where(User.class).findAllAsync();
         userResults.addChangeListener(userResultsListener);
 
-        NotificationEventReceiver.setupAlarm(getApplicationContext());
+        //NotificationEventReceiver.setupAlarm(getApplicationContext());
+
+    }
+    private void createEntry(String bs, HealthDataType type, Session session, int hours){
+        final HealthDataEntry secondEntry = new HealthDataEntry();
+        secondEntry.setType(type);
+        secondEntry.setValue(new BigDecimal(bs));
+        secondEntry.setInstant(new DateTime().minusHours(hours).toInstant());
+        enterEntry(secondEntry,session);
 
     }
 
@@ -243,10 +251,10 @@ public class ProgressViewActivity extends Activity {
         boolean userExists = (user != null);
         goalItems.clear();
         if (userExists) {
-            userNameTextView.setText(user.getFirstName() + " " + user.getLastName());
+            //userNameTextView.setText(user.getFirstName() + " " + user.getLastName());
             goalItems.addAll(user.getGoals());
         } else {
-            userNameTextView.setText("");
+            //userNameTextView.setText("");
         }
 
         /* Refresh interface and adapters. */
