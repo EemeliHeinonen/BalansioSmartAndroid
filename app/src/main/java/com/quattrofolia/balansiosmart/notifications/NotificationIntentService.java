@@ -18,6 +18,7 @@ import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.NotificationEntry;
+import com.quattrofolia.balansiosmart.models.NotificationIntensity;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.storage.Storage;
 
@@ -211,7 +212,7 @@ public class NotificationIntentService extends IntentService {
 
     //check if discipline goals with easy notification setting need to send notifications
     private void easyDisciplineCheck() {
-        RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("discipline").findAll();
+        RealmResults<Goal> easyDisciplineGoals = allGoals.where().equalTo("notificationIntensity", NotificationIntensity.EASY.toString()).isNotNull("discipline").findAll();
         if (easyDisciplineGoals.size() > 0) {
             Log.d(TAG, "easyDisciplineCheck: easyDiscipline Typen Test log: " + easyDisciplineGoals.first().getType().toString());
 
@@ -268,7 +269,7 @@ public class NotificationIntentService extends IntentService {
     private void easyClinicalCheck() {
 
         if (isWakingHours()) {
-            RealmResults<Goal> easyClinicalGoals = allGoals.where().equalTo("notificationStyle", "Easy").isNotNull("targetRange").findAll();
+            RealmResults<Goal> easyClinicalGoals = allGoals.where().equalTo("notificationIntensity", NotificationIntensity.EASY.toString()).isNotNull("targetRange").findAll();
             if (easyClinicalGoals.size() > 0) {
                 Log.d(TAG, "easyClinicalCheck: easyClinical Typen Test log: " + easyClinicalGoals.first().getType().toString());
                 for (Goal goal : easyClinicalGoals) {

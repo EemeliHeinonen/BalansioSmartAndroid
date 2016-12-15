@@ -21,41 +21,31 @@ public enum MedicalCondition {
         public List<Goal> goalPresets() {
             List<Goal> presets = new ArrayList<>();
 
-            HealthDataType bgType = HealthDataType.BLOOD_GLUCOSE;
+            presets.add(createGoal(HealthDataType.BLOOD_GLUCOSE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.EASY));
+            presets.add(createGoal(HealthDataType.WEIGHT,MonitoringPeriod.week,3,"65","75",NotificationIntensity.EASY));
+            presets.add(createGoal(HealthDataType.EXERCISE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.EASY));
+            presets.add(createGoal(HealthDataType.BLOOD_GLUCOSE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.EASY));
+
+            return presets;
+        }
+        private Goal createGoal(HealthDataType type,MonitoringPeriod moped, int frequency, String low, String high, NotificationIntensity notificationIntensity){
+            HealthDataType bgType = type;
             Discipline bgDiscipline = new Discipline();
-            bgDiscipline.setMonitoringPeriod(MonitoringPeriod.day);
-            bgDiscipline.setFrequency(2);
+            bgDiscipline.setMonitoringPeriod(moped);
+            bgDiscipline.setFrequency(frequency);
             Range bgRange = new Range();
-            bgRange.setLow(new BigDecimal("3.5"));
-            bgRange.setHigh(new BigDecimal("8.5"));
+            bgRange.setLow(new BigDecimal(low));
+            bgRange.setHigh(new BigDecimal(high));
             Goal bgGoal = new Goal();
             bgGoal.setType(bgType);
             bgGoal.setDiscipline(bgDiscipline);
             bgGoal.setTargetRange(bgRange);
-            bgGoal.setNotificationIntensity(NotificationIntensity.EASY);
-            presets.add(bgGoal);
-
-            HealthDataType weightType = HealthDataType.WEIGHT;
-            Discipline weightDiscipline = new Discipline();
-            weightDiscipline.setMonitoringPeriod(MonitoringPeriod.month);
-            weightDiscipline.setFrequency(1);
-            Range weightRange = new Range();
-            weightRange.setLow(new BigDecimal("60"));
-            weightRange.setHigh(new BigDecimal("150"));
-            Goal weightGoal = new Goal();
-            weightGoal.setType(weightType);
-            weightGoal.setDiscipline(weightDiscipline);
-            weightGoal.setTargetRange(weightRange);
-            weightGoal.setNotificationIntensity(NotificationIntensity.EASY);
-            presets.add(weightGoal);
-
-            return presets;
+            bgGoal.setNotificationIntensity(notificationIntensity);
+            return bgGoal;
         }
     };
 
-    private void createGoal(HealthDataType type, int frequency, int low, int high, NotificationIntensity notificationIntensity){
 
-    }
 
 
     private final String descriptiveName;
