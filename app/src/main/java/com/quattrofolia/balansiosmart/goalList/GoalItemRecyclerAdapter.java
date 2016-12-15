@@ -42,6 +42,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         private TextView textViewPeriod;
         private TextView textViewType;
         private Context context;
+        private Timeline timeline;
 
         public GoalViewHolder(View v) {
             super(v);
@@ -53,6 +54,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
             textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
             textViewType = (TextView) v.findViewById(R.id.textView_goalItemType);
+            timeline = (Timeline) v.findViewById(R.id.timeline_goalDisciplinePeriod);
         }
 
         @Override
@@ -102,6 +104,9 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         });
 
         if (discipline != null) {
+
+            /* Update completion view */
+
             int frequency = discipline.getFrequency();
             Interval currentPeriod = discipline.getMonitoringPeriod().quantizedInterval(now, 0);
             RealmResults<HealthDataEntry> entries;
@@ -111,17 +116,19 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
                     .greaterThan("instant", currentPeriod.getStartMillis())
                     .lessThan("instant", currentPeriod.getEndMillis())
                     .findAll();
-            float completion;
+            float disciplineCompletion;
             if (frequency > 0) {
-                completion = (float) entries.size() / (float) frequency;
+                disciplineCompletion = (float) entries.size() / (float) frequency;
             } else {
-                completion = 0;
+                disciplineCompletion = 0;
             }
-
-            /* Update completion view */
-            holder.completionRing.setCompletion(completion);
+            holder.completionRing.setCompletion(disciplineCompletion);
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
+
+            /* Update timeline view */
+
+            holder.timeline.setPeriod(discipline.getMonitoringPeriod());
 
         } else {
             holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);
