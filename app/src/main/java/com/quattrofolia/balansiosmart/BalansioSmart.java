@@ -100,7 +100,7 @@ public class BalansioSmart extends Application {
 
     public static Session currentSession(final Realm realm) {
 
-        /* Return the latest sesssion from database
+        /* Return the latest session from database
          * or create and return a new session without
          * userId */
 
