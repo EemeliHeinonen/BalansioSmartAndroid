@@ -9,6 +9,9 @@ import android.widget.TextView;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import io.realm.RealmResults;
 
 public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDetailsRecyclerViewAdapter.HealthDataViewHolder>{
@@ -30,7 +33,14 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
     public void onBindViewHolder(HealthDataViewHolder holder, int position) {
         // Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
         HealthDataEntry entry = list.get(position);
-        holder.time.setText(entry.getInstant().toString());
+
+        DateFormat dateFormat = android.text.format.DateFormat.getLongDateFormat(holder.time.getContext());
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(holder.time.getContext());
+        Date dateObject = entry.getInstant().toDateTime().toGregorianCalendar().getTime();
+        String date = dateFormat.format(dateObject);
+        String time = timeFormat.format(dateObject);
+
+        holder.time.setText(date + " " + time);
         holder.measures.setText(entry.getValue());
     }
 
