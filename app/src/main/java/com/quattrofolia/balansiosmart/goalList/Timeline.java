@@ -64,7 +64,7 @@ public class Timeline extends View {
 
         now.toDate();
         Interval quantizedInterval = period.quantizedInterval(now.toInstant(), 0);
-        float completion = instantToPeriodRatio(now.toInstant());
+        float completion = positionInPeriod(now.toInstant(), period);
 
         /* Paint the canvas */
 
@@ -86,7 +86,7 @@ public class Timeline extends View {
 
     }
 
-    public float instantToPeriodRatio(Instant instant) {
+    public float positionInPeriod(Instant instant, MonitoringPeriod period) {
         DateTime dt = instant.toDateTime();
         Interval i = period.quantizedInterval(now.toInstant(), 0);
         Duration duration = i.toDuration();
