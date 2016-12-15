@@ -12,6 +12,7 @@ import android.util.Log;
 import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
@@ -146,7 +147,7 @@ public class NotificationIntentService extends IntentService {
     }
 
     //method for creating the actual notification with set parameters
-    private void sendNotification(String title, String text, HealthDataType goalType) {
+    private void sendNotification(String title, String text, HealthDataType goalType, Goal goal) {
         final NotificationManager manager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         //goalComposerIntent needs to use the HealthDataType's getLongName, whereas the removeNotificationsIntent needs the all caps version.
 
@@ -158,9 +159,8 @@ public class NotificationIntentService extends IntentService {
         PendingIntent goalComposerIntent = PendingIntent.getActivity(this,
                 NOTIFICATION_ID,
                 new Intent(this, GoalComposerActivity.class)
-                        .putExtra("type", goalType)
-                        .putExtra("notificationId", NOTIFICATION_ID)
-                        .putExtra("goalId", GOAL_ID),
+                        .putExtra(ComposerMode.EDIT.toString(),goal.getId())
+                        .putExtra("notificationId", NOTIFICATION_ID),
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
         PendingIntent removeNotificationsIntent = PendingIntent.getService(this,
@@ -246,13 +246,13 @@ public class NotificationIntentService extends IntentService {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType());
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType(),easyDisciplineGoals.get(i));
                         } else if (currentNotificationEntries
                                 .last().getInstant().isBefore(now.minus(twoHours))) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType());
+                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType(),easyDisciplineGoals.get(i));
                         }
                     } else {
                         Log.d(TAG, "easyDisciplineCheck: goal accomplished / has already been notified about");
@@ -305,7 +305,7 @@ public class NotificationIntentService extends IntentService {
                     }
                     if (numberOfFailedEntries >= 5) {
                         writeNotificationEntry(goal.getType(), "easyClinical",goal.getType().getLongName() + " clinical goal did fail");
-                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType());
+                        sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType(),goal);
                     }
                     else{
                         Log.d(TAG, "easyClinicalCheck: " + goal.getType().getLongName() + " clinical goal accomplished.");

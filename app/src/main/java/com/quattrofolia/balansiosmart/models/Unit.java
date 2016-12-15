@@ -10,6 +10,7 @@ public enum Unit {
     MMOL_PER_L("mmol/l"),
     MMHG("mmHg"),
     MINUTE("min"),
+    HOUR("hour"),
     KCAL("kCal");
 
 
