@@ -52,6 +52,10 @@ public enum MedicalCondition {
         }
     };
 
+    private void createGoal(HealthDataType type, int frequency, int low, int high, NotificationIntensity notificationIntensity){
+
+    }
+
 
     private final String descriptiveName;
 
