@@ -28,6 +28,8 @@ import com.quattrofolia.balansiosmart.goalComposer.MedicalCondition;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.User;
 
+import java.util.List;
+
 import io.realm.Realm;
 
 public class WelcomeSliderActivity extends AppCompatActivity {
@@ -211,14 +213,19 @@ public class WelcomeSliderActivity extends AppCompatActivity {
                             realm.executeTransactionAsync(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
-                                    Goal generatedGoal = condition.goalPreset();
+                                    List<Goal> generatedGoals = condition.goalPresets();
                                     Integer userId = BalansioSmart.currentSession(realm).getUserId();
+                                    User loggedUser = realm.where(User.class).equalTo("id", userId).findFirst();
+
                                     if (userId != null) {
-                                        User loggedUser = realm.where(User.class).equalTo("id", userId).findFirst();
-                                        loggedUser.getGoals().add(generatedGoal);
+                                        for (Goal generatedGoal : generatedGoals) {
+                                            generatedGoal.setPrimaryKey(generatedGoal.getNextPrimaryKey(realm));
+                                            loggedUser.getGoals().add(generatedGoal);
+                                        }
                                     } else {
                                         Log.e(TAG, "Couldn't find user id.");
                                     }
+                                    ;
                                 }
                             }, new Realm.Transaction.OnSuccess() {
                                 @Override
