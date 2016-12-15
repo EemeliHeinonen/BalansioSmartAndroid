@@ -215,12 +215,13 @@ public class GoalIntensityFragment extends Fragment {
 
     //Methods for initializing the fragment for different progress_view_goal_item_row types.
     public void weightMode() {
-        int weightDefaultFrequency = 2;
+        int weightDefaultFrequency = 5;
         npFrequency.setMinValue(1);
         npFrequency.setMaxValue(10);
         npFrequency.setValue(weightDefaultFrequency);
+        npMonitoringPeriod.setValue(1);
         selectedFrequency = weightDefaultFrequency;
-        monitoringPeriod = periods[0];
+        monitoringPeriod = periods[1];
     }
 
     public void bgMode() {
@@ -231,7 +232,7 @@ public class GoalIntensityFragment extends Fragment {
     }
 
     public void exerciseMode() {
-        monitoringPeriod = periods[1];
+        monitoringPeriod = periods[0];
         npMonitoringPeriod.setVisibility(View.GONE);
         tvMonitoringPeriod.setVisibility(View.GONE);
         tvFrequency.setText("Times of exercise a week");

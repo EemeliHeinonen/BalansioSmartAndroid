@@ -50,7 +50,7 @@ public class GoalNotificationFragment extends Fragment {
     RadioButton rbStrict;
     RadioButton rbEasy;
     RadioButton rbNone;
-    private String notificationStyle = "Strict";
+    private String notificationStyle = "Easy";
 
     public static GoalNotificationFragment newInstance
             (HealthDataType dataType, int frequency, MonitoringPeriod monitoringPeriod, String idealRangeMin, String idealRangeMax) {
@@ -95,7 +95,7 @@ public class GoalNotificationFragment extends Fragment {
         rbNone = (RadioButton) myView.findViewById(R.id.rbNone);
         tv.setText("Remind me to measure " + dataType.getLongName());
 
-        radioButtonGroup.check(R.id.rbStrict);
+        radioButtonGroup.check(R.id.rbEasy);
         radioButtonGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {

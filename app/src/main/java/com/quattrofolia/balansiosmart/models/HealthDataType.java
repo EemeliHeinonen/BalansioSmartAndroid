@@ -10,7 +10,7 @@ public enum HealthDataType {
     WEIGHT("Weight", "wt", Unit.KG),
     BLOOD_PRESSURE_SYSTOLIC("Blood Pressure Systolic", "bps", Unit.MMHG),
     BLOOD_PRESSURE_DIASTOLIC("Blood Pressure Diastolic", "bpd", Unit.MMHG),
-    SLEEP("Sleep", "slp", Unit.MINUTE),
+    SLEEP("Sleep", "slp", Unit.HOUR),
     EXERCISE("Exercise", "xrc", Unit.MINUTE),
     NUTRITION("Nutrition", "ntr", Unit.KCAL);
 
