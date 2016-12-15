@@ -3,13 +3,13 @@ package com.quattrofolia.balansiosmart;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.support.design.widget.FloatingActionButton;
 
 import com.quattrofolia.balansiosmart.cardstack.CardStack;
 import com.quattrofolia.balansiosmart.cardstack.CardsDataAdapter;
@@ -24,10 +24,8 @@ import com.quattrofolia.balansiosmart.models.NotificationEntry;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
-import com.quattrofolia.balansiosmart.storage.Storage;
 
 import org.joda.time.DateTime;
-import org.joda.time.Instant;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -57,9 +55,6 @@ public class ProgressViewActivity extends Activity {
 
     // Storage
     private Realm realm;
-    private Storage storage;
-    private RealmResults<Session> sessionResults;
-    private RealmChangeListener<RealmResults<Session>> sessionResultsListener;
     private User user;
 
     private RealmResults<User> userResults;
@@ -73,7 +68,6 @@ public class ProgressViewActivity extends Activity {
         realm = Realm.getDefaultInstance();
 
         // Use storage.save() for saving autoincrementable objects
-        storage = new Storage();
 
         userNameTextView = (TextView) findViewById(R.id.textView_userName);
 
@@ -225,7 +219,7 @@ public class ProgressViewActivity extends Activity {
 
         User user = realm.where(User.class).equalTo("id", currentSession.getUserId()).findFirst();
         goalItems.addAll(user.getGoals());
-        goalAdapter.setItemList(goalItems);
+        goalAdapter.setItemLists(goalItems);
     }
 
     private void setInterfaceAccessibility(boolean authorized) {
@@ -251,15 +245,13 @@ public class ProgressViewActivity extends Activity {
         /* Refresh interface and adapters. */
 
         //setInterfaceAccessibility(userExists);
-        goalAdapter.setItemList(goalItems);
+        goalAdapter.setItemLists(goalItems);
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (sessionResults != null) {
-            sessionResults.removeChangeListeners();
-        }
         realm.removeAllChangeListeners();
         realm.close();
     }
