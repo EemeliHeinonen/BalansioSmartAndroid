@@ -9,6 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,16 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.quattrofolia.balansiosmart.BalansioSmart;
 import com.quattrofolia.balansiosmart.ProgressViewActivity;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.goalComposer.ComposerMode;
 import com.quattrofolia.balansiosmart.goalComposer.GoalComposerActivity;
 import com.quattrofolia.balansiosmart.goalComposer.MedicalCondition;
+import com.quattrofolia.balansiosmart.models.Goal;
+import com.quattrofolia.balansiosmart.models.User;
+
+import io.realm.Realm;
 
 public class WelcomeSliderActivity extends AppCompatActivity {
 
@@ -34,16 +40,18 @@ public class WelcomeSliderActivity extends AppCompatActivity {
     private int[] layouts;
     private Button btnSkip, btnNext;
     private PreferenceManager prefManager;
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        realm = Realm.getDefaultInstance();
         // Checking for first time launch - before calling setContentView()
         prefManager = new PreferenceManager(this);
         if (!prefManager.isFirstTimeLaunch()) {
-        // For testing use this condition
-        // if (false && !prefManager.isFirstTimeLaunch()) {
+            // For testing use this condition
+            // if (false && !prefManager.isFirstTimeLaunch()) {
             launchHomeScreen();
             finish();
         }
@@ -196,10 +204,36 @@ public class WelcomeSliderActivity extends AppCompatActivity {
                     b.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent i = new Intent(WelcomeSliderActivity.this,
-                                    GoalComposerActivity.class);
-                            i.putExtra(ComposerMode.GENERATE.toString(), condition);
-                            startActivity(i);
+
+                            /* Create selected default goal, add it to user's
+                            * goals and launch the ProgressView activity. */
+
+                            realm.executeTransactionAsync(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    Goal generatedGoal = condition.goalPreset();
+                                    Integer userId = BalansioSmart.currentSession(realm).getUserId();
+                                    if (userId != null) {
+                                        User loggedUser = realm.where(User.class).equalTo("id", userId).findFirst();
+                                        loggedUser.getGoals().add(generatedGoal);
+                                    } else {
+                                        Log.e(TAG, "Couldn't find user id.");
+                                    }
+                                }
+                            }, new Realm.Transaction.OnSuccess() {
+                                @Override
+                                public void onSuccess() {
+                                    Intent i = new Intent(WelcomeSliderActivity.this, ProgressViewActivity.class);
+                                    startActivity(i);
+                                }
+                            }, new Realm.Transaction.OnError() {
+                                @Override
+                                public void onError(Throwable error) {
+                                    error.printStackTrace();
+                                }
+                            });
+
+
                         }
                     });
                     conditionsLayout.addView(b);
@@ -234,5 +268,13 @@ public class WelcomeSliderActivity extends AppCompatActivity {
             View view = (View) object;
             container.removeView(view);
         }
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }
