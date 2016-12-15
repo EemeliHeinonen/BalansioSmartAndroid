@@ -23,7 +23,7 @@
         <TextView
             android:id="@+id/textViewGoalIntensity"
             style="@style/BSCaption"
-            android:hint="textView2" />
+            android:text="Measure"/>
 
         <NumberPicker
             android:id="@+id/npGoalIntensityAmount"

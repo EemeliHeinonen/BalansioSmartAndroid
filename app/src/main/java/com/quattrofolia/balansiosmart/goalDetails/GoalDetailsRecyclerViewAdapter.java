@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.quattrofolia.balansiosmart.R;
 import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 
+import org.joda.time.DateTime;
+
 import io.realm.RealmResults;
 
 public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDetailsRecyclerViewAdapter.HealthDataViewHolder>{
@@ -30,8 +32,21 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
     public void onBindViewHolder(HealthDataViewHolder holder, int position) {
         // Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
         HealthDataEntry entry = list.get(position);
-        holder.time.setText(entry.getInstant().toString());
-        holder.measures.setText(entry.getValue());
+        String value = entry.getValue();
+        DateTime dt = entry.getInstant().toDateTime();
+        String time = ""
+                + dt.getDayOfMonth() + "."
+                + dt.getMonthOfYear() + "."
+                + dt.getYear() + " "
+                + dt.getHourOfDay()
+                + ":"
+                + dt.getMinuteOfHour();
+
+        String measurement = ""
+                + entry.getValue() + " "
+                + entry.getType().getUnit().toString();
+        holder.time.setText(time);
+        holder.measures.setText(measurement);
     }
 
     @Override
@@ -52,8 +67,8 @@ public class GoalDetailsRecyclerViewAdapter extends RecyclerView.Adapter<GoalDet
         private HealthDataViewHolder(View itemView) {
             super(itemView);
 
-            time = (TextView) itemView.findViewById(R.id.time_of_measurement);
-            measures = (TextView) itemView.findViewById(R.id.measurement);
+            time = (TextView) itemView.findViewById(R.id.textView_measurementTime);
+            measures = (TextView) itemView.findViewById(R.id.textView_measurementValue);
         }
     }
 

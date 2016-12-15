@@ -5,18 +5,24 @@
     android:id="@+id/goal_details_list_item">
 
 
+    <ImageView
+        android:src="@drawable/ic_action_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.01" />
+
     <TextView
         android:text="@string/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/time_of_measurement"
+        android:id="@+id/textView_measurementTime"
         android:layout_weight="0.20" />
 
     <TextView
         android:text="@string/measures"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/measurement"
-        android:layout_weight="0.15" />
+        android:id="@+id/textView_measurementValue"
+        android:layout_weight="0.05" />
 
 </LinearLayout>
