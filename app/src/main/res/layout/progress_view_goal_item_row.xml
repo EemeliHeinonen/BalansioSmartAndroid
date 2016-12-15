@@ -70,7 +70,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:background="@color/testGreen"
             android:id="@+id/goalItem_descriptionView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -85,11 +84,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <com.quattrofolia.balansiosmart.goalList.Timeline
-                    android:id="@+id/timeline_goalDisciplinePeriod"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
             </RelativeLayout>
         </LinearLayout>

@@ -42,7 +42,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
         private TextView textViewPeriod;
         private TextView textViewType;
         private Context context;
-        private Timeline timeline;
 
         public GoalViewHolder(View v) {
             super(v);
@@ -54,7 +53,6 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             textViewFrequency = (TextView) v.findViewById(R.id.textView_disciplineFrequency);
             textViewPeriod = (TextView) v.findViewById(R.id.textView_period);
             textViewType = (TextView) v.findViewById(R.id.textView_goalItemType);
-            timeline = (Timeline) v.findViewById(R.id.timeline_goalDisciplinePeriod);
         }
 
         @Override
@@ -126,9 +124,7 @@ public class GoalItemRecyclerAdapter extends RecyclerView.Adapter<GoalItemRecycl
             holder.textViewFrequency.setText("" + frequency);
             holder.textViewAccomplishments.setText("" + entries.size());
 
-            /* Update timeline view */
-
-            holder.timeline.setPeriod(discipline.getMonitoringPeriod());
+            /* Updating timeline view should happen here*/
 
         } else {
             holder.accomplishmentsLayout.setVisibility(View.INVISIBLE);

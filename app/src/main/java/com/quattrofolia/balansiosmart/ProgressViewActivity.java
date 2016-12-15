@@ -186,7 +186,6 @@ public class ProgressViewActivity extends Activity {
         goalAdapter.setItemList(goalItems);
     }
 
-
     private void setInterfaceAccessibility(boolean authorized) {
         createGoalButton.setEnabled(authorized);
         if (authorized) {
@@ -217,7 +216,9 @@ public class ProgressViewActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sessionResults.removeChangeListeners();
+        if (sessionResults != null) {
+            sessionResults.removeChangeListeners();
+        }
         realm.removeAllChangeListeners();
         realm.close();
     }
