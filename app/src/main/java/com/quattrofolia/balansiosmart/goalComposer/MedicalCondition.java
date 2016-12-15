@@ -21,10 +21,13 @@ public enum MedicalCondition {
         public List<Goal> goalPresets() {
             List<Goal> presets = new ArrayList<>();
 
-            presets.add(createGoal(HealthDataType.BLOOD_GLUCOSE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.EASY));
+            presets.add(createGoal(HealthDataType.BLOOD_GLUCOSE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.NONE));
             presets.add(createGoal(HealthDataType.WEIGHT,MonitoringPeriod.week,3,"65","75",NotificationIntensity.EASY));
-            presets.add(createGoal(HealthDataType.EXERCISE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.EASY));
-            presets.add(createGoal(HealthDataType.BLOOD_GLUCOSE,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.EASY));
+            presets.add(createGoal(HealthDataType.EXERCISE,MonitoringPeriod.day,2,NotificationIntensity.EASY));
+            presets.add(createGoal(HealthDataType.SLEEP,MonitoringPeriod.day,1,"8","8",NotificationIntensity.NONE));
+
+            //presets.add(createGoal(HealthDataType.BLOOD_PRESSURE_DIASTOLIC,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.NONE));
+            //presets.add(createGoal(HealthDataType.BLOOD_PRESSURE_SYSTOLIC,MonitoringPeriod.day,2,"3.5","7",NotificationIntensity.NONE));
 
             return presets;
         }
@@ -43,6 +46,18 @@ public enum MedicalCondition {
             bgGoal.setNotificationIntensity(notificationIntensity);
             return bgGoal;
         }
+        private Goal createGoal(HealthDataType type,MonitoringPeriod moped, int frequency, NotificationIntensity notificationIntensity){
+            HealthDataType bgType = type;
+            Discipline bgDiscipline = new Discipline();
+            bgDiscipline.setMonitoringPeriod(moped);
+            bgDiscipline.setFrequency(frequency);
+            Goal bgGoal = new Goal();
+            bgGoal.setType(bgType);
+            bgGoal.setDiscipline(bgDiscipline);
+            bgGoal.setNotificationIntensity(notificationIntensity);
+            return bgGoal;
+        }
+
     };
 
 

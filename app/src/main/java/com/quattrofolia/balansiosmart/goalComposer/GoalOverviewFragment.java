@@ -108,6 +108,7 @@ public class GoalOverviewFragment extends Fragment {
             }
             if (!idealRangeMax.equals("0")) {
                 range = new Range();
+                Log.d(TAG, "onCreate: range created");
             }
         } else {
             Log.d(TAG, "onCreate: arguments null");

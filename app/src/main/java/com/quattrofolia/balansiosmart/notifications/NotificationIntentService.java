@@ -47,6 +47,7 @@ public class NotificationIntentService extends IntentService {
     private static final String ACTION_REMOVE_GOAL_NOTIFICATIONS = "ACTION_REMOVE_GOAL_NOTIFICATIONS";
     private static String TAG = "theTAG";
 
+
     // Storage
     private Realm realm;
     private RealmChangeListener realmChangeListener;
@@ -128,6 +129,7 @@ public class NotificationIntentService extends IntentService {
 
     //main method for initialization and starting notification logic.
     private void processStartNotification() {
+
         Log.d(TAG, "processStartNotification: ");
         // Do something. For example, fetch fresh data from backend to create a rich notification?
         now = new Instant();
@@ -246,14 +248,18 @@ public class NotificationIntentService extends IntentService {
                         if (currentNotificationEntries.isEmpty()) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
-                            writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
-                            sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType(),easyDisciplineGoals.get(i));
+
+                                sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType(),easyDisciplineGoals.get(i));
+                                writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
+
                         } else if (currentNotificationEntries
                                 .last().getInstant().isBefore(now.minus(twoHours))) {
 
                             Log.d(TAG, "easyDisciplineCheck: goal failed");
+
                             writeNotificationEntry(easyDisciplineGoals.get(i).getType(), "easyDiscipline",easyDisciplineGoals.get(i).getType().getLongName()+" discipline goal did fail.");
                             sendNotification(easyDisciplineGoals.get(i).getType().getLongName() + "goal has failed", "You didn't accomplish your goal this time", easyDisciplineGoals.get(i).getType(),easyDisciplineGoals.get(i));
+
                         }
                     } else {
                         Log.d(TAG, "easyDisciplineCheck: goal accomplished / has already been notified about");
@@ -305,8 +311,10 @@ public class NotificationIntentService extends IntentService {
                         }
                     }
                     if (numberOfFailedEntries >= 5) {
+
                         writeNotificationEntry(goal.getType(), "easyClinical",goal.getType().getLongName() + " clinical goal did fail");
                         sendNotification(goal.getType().getLongName() + " clinical goal has failed", "You didn't accomplish your goal this time", goal.getType(),goal);
+
                     }
                     else{
                         Log.d(TAG, "easyClinicalCheck: " + goal.getType().getLongName() + " clinical goal accomplished.");
@@ -371,6 +379,7 @@ public class NotificationIntentService extends IntentService {
 
     //create notification entry to the model, to keep track of what notifications has been sent.
     private void writeNotificationEntry(HealthDataType type, String value, String notificationText) {
+
         NotificationEntry entry = new NotificationEntry();
         entry.setType(type);
         entry.setValue(value);

@@ -21,6 +21,7 @@ import com.quattrofolia.balansiosmart.models.HealthDataEntry;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.Incrementable;
 import com.quattrofolia.balansiosmart.models.NotificationEntry;
+import com.quattrofolia.balansiosmart.models.NotificationIntensity;
 import com.quattrofolia.balansiosmart.models.Session;
 import com.quattrofolia.balansiosmart.models.User;
 import com.quattrofolia.balansiosmart.notifications.NotificationEventReceiver;
@@ -116,20 +117,30 @@ public class ProgressViewActivity extends Activity {
                     case 1:
                         NotificationEventReceiver.setupAlarm(getApplicationContext());
                         //Create default goals and entries here
-                        createEntry("5",HealthDataType.BLOOD_GLUCOSE,session,0);
+
                         break;
                     case 2:
-                        NotificationEventReceiver.setupAlarm(getApplicationContext());
+                        createEntry("5",HealthDataType.BLOOD_GLUCOSE,session,0);
+                        realm = Realm.getDefaultInstance();
+                        realm.beginTransaction();
+                        Goal targetGoal = realm.where(Goal.class).equalTo("type", HealthDataType.BLOOD_GLUCOSE.name()).findFirst();
+                        targetGoal.setNotificationIntensity(NotificationIntensity.EASY);
+                        realm.commitTransaction();
                         break;
                     case 3:
+                        NotificationEventReceiver.setupAlarm(getApplicationContext());
+                        break;
+                    case 4:
                         createEntry("78.5",HealthDataType.WEIGHT,session, 0);
                         createEntry("78.2",HealthDataType.WEIGHT,session, 8);
                         createEntry("78",HealthDataType.WEIGHT,session, 16);
                         createEntry("77.5",HealthDataType.WEIGHT,session, 30);
                         createEntry("77.6",HealthDataType.WEIGHT,session, 42);
                         createEntry("77",HealthDataType.WEIGHT,session, 54);
-                        NotificationEventReceiver.setupAlarm(getApplicationContext());
                         break;
+                    case 5:
+                        NotificationEventReceiver.setupAlarm(getApplicationContext());
+
                     default: //monthString = "Invalid month";
                         break;
 
