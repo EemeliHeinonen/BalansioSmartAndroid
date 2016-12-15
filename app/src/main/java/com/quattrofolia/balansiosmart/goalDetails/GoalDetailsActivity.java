@@ -157,7 +157,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         List<Pair<String, String>> settings = new ArrayList<>();
 
         if (discipline != null) {
-            settings.add(new Pair("Measure " +
+            settings.add(new Pair<>("Measure " +
                     goal.getType().getLongName().toLowerCase()
                     , discipline.getDescriptiveName()));
         }
@@ -165,13 +165,13 @@ public class GoalDetailsActivity extends AppCompatActivity {
         // Show target range
         Range range = goal.getTargetRange();
         if (range != null) {
-            settings.add(new Pair("Target Range",
+            settings.add(new Pair<>("Target Range",
                     range.getDescriptiveName()
                             + " "
                             + goal.getType().getUnit().toString()));
         }
 
-        settings.add(new Pair("Notification Setting", goal.getNotificationStyle()));
+        settings.add(new Pair<>("Notification Setting", goal.getNotificationStyle()));
 
         goalSettingsAdapter.setValuePairs(settings);
 
