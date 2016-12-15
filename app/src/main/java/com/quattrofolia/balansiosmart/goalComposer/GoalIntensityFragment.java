@@ -212,7 +212,7 @@ public class GoalIntensityFragment extends Fragment {
         return myView;
     }
 
-    //Methods for initializing the fragment for different progress_view_goal_item_row types.
+    //Methods for initializing the fragment for different goal types.
     public void weightMode() {
         int weightDefaultFrequency = 5;
         npFrequency.setMinValue(1);
