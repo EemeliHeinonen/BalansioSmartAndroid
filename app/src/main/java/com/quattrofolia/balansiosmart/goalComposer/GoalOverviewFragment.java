@@ -38,13 +38,11 @@ import static android.content.ContentValues.TAG;
 public class GoalOverviewFragment extends Fragment {
 
 
-
     /* Current setup view */
     private List<Pair<String, String>> goalSettings;
     private TextView goalTypeHeader;
     ValuePairViewAdapter goalSettingsAdapter;
     RecyclerView goalSettingsView;
-
 
 
     private HealthDataType dataType;
@@ -181,6 +179,8 @@ public class GoalOverviewFragment extends Fragment {
                     ((GoalComposerActivity) getActivity()).addGoal(goal, true);
                 }
             });
+
+
         }
 
 
