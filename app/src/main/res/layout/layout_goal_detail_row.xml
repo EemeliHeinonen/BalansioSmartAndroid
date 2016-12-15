@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/BSDetailContainer">
+
+    <TextView
+        android:id="@+id/textView_goalDetailKey"
+        style="@style/BSCaption.Table.Key" />
+
+    <TextView
+        android:id="@+id/textView_goalDetailValue"
+        style="@style/BSCaption.Table.Value" />
+
+</RelativeLayout>

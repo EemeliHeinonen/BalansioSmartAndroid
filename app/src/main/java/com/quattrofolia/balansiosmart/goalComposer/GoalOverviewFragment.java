@@ -3,15 +3,19 @@ package com.quattrofolia.balansiosmart.goalComposer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalDetails.Pair;
+import com.quattrofolia.balansiosmart.goalDetails.ValuePairViewAdapter;
 import com.quattrofolia.balansiosmart.models.Discipline;
 import com.quattrofolia.balansiosmart.models.Goal;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
@@ -19,6 +23,8 @@ import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
 import com.quattrofolia.balansiosmart.models.Range;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
@@ -31,6 +37,16 @@ import static android.content.ContentValues.TAG;
 
 public class GoalOverviewFragment extends Fragment {
 
+
+
+    /* Current setup view */
+    private List<Pair<String, String>> goalSettings;
+    private TextView goalTypeHeader;
+    ValuePairViewAdapter goalSettingsAdapter;
+    RecyclerView goalSettingsView;
+
+
+
     private HealthDataType dataType;
     private int frequency;
     private MonitoringPeriod monitoringPeriod;
@@ -40,6 +56,12 @@ public class GoalOverviewFragment extends Fragment {
     private Goal goal;
     private Discipline discipline;
     private Range range;
+
+    public static GoalOverviewFragment newInstance(Bundle args) {
+        GoalOverviewFragment fragment = new GoalOverviewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public static GoalOverviewFragment newInstance(
             HealthDataType dataType, int frequency, MonitoringPeriod monitoringPeriod,
@@ -61,6 +83,9 @@ public class GoalOverviewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (goal != null) {
+            Log.d(TAG, goal.getType().getLongName());
+        }
 
         //get data from the previous fragments
         if (getArguments() != null) {
@@ -107,7 +132,7 @@ public class GoalOverviewFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_overview_fragment, container, false);
+        LinearLayout myView = (LinearLayout) inflater.inflate(R.layout.goal_overview_fragment, container, false);
         TextView tvType = (TextView) myView.findViewById(R.id.tvOverviewType);
         TextView tvFrequency = (TextView) myView.findViewById(R.id.tvOverviewFrequency);
         TextView tvRangeMin = (TextView) myView.findViewById(R.id.tvOverviewRangeMin);
@@ -157,6 +182,18 @@ public class GoalOverviewFragment extends Fragment {
                 }
             });
         }
+
+
+        goalSettingsView = (RecyclerView) myView.findViewById(R.id.recyclerView_goalSettings);
+        goalSettings = new ArrayList<>();
+        goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
+        goalSettingsView.setAdapter(goalSettingsAdapter);
+        goalSettingsView.setLayoutManager(
+                new LinearLayoutManager(myView.getContext(), LinearLayoutManager.VERTICAL, false)
+        );
+        goalTypeHeader = (TextView) myView.findViewById(R.id.textView_goalTypeHeader);
+        goalTypeHeader.setText(dataType.getLongName());
+
 
         return myView;
     }

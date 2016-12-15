@@ -4,6 +4,8 @@ package com.quattrofolia.balansiosmart.goalComposer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +13,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalDetails.Pair;
+import com.quattrofolia.balansiosmart.goalDetails.ValuePairViewAdapter;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.String.format;
@@ -28,6 +34,15 @@ import static java.lang.String.format;
 // Fragment class for selecting progress_view_goal_item_row's range
 
 public class GoalRangeFragment extends Fragment {
+
+    /* Current setup view */
+    private List<Pair<String, String>> goalSettings;
+    private TextView goalTypeHeader;
+    ValuePairViewAdapter goalSettingsAdapter;
+    RecyclerView goalSettingsView;
+
+
+
     private NumberPicker numberPickerMin;
     private NumberPicker numberPickerMax;
     private int minRangeMin;
@@ -93,7 +108,7 @@ public class GoalRangeFragment extends Fragment {
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_range_fragment, container, false);
+        LinearLayout myView = (LinearLayout) inflater.inflate(R.layout.goal_range_fragment, container, false);
         tvRangeMin = (TextView) myView.findViewById(R.id.textViewGoalRangeMin);
         tvRangeMax = (TextView) myView.findViewById(R.id.textViewGoalRangeMax);
         tvUnit = (TextView) myView.findViewById(R.id.textView_unit);
@@ -102,6 +117,17 @@ public class GoalRangeFragment extends Fragment {
         numberPickerMax = (NumberPicker) myView.findViewById(R.id.numberPicker_max);
         btnNext = (Button) myView.findViewById(R.id.btnRangeNext);
         btnSkip = (Button) myView.findViewById(R.id.btnRangeSkip);
+
+        goalSettingsView = (RecyclerView) myView.findViewById(R.id.recyclerView_goalSettings);
+        goalSettings = new ArrayList<>();
+        goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
+        goalSettingsView.setAdapter(goalSettingsAdapter);
+        goalSettingsView.setLayoutManager(
+                new LinearLayoutManager(myView.getContext(), LinearLayoutManager.VERTICAL, false)
+        );
+        goalTypeHeader = (TextView) myView.findViewById(R.id.textView_goalTypeHeader);
+        goalTypeHeader.setText(dataType.getLongName());
+
 
         // Initialize the pickers
         numberPickerMin.setMaxValue(minRangeMax);
@@ -115,29 +141,38 @@ public class GoalRangeFragment extends Fragment {
         tvUnit.setText(dataType.getUnit().toString());
 
         //check if a certain progress_view_goal_item_row type has been selected & modify the fragment accordingly
-        if (dataType.equals("Weight")) {
-            weightMode();
-        } else if (dataType.equals("Sleep")) {
-            sleepMode();
-        } else if (dataType.equals("Blood Pressure Systolic")) {
-            bpSystolicMode();
-        } else if (dataType.equals("Blood Pressure Diastolic")) {
-            bpDiastolicMode();
-        } else if (dataType.equals("Blood Glucose")) {
-            bgMode();
+        switch (dataType) {
+            case WEIGHT:
+                weightMode();
+                break;
+            case SLEEP:
+                sleepMode();
+                break;
+            case BLOOD_PRESSURE_SYSTOLIC:
+                bpSystolicMode();
+                break;
+            case BLOOD_PRESSURE_DIASTOLIC:
+                bpDiastolicMode();
+                break;
+            case BLOOD_GLUCOSE:
+                bgMode();
+                break;
         }
 
         numberPickerMin.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Check data type and display the newly selected number from picker
-                if (dataType.equals("Sleep")) {
-                    minSelectedValue = Integer.toString(newVal);
-                    maxSelectedValue = Integer.toString(newVal);
-                } else if (dataType.equals("Blood Glucose")) {
-                    minSelectedValue = minValues[newVal];
-                } else {
-                    minSelectedValue = Integer.toString(newVal);
+                switch (dataType) {
+                    case SLEEP:
+                        minSelectedValue = Integer.toString(newVal);
+                        maxSelectedValue = Integer.toString(newVal);
+                        break;
+                    case BLOOD_GLUCOSE:
+                        minSelectedValue = minValues[newVal];
+                        break;
+                    default:
+                        minSelectedValue = Integer.toString(newVal);
                 }
             }
         });
@@ -146,15 +181,18 @@ public class GoalRangeFragment extends Fragment {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 //Check data type and display the newly selected number from picker
-                if (dataType.equals("Blood Glucose")) {
-                    maxSelectedValue = maxValues[newVal];
-                } else {
-                    maxSelectedValue = Integer.toString(newVal);
+                switch (dataType) {
+                    case BLOOD_GLUCOSE:
+                        maxSelectedValue = maxValues[newVal];
+                        break;
+                    default:
+                        maxSelectedValue = Integer.toString(newVal);
+                        break;
                 }
             }
         });
 
-        //handle the swiping to the next fragment by clicking on the button
+        //handle the swiping to the next fragment by clicking on the button_spanwidth
         btnSkip.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Move to the next fragment without passing new data from this fragment

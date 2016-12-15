@@ -166,4 +166,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
         notificationFrequency.setText(goal.getNotificationStyle());
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+    }
 }

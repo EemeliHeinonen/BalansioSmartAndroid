@@ -17,6 +17,9 @@ public class Goal extends RealmObject implements Incrementable {
     @Required
     private String type;
     private String notificationStyle;
+
+
+    private String notificationIntensity;
     private Discipline discipline;
     private Range targetRange;
 
@@ -24,8 +27,17 @@ public class Goal extends RealmObject implements Incrementable {
         this.type = type.toString();
     }
 
-    public void setNotificationStyle(String notificationStyle){
+    public void setNotificationStyle(String notificationStyle) {
         this.notificationStyle = notificationStyle;
+    }
+
+    /* Use enums for restricted set of string parameters */
+    public void setNotificationIntensity(NotificationIntensity intensity) {
+        this.notificationIntensity = intensity.toString();
+    }
+
+    public NotificationIntensity getNotificationIntensity() {
+        return NotificationIntensity.valueOf(this.notificationIntensity);
     }
 
     public void setDiscipline(Discipline discipline) {
@@ -48,7 +60,7 @@ public class Goal extends RealmObject implements Incrementable {
         return targetRange;
     }
 
-    public String getNotificationStyle(){
+    public String getNotificationStyle() {
         return notificationStyle;
     }
 

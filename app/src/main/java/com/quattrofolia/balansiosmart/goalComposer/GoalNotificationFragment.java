@@ -3,19 +3,26 @@ package com.quattrofolia.balansiosmart.goalComposer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.quattrofolia.balansiosmart.R;
+import com.quattrofolia.balansiosmart.goalDetails.Pair;
+import com.quattrofolia.balansiosmart.goalDetails.ValuePairViewAdapter;
 import com.quattrofolia.balansiosmart.models.HealthDataType;
 import com.quattrofolia.balansiosmart.models.MonitoringPeriod;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
@@ -26,6 +33,13 @@ import static android.content.ContentValues.TAG;
 // Fragment class for selecting progress_view_goal_item_row's notification preferences
 
 public class GoalNotificationFragment extends Fragment {
+
+    /* Current setup view */
+    private List<Pair<String, String>> goalSettings;
+    private TextView goalTypeHeader;
+    ValuePairViewAdapter goalSettingsAdapter;
+    RecyclerView goalSettingsView;
+
 
     private HealthDataType dataType;
     private int frequency;
@@ -72,7 +86,7 @@ public class GoalNotificationFragment extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RelativeLayout myView = (RelativeLayout) inflater.inflate(R.layout.goal_notification_fragment, container, false);
+        LinearLayout myView = (LinearLayout) inflater.inflate(R.layout.goal_notification_fragment, container, false);
         TextView tv = (TextView) myView.findViewById(R.id.tvNotificationRemind);
         Button btnNext = (Button) myView.findViewById(R.id.btnNotificationNext);
         radioButtonGroup = (RadioGroup) myView.findViewById(R.id.radioGroup);
@@ -102,7 +116,19 @@ public class GoalNotificationFragment extends Fragment {
             }
         });
 
-        //handle the navigation and data passing to the next fragment by clicking on the button
+
+        goalSettingsView = (RecyclerView) myView.findViewById(R.id.recyclerView_goalSettings);
+        goalSettings = new ArrayList<>();
+        goalSettingsAdapter = new ValuePairViewAdapter(goalSettings);
+        goalSettingsView.setAdapter(goalSettingsAdapter);
+        goalSettingsView.setLayoutManager(
+                new LinearLayoutManager(myView.getContext(), LinearLayoutManager.VERTICAL, false)
+        );
+        goalTypeHeader = (TextView) myView.findViewById(R.id.textView_goalTypeHeader);
+        goalTypeHeader.setText(dataType.getLongName());
+
+
+        //handle the navigation and data passing to the next fragment by clicking on the button_spanwidth
         btnNext.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
